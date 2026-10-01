@@ -1,47 +1,31 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# Dependencias de Node (¡súper pesado, nunca debe subirse!)
+/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Compiled output
+# Compilación y Caché de Angular
+/.angular
 /dist
 /tmp
 /out-tsc
-/bazel-out
 
-# Node
-/node_modules
-npm-debug.log
-yarn-error.log
+# IDEs y Editores de código
+/.vscode/*
+!/.vscode/extensions.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
+!/.vscode/settings.json
+/.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# Archivos de entorno sensibles o locales
+.env
 
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/mcp.json
-.history/*
-
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
-__screenshots__/
-
-# System files
+# Sistema operativo
 .DS_Store
 Thumbs.db
-
-.env
-npm-debug.log*
