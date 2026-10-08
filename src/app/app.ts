@@ -1,6 +1,8 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ApiService } from './core/services/api.service';
+import { SensorService } from './core/services/sensor';
+import { SensorReading } from './shared/models/sensor-reading.model';
 
 @Component({
   selector: 'app-root',
@@ -10,18 +12,16 @@ import { ApiService } from './core/services/api.service';
   styleUrl: './app.css'
 })
 export class App implements OnInit {
-  // Declaramos 'title' como una signal (usada en el app.html generado por Angular v19)
-  title = signal('PyroGuard-FRONTEND');
-
-  private apiService = inject(ApiService);
+  
+  constructor(private sensorService: SensorService) {}
 
   ngOnInit(): void {
-    this.apiService.getDatos().subscribe({
-      next: (response: any) => {
-        console.log('Conexión exitosa con el backend:', response);
+    this.sensorService.getLatestReadings().subscribe({
+      next: (data: SensorReading[]) => {
+        console.log('Datos recibidos exitosamente desde Django:', data);
       },
-      error: (error: any) => {
-        console.error('Error al conectar con el backend:', error);
+      error: (error) => {
+        console.error('Error al conectar con la API:', error);
       }
     });
   }
