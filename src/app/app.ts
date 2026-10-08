@@ -1,39 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http'; // Necesario para *ngIf, *ngFor y pipes de fecha
 import { SensorService } from './core/services/sensor';
 import { SensorReading } from './shared/models/sensor-reading.model';
-
-interface AppReadingsError extends HttpErrorResponse {}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule], // Importante para componentes standalone
+  imports: [CommonModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class App implements OnInit {
   readings: SensorReading[] = [];
+  errorMessage: string = '';
 
   constructor(private sensorService: SensorService) {}
 
   ngOnInit(): void {
-    this.fetchReadings();
-    
-    // Opcional: Actualizar los datos automáticamente cada 5 segundos
-    setInterval(() => {
-      this.fetchReadings();
-    }, 5000);
+    this.loadReadings();
   }
 
-  fetchReadings(): void {
+  loadReadings(): void {
     this.sensorService.getLatestReadings().subscribe({
-      next: (data: SensorReading[]): void => {
+      next: (data: SensorReading[]) => {
+        console.log("Datos recibidos:", data);
         this.readings = data;
       },
-      error: (error: AppReadingsError): void => {
+      error: (error: any) => {
         console.error('Error al conectar con la API:', error);
+        this.errorMessage = JSON.stringify(error);
       }
     });
   }

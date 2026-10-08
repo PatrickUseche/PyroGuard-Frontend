@@ -1,75 +1,38 @@
-<div class="dashboard-container">
-  <!-- Header / Título -->
-  <header class="dashboard-header">
-    <h1>PyroGuard - Forest Fire Monitoring</h1>
-    <p class="subtitle">Monitoreo en tiempo real de nodos IoT - Pasto, Colombia</p>
-  </header>
+<div class="dashboard-container" style="padding: 20px; font-family: sans-serif;">
+  <h1>PyroGuard - Debug View</h1>
+  
+  <!-- Estado de la conexión -->
+  <p><strong>Estado de carga:</strong> {{ readings.length > 0 ? 'Datos cargados (' + readings.length + ' registros)' : 'Esperando datos de la API...' }}</p>
 
-  <!-- Contenido visible solo cuando ya llegaron datos -->
-  <ng-container *ngIf="readings.length > 0; else loading">
-    <!-- Tarjetas de Resumen (Última lectura) -->
-    <section class="metrics-grid">
-      <div class="card metric-card">
-        <h3>Temperatura</h3>
-        <p class="metric-value">{{ readings[0].temperature }} °C</p>
-      </div>
+  <!-- Si hay datos, muestra la tabla directamente -->
+  <div *ngIf="readings.length > 0">
+    <h2>Último registro:</h2>
+    <p>Temperatura: {{ readings[0].temperature }} °C</p>
+    <p>Humedad: {{ readings[0].humidity }} %</p>
+    
+    <h3>Tabla de prueba:</h3>
+    <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+      <tr>
+        <th>Nodo</th>
+        <th>Temperatura</th>
+        <th>Humedad</th>
+        <th>Humo</th>
+        <th>Llama</th>
+        <th>Fecha</th>
+      </tr>
+      <tr *ngFor="let item of readings">
+        <td>{{ item.node_id }}</td>
+        <td>{{ item.temperature }}</td>
+        <td>{{ item.humidity }}</td>
+        <td>{{ item.smoke }}</td>
+        <td>{{ item.flame }}</td>
+        <td>{{ item.timestamp }}</td>
+      </tr>
+    </table>
+  </div>
 
-      <div class="card metric-card">
-        <h3>Humedad</h3>
-        <p class="metric-value">{{ readings[0].humidity }} %</p>
-      </div>
-
-      <div class="card metric-card">
-        <h3>Humo / Gas</h3>
-        <p class="metric-value">{{ readings[0].smoke }}</p>
-      </div>
-
-      <div class="card metric-card" [ngClass]="{'alert-card': readings[0].flame}">
-        <h3>Estado de Llama</h3>
-        <p class="metric-value status-text">
-          {{ readings[0].flame ? '¡PELIGRO: LLAMA DETECTADA!' : 'Normal' }}
-        </p>
-      </div>
-    </section>
-
-    <!-- Tabla de Historial Reciente -->
-    <section class="table-section">
-      <h2>Historial de Mediciones Recientes</h2>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Nodo</th>
-              <th>Temperatura</th>
-              <th>Humedad</th>
-              <th>Humo</th>
-              <th>Llama</th>
-              <th>Fecha y Hora</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of readings">
-              <td><strong>{{ item.node_id }}</strong></td>
-              <td>{{ item.temperature }} °C</td>
-              <td>{{ item.humidity }} %</td>
-              <td>{{ item.smoke }}</td>
-              <td>
-                <span class="badge" [ngClass]="item.flame ? 'badge-danger' : 'badge-success'">
-                  {{ item.flame ? 'Sí' : 'No' }}
-                </span>
-              </td>
-              <td>{{ item.timestamp | date:'medium' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </ng-container>
-
-  <!-- Mensaje mientras cargan los datos -->
-  <ng-template #loading>
-    <div style="text-align: center; margin-top: 50px; color: #7f8c8d;">
-      <p>Cargando datos desde la nube...</p>
-    </div>
-  </ng-template>
+  <!-- Si ocurrió un error o sigue vacío -->
+  <div *ngIf="errorMessage" style="color: red; margin-top: 20px;">
+    <strong>Error capturado:</strong> {{ errorMessage }}
+  </div>
 </div>
