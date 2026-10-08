@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SensorService } from './core/services/sensor';
 import { SensorReading } from './shared/models/sensor-reading.model';
@@ -14,10 +14,18 @@ export class App implements OnInit {
   readings: SensorReading[] = [];
   errorMessage: string = '';
 
-  constructor(private sensorService: SensorService) {}
+  constructor(
+    private sensorService: SensorService,
+    private cdr: ChangeDetectorRef // Inyectamos el detector de cambios
+  ) {}
 
   ngOnInit(): void {
     this.loadReadings();
+    
+    // Refrescar cada 5 segundos
+    setInterval(() => {
+      this.loadReadings();
+    }, 5000);
   }
 
   loadReadings(): void {
@@ -25,10 +33,12 @@ export class App implements OnInit {
       next: (data: SensorReading[]) => {
         console.log("Datos recibidos:", data);
         this.readings = data;
+        this.cdr.detectChanges(); // ¡Forzamos a Angular a pintar los datos en la pantalla!
       },
       error: (error: any) => {
         console.error('Error al conectar con la API:', error);
         this.errorMessage = JSON.stringify(error);
+        this.cdr.detectChanges();
       }
     });
   }
