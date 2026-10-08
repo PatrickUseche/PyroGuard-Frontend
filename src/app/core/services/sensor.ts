@@ -7,7 +7,7 @@ import { SensorReading } from "../../shared/models/sensor-reading.model";
     providedIn: 'root'
 })
 export class SensorService {
-    private apiUrl = 'https://pyroguard-backend.onrender.com';
+    private apiUrl = 'https://pyroguard-backend.onrender.com/api/readings/';
 
     constructor(private http: HttpClient){}
 
