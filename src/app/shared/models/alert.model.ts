@@ -1,12 +1,10 @@
 import { AlertStatus } from './alert-status.model';
 
-export type AlertLevel = 'WARNING' | 'FIRE';
-
 export interface Alert {
   id: number;
   node_id: string;
-  reading_id: number | null;
-  level: AlertLevel;
+  reading_id: number;
+  level: 'WARNING' | 'FIRE';
   probability: number | null;
   message: string;
   status: AlertStatus;
