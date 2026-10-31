@@ -14,6 +14,21 @@ describe('RiskBadge', () => {
     expect(badge.getAttribute('aria-label')).toBe('Riesgo incendio');
   });
 
+  it.each([
+    { risk: 'NORMAL' as const, label: 'Normal' },
+    { risk: 'WARNING' as const, label: 'Advertencia' },
+    { risk: 'FIRE' as const, label: 'Incendio' },
+  ])('should render the $label risk label and icon', async ({ risk, label }) => {
+    await TestBed.configureTestingModule({ imports: [RiskBadge] }).compileComponents();
+    const fixture = TestBed.createComponent(RiskBadge);
+    fixture.componentRef.setInput('risk', risk);
+    fixture.detectChanges();
+
+    const badge = fixture.nativeElement.querySelector('[role="status"]') as HTMLElement;
+    expect(badge.textContent).toContain(label);
+    expect(badge.querySelector('svg')).toBeTruthy();
+  });
+
   it('should present offline risk as stale instead of normal', async () => {
     await TestBed.configureTestingModule({ imports: [RiskBadge] }).compileComponents();
     const fixture = TestBed.createComponent(RiskBadge);

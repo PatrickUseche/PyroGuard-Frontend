@@ -1,6 +1,8 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { AlertsService } from '../../core/services/alerts.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ReadingsService } from '../../core/services/readings.service';
 import { DashboardSummary } from '../../shared/models/dashboard-summary.model';
 import { DashboardStore } from './dashboard-store';
@@ -41,6 +43,8 @@ describe('DashboardPage', () => {
             getSeries: () => of([]),
           },
         },
+        { provide: AuthService, useValue: { isAuthenticated: signal(false) } },
+        { provide: AlertsService, useValue: { acknowledge: () => of({}), close: () => of({}), getActive: () => of([]) } },
       ],
     }).compileComponents();
   });

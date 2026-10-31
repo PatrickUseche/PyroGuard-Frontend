@@ -1,5 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { DashboardSummary } from '../../shared/models/dashboard-summary.model';
 import { Node } from '../../shared/models/node.model';
 import { DashboardStore } from './dashboard-store';
@@ -48,6 +49,7 @@ describe('NodeGrid', () => {
     await TestBed.configureTestingModule({
       imports: [NodeGrid],
       providers: [
+        provideRouter([]),
         {
           provide: DashboardStore,
           useValue: {

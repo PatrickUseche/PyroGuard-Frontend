@@ -11,6 +11,7 @@ describe('DashboardStore', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
+    vi.useFakeTimers();
     Object.defineProperty(document, 'hidden', { configurable: true, value: false });
     TestBed.configureTestingModule({
       providers: [
@@ -24,7 +25,10 @@ describe('DashboardStore', () => {
     httpTestingController = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => httpTestingController.verify());
+  afterEach(() => {
+    httpTestingController.verify();
+    vi.useRealTimers();
+  });
 
   it('should fetch summary, nodes, and active alerts in a single cycle', () => {
     const summaryRequest = httpTestingController.expectOne(
@@ -76,4 +80,65 @@ describe('DashboardStore', () => {
     expect(store.lastUpdated()).toBeNull();
     expect(store.summary()).not.toBeNull();
   });
+
+  it('should poll again after ten seconds', async () => {
+    completeInitialCycle();
+
+    await vi.advanceTimersByTimeAsync(9_999);
+    httpTestingController.expectNone('https://api.test/api/dashboard/summary/');
+
+    await vi.advanceTimersByTimeAsync(1);
+    completeInitialCycle();
+  });
+
+  it('should pause polling while the document is hidden', async () => {
+    completeInitialCycle();
+    setDocumentHidden(true);
+
+    await vi.advanceTimersByTimeAsync(30_000);
+    httpTestingController.expectNone('https://api.test/api/dashboard/summary/');
+
+    setDocumentHidden(false);
+    completeInitialCycle();
+  });
+
+  it('should respect Retry-After after a throttled response', async () => {
+    httpTestingController.expectOne('https://api.test/api/dashboard/summary/').flush(
+      {},
+      {
+        status: 429,
+        statusText: 'Too Many Requests',
+        headers: { 'Retry-After': '60' },
+      },
+    );
+    httpTestingController.expectOne('https://api.test/api/nodes/').flush([]);
+    httpTestingController.expectOne('https://api.test/api/alerts/active/').flush([]);
+    expect(store.error()).toContain('límite');
+
+    await vi.advanceTimersByTimeAsync(50_000);
+    httpTestingController.expectNone('https://api.test/api/dashboard/summary/');
+
+    await vi.advanceTimersByTimeAsync(10_000);
+    completeInitialCycle();
+  });
+
+  function completeInitialCycle(): void {
+    httpTestingController.expectOne('https://api.test/api/dashboard/summary/').flush({
+      total_nodes: 0,
+      nodes_online: 0,
+      nodes_offline: 0,
+      nodes_unknown: 0,
+      nodes_at_risk: 0,
+      active_alerts: 0,
+      overall_risk: 'NORMAL',
+      latest_readings: [],
+    });
+    httpTestingController.expectOne('https://api.test/api/nodes/').flush([]);
+    httpTestingController.expectOne('https://api.test/api/alerts/active/').flush([]);
+  }
+
+  function setDocumentHidden(hidden: boolean): void {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: hidden });
+    document.dispatchEvent(new Event('visibilitychange'));
+  }
 });
