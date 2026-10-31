@@ -30,7 +30,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(shared): componentes `RiskBadge`, `ConnectionBadge` e iconos SVG [2.9]
 - [x] feat(dashboard): store con signals y sondeo único cada 10 s que se pausa con la pestaña oculta [2.10]
 - [x] chore(html): `lang="es"`, título y descripción de la página [2.12]
-- [ ] feat(dashboard): tarjetas de resumen y riesgo global con `/dashboard/summary/` [2.1]
+- [x] feat(dashboard): tarjetas de resumen y riesgo global con `/dashboard/summary/` [2.1]
 - [ ] feat(dashboard): semáforo de riesgo y estado (ONLINE, OFFLINE, UNKNOWN) por nodo [2.2]
 - [ ] feat(alerts): lista de alertas activas con nivel y número de ocurrencias [2.3]
 - [ ] feat(readings): tabla de lecturas con el riesgo final y el resultado de la IA [2.4]
