@@ -1,5 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { ReadingsService } from '../../core/services/readings.service';
 import { DashboardSummary } from '../../shared/models/dashboard-summary.model';
 import { DashboardStore } from './dashboard-store';
 import { DashboardPage } from './dashboard-page';
@@ -29,6 +31,10 @@ describe('DashboardPage', () => {
             loading: signal(false),
             error: signal(null),
           },
+        },
+        {
+          provide: ReadingsService,
+          useValue: { getAll: () => of({ items: [], total: 0 }) },
         },
       ],
     }).compileComponents();

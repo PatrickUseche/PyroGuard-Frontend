@@ -3,11 +3,12 @@ import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { ActiveAlerts } from './active-alerts';
 import { DashboardStore } from './dashboard-store';
 import { NodeGrid } from './node-grid';
+import { ReadingsTable } from './readings-table';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [ActiveAlerts, NodeGrid, RiskBadge],
+  imports: [ActiveAlerts, NodeGrid, ReadingsTable, RiskBadge],
   template: `
     <section class="dashboard" aria-labelledby="dashboard-title">
       <header class="page-heading">
@@ -79,6 +80,7 @@ import { NodeGrid } from './node-grid';
 
       <app-node-grid />
       <app-active-alerts />
+      <app-readings-table />
     </section>
   `,
   styles: `
