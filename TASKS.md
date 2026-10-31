@@ -20,7 +20,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] fix(env): que `apiUrl` de producción apunte al backend y no al propio frontend de Vercel [1.1]
 - [x] refactor(api): que `sensor.ts` use `environment.apiUrl` en lugar de la URL fija [1.2]
 - [x] refactor(api): eliminar `ApiService` obsoleto que apunta a `/admin/` [1.2]
-- [ ] feat(models): tipos para riesgo, resultado de la IA, alertas y nodos según el contrato del backend [1.3]
+- [x] feat(models): tipos para riesgo, resultado de la IA, alertas y nodos según el contrato del backend [1.3]
 - [ ] refactor(services): servicios para `dashboard/summary`, `readings`, `alerts` y `nodes` [1.4]
 
 ## Fase 2 — Dashboard
