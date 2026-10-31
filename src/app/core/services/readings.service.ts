@@ -44,6 +44,12 @@ export class ReadingsService {
       .pipe(map((response) => this.toPaginatedReadings(response)));
   }
 
+  getSeries(nodeId: string, range: '24h' | '7d'): Observable<Reading[]> {
+    return this.getForNode(nodeId, { range, order: 'asc', limit: 500 }).pipe(
+      map((response) => response.items),
+    );
+  }
+
   private toPaginatedReadings(response: HttpResponse<Reading[]>): PaginatedReadings {
     const items = response.body;
     const totalHeader = response.headers.get('X-Total-Count');

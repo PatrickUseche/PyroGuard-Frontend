@@ -34,7 +34,10 @@ describe('DashboardPage', () => {
         },
         {
           provide: ReadingsService,
-          useValue: { getAll: () => of({ items: [], total: 0 }) },
+          useValue: {
+            getAll: () => of({ items: [], total: 0 }),
+            getSeries: () => of([]),
+          },
         },
       ],
     }).compileComponents();

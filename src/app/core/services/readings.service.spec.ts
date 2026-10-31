@@ -68,6 +68,21 @@ describe('ReadingsService', () => {
     });
   });
 
+  it('should fetch ordered series readings for a node and selected range', () => {
+    service.getSeries('node-1', '7d').subscribe();
+
+    const request = httpTestingController.expectOne(
+      (candidate) =>
+        candidate.url === 'https://api.test/api/nodes/node-1/readings/' &&
+        candidate.params.get('range') === '7d',
+    );
+    expect(request.request.params.get('order')).toBe('asc');
+    expect(request.request.params.get('limit')).toBe('500');
+    request.flush([], {
+      headers: new HttpHeaders({ 'X-Total-Count': '0' }),
+    });
+  });
+
   it('should report an invalid API response when the total header is missing', () => {
     let actualError: ApiError | undefined;
 

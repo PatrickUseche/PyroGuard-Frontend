@@ -4,11 +4,12 @@ import { ActiveAlerts } from './active-alerts';
 import { DashboardStore } from './dashboard-store';
 import { NodeGrid } from './node-grid';
 import { ReadingsTable } from './readings-table';
+import { SeriesChart } from './series-chart';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [ActiveAlerts, NodeGrid, ReadingsTable, RiskBadge],
+  imports: [ActiveAlerts, NodeGrid, ReadingsTable, RiskBadge, SeriesChart],
   template: `
     <section class="dashboard" aria-labelledby="dashboard-title">
       <header class="page-heading">
@@ -81,6 +82,7 @@ import { ReadingsTable } from './readings-table';
       <app-node-grid />
       <app-active-alerts />
       <app-readings-table />
+      <app-series-chart />
     </section>
   `,
   styles: `

@@ -34,7 +34,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(dashboard): semáforo de riesgo y estado (ONLINE, OFFLINE, UNKNOWN) por nodo [2.2]
 - [x] feat(alerts): lista de alertas activas con nivel y número de ocurrencias [2.3]
 - [x] feat(readings): tabla de lecturas con el riesgo final y el resultado de la IA [2.4]
-- [ ] feat(charts): gráfico histórico de temperatura, humo y humedad [2.5] (necesita el backend [2.3])
+- [x] feat(charts): gráfico histórico de temperatura, humo y humedad [2.5] (necesita el backend [2.3])
 - [ ] feat(ui): estados de carga, error y sin datos, e indicador de salud con `/health/` [2.6] (necesita el backend [4.2])
 - [ ] refactor(app): eliminar la vista de depuración y `SensorService` [2.11]
 
