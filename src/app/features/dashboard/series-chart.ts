@@ -13,6 +13,7 @@ import { EMPTY, Subject, catchError, startWith, switchMap, timer } from 'rxjs';
 import { ReadingsService } from '../../core/services/readings.service';
 import { ApiError } from '../../shared/models/api-error.model';
 import { Reading } from '../../shared/models/reading.model';
+import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate } from '../../shared/utils/date-format.util';
 import { DashboardStore } from './dashboard-store';
 
@@ -57,6 +58,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
 @Component({
   selector: 'app-series-chart',
   standalone: true,
+  imports: [StateMessage],
   template: `
     <section class="chart-section" aria-labelledby="chart-title">
       <header class="section-heading">
@@ -91,11 +93,19 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
           <span></span>
         </div>
       } @else if (error()) {
-        <p class="chart-state" role="status">{{ error() }}</p>
+        <app-state-message kind="error" title="No se pudo cargar el histórico" [message]="error() ?? ''" />
       } @else if (!selectedNode()) {
-        <p class="chart-state">Selecciona un nodo para consultar su histórico de lecturas.</p>
+        <app-state-message
+          kind="empty"
+          title="Selecciona un nodo"
+          message="Elige un nodo para consultar su histórico de lecturas."
+        />
       } @else if (readings().length === 0) {
-        <p class="chart-state">No hay lecturas en el periodo seleccionado.</p>
+        <app-state-message
+          kind="empty"
+          title="Sin lecturas históricas"
+          message="No hay lecturas en el periodo seleccionado."
+        />
       } @else {
         <div class="plots">
           @for (plot of plots(); track plot.key) {

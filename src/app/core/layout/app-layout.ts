@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { HealthIndicator } from './health-indicator';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [HealthIndicator, RouterLink, RouterLinkActive, RouterOutlet],
   template: `
     <div class="app-shell">
       <header class="site-header">
@@ -32,6 +33,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
             Resumen
           </a>
         </nav>
+        <app-health-indicator class="health-indicator" />
       </header>
 
       <main id="main-content" class="main-content">
@@ -102,6 +104,10 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       color: var(--color-text);
     }
 
+    .health-indicator {
+      margin-left: auto;
+    }
+
     .main-content {
       width: min(1200px, 100%);
       flex: 1;
@@ -124,9 +130,14 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
     @media (max-width: 640px) {
       .site-header {
+        flex-wrap: wrap;
         min-height: 60px;
         gap: var(--space-4);
         padding: var(--space-2) var(--space-4);
+      }
+
+      .health-indicator {
+        margin-left: auto;
       }
 
       .main-content {

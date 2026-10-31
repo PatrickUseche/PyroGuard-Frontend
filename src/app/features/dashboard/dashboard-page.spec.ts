@@ -29,7 +29,9 @@ describe('DashboardPage', () => {
             nodes: signal([]),
             alerts: signal([]),
             loading: signal(false),
+            slowLoading: signal(false),
             error: signal(null),
+            lastUpdated: signal(new Date()),
           },
         },
         {

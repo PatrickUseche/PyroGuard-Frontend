@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, startWith, switchMap, timer } from 'rxjs';
 import { ReadingsService, PaginatedReadings } from '../../core/services/readings.service';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
+import { StateMessage } from '../../shared/components/state-message/state-message';
 import { AiResult } from '../../shared/models/ai-result.model';
 import { Reading } from '../../shared/models/reading.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
@@ -19,7 +20,7 @@ import { DashboardStore } from './dashboard-store';
 @Component({
   selector: 'app-readings-table',
   standalone: true,
-  imports: [RiskBadge],
+  imports: [RiskBadge, StateMessage],
   template: `
     <section class="readings-section" aria-labelledby="readings-title">
       <header class="section-heading">
@@ -45,9 +46,13 @@ import { DashboardStore } from './dashboard-store';
           <span></span>
         </div>
       } @else if (error()) {
-        <p class="error-state" role="status">{{ error() }}</p>
+        <app-state-message kind="error" title="No se pudieron cargar las lecturas" [message]="error() ?? ''" />
       } @else if (readings().length === 0) {
-        <p class="empty-state">No hay lecturas para los filtros seleccionados.</p>
+        <app-state-message
+          kind="empty"
+          title="Sin lecturas"
+          message="No hay lecturas para los filtros seleccionados."
+        />
       } @else {
         <div class="table-scroll">
           <table>

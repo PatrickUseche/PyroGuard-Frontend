@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
+import { StateMessage } from '../../shared/components/state-message/state-message';
+import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { ActiveAlerts } from './active-alerts';
 import { DashboardStore } from './dashboard-store';
 import { NodeGrid } from './node-grid';
@@ -9,7 +11,7 @@ import { SeriesChart } from './series-chart';
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [ActiveAlerts, NodeGrid, ReadingsTable, RiskBadge, SeriesChart],
+  imports: [ActiveAlerts, NodeGrid, ReadingsTable, RiskBadge, SeriesChart, StateMessage],
   template: `
     <section class="dashboard" aria-labelledby="dashboard-title">
       <header class="page-heading">
@@ -18,17 +20,32 @@ import { SeriesChart } from './series-chart';
           <h1 id="dashboard-title">Centro de control</h1>
           <p class="intro">Estado de nodos, lecturas recientes y alertas de PyroGuard.</p>
         </div>
-        @if (store.summary(); as summary) {
-          <div
-            class="risk-banner"
-            [class.fire]="summary.overall_risk === 'FIRE'"
-            aria-live="polite"
-          >
-            <span>Riesgo global</span>
-            <app-risk-badge [risk]="summary.overall_risk" />
-          </div>
-        }
+        <div class="heading-status">
+          @if (store.lastUpdated(); as updatedAt) {
+            <time class="updated" [attr.datetime]="updatedAt.toISOString()" [attr.title]="formatFullDate(updatedAt.toISOString())">
+              Actualizado {{ formatRelativeTime(updatedAt.toISOString()) }}
+            </time>
+          }
+          @if (store.summary(); as summary) {
+            <div
+              class="risk-banner"
+              [class.fire]="summary.overall_risk === 'FIRE'"
+              aria-live="polite"
+            >
+              <span>Riesgo global</span>
+              <app-risk-badge [risk]="summary.overall_risk" />
+            </div>
+          }
+        </div>
       </header>
+
+      @if (store.loading() && store.slowLoading()) {
+        <app-state-message
+          kind="loading"
+          title="Conectando con el servidor"
+          message="La conexión puede tardar hasta un minuto si el servidor estaba en reposo."
+        />
+      }
 
       <section class="summary-section" aria-label="Resumen del sistema">
         @if (store.summary(); as summary) {
@@ -59,9 +76,11 @@ import { SeriesChart } from './series-chart';
             </article>
           </div>
           @if (summary.total_nodes === 0) {
-            <p class="empty-summary">
-              No hay nodos registrados. Cuando se conecten dispositivos, su estado aparecerá aquí.
-            </p>
+            <app-state-message
+              kind="empty"
+              title="Todavía no hay nodos"
+              message="Cuando se conecten dispositivos, su estado aparecerá aquí."
+            />
           }
         } @else if (store.loading()) {
           <div class="metrics-grid" aria-label="Cargando resumen">
@@ -73,9 +92,13 @@ import { SeriesChart } from './series-chart';
             }
           </div>
         } @else if (store.error()) {
-          <p class="summary-error" role="status">{{ store.error() }}</p>
+          <app-state-message kind="error" title="No se pudo cargar el resumen" [message]="store.error() ?? ''" />
         } @else {
-          <p class="empty-summary">Todavía no hay datos de resumen disponibles.</p>
+          <app-state-message
+            kind="empty"
+            title="Sin datos de resumen"
+            message="Todavía no hay datos disponibles para mostrar."
+          />
         }
       </section>
 
@@ -126,6 +149,17 @@ import { SeriesChart } from './series-chart';
       border-radius: var(--radius-card);
       background: var(--color-surface);
       font-weight: 700;
+    }
+
+    .heading-status {
+      display: grid;
+      justify-items: end;
+      gap: var(--space-2);
+    }
+
+    .updated {
+      color: var(--color-text-muted);
+      font-size: 0.8rem;
     }
 
     .risk-banner.fire {
@@ -234,6 +268,10 @@ import { SeriesChart } from './series-chart';
         align-items: flex-start;
         flex-direction: column;
       }
+
+      .heading-status {
+        justify-items: start;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -241,4 +279,6 @@ import { SeriesChart } from './series-chart';
 export class DashboardPage {
   readonly store = inject(DashboardStore);
   readonly skeletons = [1, 2, 3, 4, 5, 6];
+  readonly formatFullDate = formatFullDate;
+  readonly formatRelativeTime = formatRelativeTime;
 }

@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ConnectionBadge } from '../../shared/components/connection-badge/connection-badge';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
+import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { DashboardStore } from './dashboard-store';
 
 @Component({
   selector: 'app-node-grid',
   standalone: true,
-  imports: [ConnectionBadge, RiskBadge],
+  imports: [ConnectionBadge, RiskBadge, StateMessage],
   template: `
     <section class="node-section" aria-labelledby="nodes-title">
       <header class="section-heading">
@@ -72,8 +73,18 @@ import { DashboardStore } from './dashboard-store';
             </div>
           }
         </div>
+      } @else if (store.error()) {
+        <app-state-message
+          kind="error"
+          title="No se pudieron cargar los nodos"
+          [message]="store.error() ?? ''"
+        />
       } @else {
-        <p class="empty-state">No hay nodos registrados para mostrar.</p>
+        <app-state-message
+          kind="empty"
+          title="No hay nodos registrados"
+          message="Cuando se conecten, los nodos aparecerán en este panel."
+        />
       }
     </section>
   `,

@@ -40,6 +40,7 @@ export class DashboardStore {
   private readonly nodesState = signal<Node[]>([]);
   private readonly alertsState = signal<Alert[]>([]);
   private readonly loadingState = signal(true);
+  private readonly slowLoadingState = signal(false);
   private readonly errorState = signal<string | null>(null);
   private readonly lastUpdatedState = signal<Date | null>(null);
 
@@ -47,6 +48,7 @@ export class DashboardStore {
   readonly nodes = this.nodesState.asReadonly();
   readonly alerts = this.alertsState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
+  readonly slowLoading = this.slowLoadingState.asReadonly();
   readonly error = this.errorState.asReadonly();
   readonly lastUpdated = this.lastUpdatedState.asReadonly();
   readonly hasData = computed(
@@ -55,6 +57,13 @@ export class DashboardStore {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
+      timer(4_000)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          if (this.loadingState()) {
+            this.slowLoadingState.set(true);
+          }
+        });
       this.startPolling();
     }
   }
@@ -114,6 +123,7 @@ export class DashboardStore {
         if (errors.length === 0) {
           this.lastUpdatedState.set(new Date());
         }
+        this.slowLoadingState.set(false);
         this.loadingState.set(false);
       }),
       map(() => undefined),

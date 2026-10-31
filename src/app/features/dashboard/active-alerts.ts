@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { Alert } from '../../shared/models/alert.model';
 import { ALERT_STATUS_LABELS } from '../../shared/models/alert-status.model';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
+import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { DashboardStore } from './dashboard-store';
 
 @Component({
   selector: 'app-active-alerts',
   standalone: true,
-  imports: [RiskBadge],
+  imports: [RiskBadge, StateMessage],
   template: `
     <section class="alerts-section" aria-labelledby="alerts-title">
       <header class="section-heading">
@@ -45,8 +46,18 @@ import { DashboardStore } from './dashboard-store';
           <span></span>
           <span></span>
         </div>
+      } @else if (store.error()) {
+        <app-state-message
+          kind="error"
+          title="No se pudieron cargar las alertas"
+          [message]="store.error() ?? ''"
+        />
       } @else {
-        <p class="empty-state">No hay alertas activas. La actividad nueva aparecerá aquí.</p>
+        <app-state-message
+          kind="empty"
+          title="No hay alertas activas"
+          message="La actividad nueva aparecerá aquí."
+        />
       }
     </section>
   `,
