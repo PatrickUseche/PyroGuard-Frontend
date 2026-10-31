@@ -36,7 +36,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(readings): tabla de lecturas con el riesgo final y el resultado de la IA [2.4]
 - [x] feat(charts): gráfico histórico de temperatura, humo y humedad [2.5] (necesita el backend [2.3])
 - [x] feat(ui): estados de carga, error y sin datos, e indicador de salud con `/health/` [2.6] (necesita el backend [4.2])
-- [ ] refactor(app): eliminar la vista de depuración y `SensorService` [2.11]
+- [x] refactor(app): eliminar la vista de depuración y `SensorService` [2.11]
 
 ## Fase 3 — Operación
 
