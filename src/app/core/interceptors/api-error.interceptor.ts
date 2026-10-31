@@ -33,7 +33,9 @@ function toApiError(error: unknown): ApiError {
     const retryAfter = parseRetryAfter(error.headers.get('Retry-After'));
     return {
       kind: 'throttled',
-      message: 'Se alcanzó el límite de solicitudes. Espera antes de volver a intentarlo.',
+      message: retryAfter === undefined
+        ? 'Se alcanzó el límite de intentos. Espera antes de volver a intentarlo.'
+        : `Se alcanzó el límite de intentos. Inténtalo de nuevo en ${retryAfter} s.`,
       ...(retryAfter === undefined ? {} : { retryAfter }),
     };
   }
@@ -52,9 +54,10 @@ function toApiError(error: unknown): ApiError {
     };
   }
 
+  const validationMessage = getNonFieldError(error.error);
   return {
     kind: 'unknown',
-    message: 'La solicitud no pudo completarse. Inténtalo de nuevo.',
+    message: validationMessage ?? 'La solicitud no pudo completarse. Inténtalo de nuevo.',
   };
 }
 
@@ -74,4 +77,23 @@ function parseRetryAfter(value: string | null): number | undefined {
   }
 
   return Math.max(0, Math.ceil((retryAt - Date.now()) / 1000));
+}
+
+function getNonFieldError(body: unknown): string | undefined {
+  if (
+    typeof body !== 'object' ||
+    body === null ||
+    !('errors' in body) ||
+    typeof body.errors !== 'object' ||
+    body.errors === null ||
+    !('non_field_errors' in body.errors) ||
+    !Array.isArray(body.errors.non_field_errors)
+  ) {
+    return undefined;
+  }
+
+  const messages = body.errors.non_field_errors.filter(
+    (message): message is string => typeof message === 'string',
+  );
+  return messages.length > 0 ? messages.join(' ') : undefined;
 }

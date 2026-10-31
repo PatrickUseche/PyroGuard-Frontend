@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { HealthIndicator } from './health-indicator';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -32,8 +33,20 @@ import { HealthIndicator } from './health-indicator';
           >
             Resumen
           </a>
+          <a
+            routerLink="/alertas"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+          >
+            Alertas
+          </a>
         </nav>
         <app-health-indicator class="health-indicator" />
+        @if (auth.isAuthenticated()) {
+          <button type="button" class="auth-button" (click)="logout()">Cerrar sesión</button>
+        } @else {
+          <a class="auth-button" routerLink="/login">Iniciar sesión</a>
+        }
       </header>
 
       <main id="main-content" class="main-content">
@@ -108,6 +121,22 @@ import { HealthIndicator } from './health-indicator';
       margin-left: auto;
     }
 
+    .auth-button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-surface);
+      color: var(--color-text);
+      cursor: pointer;
+      font-weight: 650;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
     .main-content {
       width: min(1200px, 100%);
       flex: 1;
@@ -151,4 +180,12 @@ import { HealthIndicator } from './health-indicator';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppLayout {}
+export class AppLayout {
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  logout(): void {
+    this.auth.logout();
+    void this.router.navigateByUrl('/login');
+  }
+}

@@ -40,7 +40,10 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 
 ## Fase 3 — Operación
 
-- [ ] feat(auth): inicio de sesión con el token del backend [3.1]
+- [x] feat(auth): inicio de sesión con el token del backend [3.1]
+- [ ] feat(auth): interceptor que añade `Authorization: Token` y cierra la sesión ante un 401 [3.5]
+- [ ] feat(nodes): página de detalle del nodo con estado, última lectura, alertas y gráfico [3.6]
+- [ ] feat(alerts): historial de alertas con filtros por estado y nivel y paginación [3.7]
 - [ ] feat(alerts): reconocer y cerrar alertas desde la interfaz [3.2]
 - [ ] style: diseño responsive para móvil y escritorio [3.3]
 - [ ] test: pruebas de los servicios y de los componentes del dashboard [3.4]
@@ -48,4 +51,5 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 ## Fase 4 — Despliegue
 
 - [ ] chore(deploy): revisar `vercel.json` y las variables de entorno de producción [4.1]
+- [ ] chore(build): quitar los restos de SSR (server.ts, hidratación, script `serve:ssr`) [4.3]
 - [ ] docs: README del frontend con la configuración y los comandos [4.2]

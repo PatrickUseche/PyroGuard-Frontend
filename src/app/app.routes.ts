@@ -11,6 +11,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/dashboard/dashboard-page').then((module) => module.DashboardPage),
       },
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./features/auth/login-page').then((module) => module.LoginPage),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

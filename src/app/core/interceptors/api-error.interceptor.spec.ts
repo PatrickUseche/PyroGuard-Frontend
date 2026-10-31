@@ -67,4 +67,22 @@ describe('apiErrorInterceptor', () => {
     expect(throttledError?.kind).toBe('throttled');
     expect(throttledError?.retryAfter).toBe(60);
   });
+
+  it('should surface backend non-field login errors', () => {
+    let actualError: ApiError | undefined;
+
+    http.post('/auth/login/', { username: 'operator', password: 'wrong' }).subscribe({
+      error: (error: ApiError) => (actualError = error),
+    });
+
+    httpTestingController.expectOne('/auth/login/').flush(
+      {
+        status: 'error',
+        errors: { non_field_errors: ['Credenciales inválidas.'] },
+      },
+      { status: 400, statusText: 'Bad Request' },
+    );
+
+    expect(actualError?.message).toBe('Credenciales inválidas.');
+  });
 });

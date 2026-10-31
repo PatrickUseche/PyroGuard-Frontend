@@ -10,13 +10,14 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { environment } from '../environments/environment';
 import { API_BASE_URL } from './core/config/api-base-url.token';
 import { apiErrorInterceptor } from './core/interceptors/api-error.interceptor';
+import { authTokenInterceptor } from './core/interceptors/auth-token.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes), provideClientHydration(),
     { provide: API_BASE_URL, useValue: environment.apiUrl },
-    provideHttpClient(withFetch(), withInterceptors([apiErrorInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authTokenInterceptor, apiErrorInterceptor])),
     provideZoneChangeDetection({ eventCoalescing: true }),
   ]
 };
