@@ -51,5 +51,5 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 ## Fase 4 — Despliegue
 
 - [x] chore(deploy): revisar `vercel.json` y las variables de entorno de producción [4.1]
-- [ ] chore(build): quitar los restos de SSR (server.ts, hidratación, script `serve:ssr`) [4.3]
+- [x] chore(build): quitar los restos de SSR (server.ts, hidratación, script `serve:ssr`) [4.3]
 - [ ] docs: README del frontend con la configuración y los comandos [4.2]

@@ -33,9 +33,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
-            "ssr": false,
-            "prerender": false
+            "scripts": []
           },
           "configurations": {
             "production": {
