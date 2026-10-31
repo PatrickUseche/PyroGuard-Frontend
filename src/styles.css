@@ -1,1 +1,119 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-card: 12px;
+
+  --color-page: #f3f6f8;
+  --color-surface: #ffffff;
+  --color-surface-muted: #e9eef2;
+  --color-text: #17212b;
+  --color-text-muted: #4b5b69;
+  --color-border: #c8d2da;
+  --color-focus: #0759a5;
+  --color-link: #0759a5;
+  --color-shadow: 0 2px 8px rgb(23 33 43 / 8%);
+
+  --risk-normal-bg: #e2f4e8;
+  --risk-normal-text: #14532d;
+  --risk-normal-border: #68a87b;
+  --risk-warning-bg: #fff1cc;
+  --risk-warning-text: #713f00;
+  --risk-warning-border: #bd7800;
+  --risk-fire-bg: #fde4e2;
+  --risk-fire-text: #7f1d1d;
+  --risk-fire-border: #bd3b37;
+  --status-offline-bg: #e8ebee;
+  --status-offline-text: #39434c;
+  --status-unknown-bg: #e4eaf3;
+  --status-unknown-text: #34445c;
+  --status-online-bg: var(--risk-normal-bg);
+  --status-online-text: var(--risk-normal-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --color-page: #10171d;
+    --color-surface: #18232c;
+    --color-surface-muted: #24323d;
+    --color-text: #edf3f7;
+    --color-text-muted: #bdc9d2;
+    --color-border: #42515d;
+    --color-focus: #8bc6ff;
+    --color-link: #8bc6ff;
+    --color-shadow: none;
+
+    --risk-normal-bg: #173c2a;
+    --risk-normal-text: #b6f0c5;
+    --risk-normal-border: #4d9b67;
+    --risk-warning-bg: #49320b;
+    --risk-warning-text: #ffe0a0;
+    --risk-warning-border: #c28a24;
+    --risk-fire-bg: #4b2020;
+    --risk-fire-text: #ffc2bd;
+    --risk-fire-border: #d2645c;
+    --status-offline-bg: #303942;
+    --status-offline-text: #e0e5e9;
+    --status-unknown-bg: #273448;
+    --status-unknown-text: #d0ddf2;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--color-page);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--color-page);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a,
+input,
+select {
+  accent-color: var(--color-focus);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

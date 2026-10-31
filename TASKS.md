@@ -25,12 +25,18 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 
 ## Fase 2 — Dashboard
 
+- [x] style(theme): tokens de diseño (colores de riesgo, tipografía, espaciado) en `styles.css` con modo claro y oscuro [2.7]
+- [ ] feat(layout): cabecera, navegación, pie con aviso de prototipo y enrutado perezoso [2.8]
+- [ ] feat(shared): componentes `RiskBadge`, `ConnectionBadge` e iconos SVG [2.9]
+- [ ] feat(dashboard): store con signals y sondeo único cada 10 s que se pausa con la pestaña oculta [2.10]
+- [ ] chore(html): `lang="es"`, título y descripción de la página [2.12]
 - [ ] feat(dashboard): tarjetas de resumen y riesgo global con `/dashboard/summary/` [2.1]
 - [ ] feat(dashboard): semáforo de riesgo y estado (ONLINE, OFFLINE, UNKNOWN) por nodo [2.2]
 - [ ] feat(alerts): lista de alertas activas con nivel y número de ocurrencias [2.3]
 - [ ] feat(readings): tabla de lecturas con el riesgo final y el resultado de la IA [2.4]
 - [ ] feat(charts): gráfico histórico de temperatura, humo y humedad [2.5] (necesita el backend [2.3])
 - [ ] feat(ui): estados de carga, error y sin datos, e indicador de salud con `/health/` [2.6] (necesita el backend [4.2])
+- [ ] refactor(app): eliminar la vista de depuración y `SensorService` [2.11]
 
 ## Fase 3 — Operación
 
