@@ -16,6 +16,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/auth/login-page').then((module) => module.LoginPage),
       },
+      {
+        path: 'nodos/:id',
+        loadComponent: () =>
+          import('./features/nodes/node-detail-page').then((module) => module.NodeDetailPage),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

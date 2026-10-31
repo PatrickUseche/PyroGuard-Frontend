@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ConnectionBadge } from '../../shared/components/connection-badge/connection-badge';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
@@ -8,7 +9,7 @@ import { DashboardStore } from './dashboard-store';
 @Component({
   selector: 'app-node-grid',
   standalone: true,
-  imports: [ConnectionBadge, RiskBadge, StateMessage],
+  imports: [ConnectionBadge, RiskBadge, RouterLink, StateMessage],
   template: `
     <section class="node-section" aria-labelledby="nodes-title">
       <header class="section-heading">
@@ -25,7 +26,7 @@ import { DashboardStore } from './dashboard-store';
             <article class="node-card">
               <header class="node-heading">
                 <div>
-                  <h3>{{ node.name }}</h3>
+                  <h3><a [routerLink]="['/nodos', node.node_id]">{{ node.name }}</a></h3>
                   <p class="node-id">{{ node.node_id }}</p>
                 </div>
                 <app-connection-badge [status]="node.connection_status" />

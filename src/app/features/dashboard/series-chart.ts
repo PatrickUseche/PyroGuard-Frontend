@@ -5,7 +5,9 @@ import {
   DestroyRef,
   PLATFORM_ID,
   computed,
+  effect,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -71,6 +73,9 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
             <span>Nodo</span>
             <select [value]="selectedNode()" (change)="onNodeChange($event)">
               <option value="">Selecciona un nodo</option>
+              @if (nodeId() && !store.nodes().some((node) => node.node_id === nodeId())) {
+                <option [value]="nodeId()">{{ nodeId() }}</option>
+              }
               @for (node of store.nodes(); track node.node_id) {
                 <option [value]="node.node_id">{{ node.name }}</option>
               }
@@ -364,6 +369,7 @@ export class SeriesChart {
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly refreshRequests = new Subject<void>();
+  readonly nodeId = input('');
   readonly store = inject(DashboardStore);
   readonly selectedNode = signal('');
   readonly range = signal<ChartRange>('24h');
@@ -388,6 +394,14 @@ export class SeriesChart {
   });
 
   constructor() {
+    effect(() => {
+      const nodeId = this.nodeId();
+      if (nodeId !== '' && this.selectedNode() !== nodeId) {
+        this.selectedNode.set(nodeId);
+        this.refreshRequests.next();
+      }
+    });
+
     if (isPlatformBrowser(this.platformId)) {
       this.refreshRequests
         .pipe(
