@@ -21,6 +21,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/nodes/node-detail-page').then((module) => module.NodeDetailPage),
       },
+      {
+        path: 'alertas',
+        loadComponent: () =>
+          import('./features/alerts/alerts-history-page').then((module) => module.AlertsHistoryPage),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -1,4 +1,5 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { API_BASE_URL } from '../config/api-base-url.token';
@@ -55,6 +56,32 @@ describe('AlertsService', () => {
     expect(request.request.params.get('limit')).toBe('20');
     expect(request.request.params.get('offset')).toBe('5');
     request.flush([]);
+  });
+
+  it('should return paginated alerts and send exact filter parameters', () => {
+    let result: { items: unknown[]; total: number } | undefined;
+
+    service
+      .getPage({
+        status: 'CLOSED',
+        level: 'FIRE',
+        node_id: 'node-1',
+        limit: 20,
+        offset: 40,
+      })
+      .subscribe((response) => (result = response));
+
+    const request = httpTestingController.expectOne(
+      (candidate) => candidate.url === 'https://api.test/api/alerts/',
+    );
+    expect(request.request.params.get('status')).toBe('CLOSED');
+    expect(request.request.params.get('level')).toBe('FIRE');
+    expect(request.request.params.get('node_id')).toBe('node-1');
+    expect(request.request.params.get('limit')).toBe('20');
+    expect(request.request.params.get('offset')).toBe('40');
+    request.flush([], { headers: new HttpHeaders({ 'X-Total-Count': '61' }) });
+
+    expect(result).toEqual({ items: [], total: 61 });
   });
 
   it('should post alert acknowledge and close transitions', () => {

@@ -43,7 +43,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(auth): inicio de sesión con el token del backend [3.1]
 - [x] feat(auth): interceptor que añade `Authorization: Token` y cierra la sesión ante un 401 [3.5]
 - [x] feat(nodes): página de detalle del nodo con estado, última lectura, alertas y gráfico [3.6]
-- [ ] feat(alerts): historial de alertas con filtros por estado y nivel y paginación [3.7]
+- [x] feat(alerts): historial de alertas con filtros por estado y nivel y paginación [3.7]
 - [x] feat(alerts): reconocer y cerrar alertas desde la interfaz [3.2]
 - [ ] style: diseño responsive para móvil y escritorio [3.3]
 - [ ] test: pruebas de los servicios y de los componentes del dashboard [3.4]
