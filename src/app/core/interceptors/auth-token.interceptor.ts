@@ -8,7 +8,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (request, next) => {
   const apiBaseUrl = inject(API_BASE_URL);
   const authService = inject(AuthService);
   const token = authService.token();
-  const isApiRequest = request.url.startsWith(apiBaseUrl);
+  const isApiRequest = isApiUrl(request.url, apiBaseUrl);
   const authenticatedRequest =
     isApiRequest && token !== null
       ? request.clone({ setHeaders: { Authorization: `Token ${token}` } })
@@ -23,6 +23,20 @@ export const authTokenInterceptor: HttpInterceptorFn = (request, next) => {
     }),
   );
 };
+
+function isApiUrl(requestUrl: string, apiBaseUrl: string): boolean {
+  try {
+    const apiUrl = new URL(apiBaseUrl);
+    const candidateUrl = new URL(requestUrl, apiUrl);
+    const apiPath = apiUrl.pathname.replace(/\/+$/, '');
+    return (
+      candidateUrl.origin === apiUrl.origin &&
+      (candidateUrl.pathname === apiPath || candidateUrl.pathname.startsWith(`${apiPath}/`))
+    );
+  } catch {
+    return false;
+  }
+}
 
 function isUnauthorized(error: unknown): boolean {
   if (

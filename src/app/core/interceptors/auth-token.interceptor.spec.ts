@@ -49,6 +49,18 @@ describe('authTokenInterceptor', () => {
     externalRequest.flush({});
   });
 
+  it('should not send credentials to a URL that only shares the API path prefix', () => {
+    authService.login('operator', 'secret').subscribe();
+    httpTestingController.expectOne('https://api.test/api/auth/login/').flush({ token: 'operator-token' });
+
+    http.get('https://api.test/api-elsewhere/resource').subscribe();
+    const unrelatedRequest = httpTestingController.expectOne(
+      'https://api.test/api-elsewhere/resource',
+    );
+    expect(unrelatedRequest.request.headers.has('Authorization')).toBe(false);
+    unrelatedRequest.flush({});
+  });
+
   it('should clear the session after an API 401', () => {
     localStorage.setItem('pyroguard-token', 'expired-token');
     const auth = TestBed.inject(AuthService);
