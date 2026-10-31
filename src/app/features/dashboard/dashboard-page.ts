@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { DashboardStore } from './dashboard-store';
+import { NodeGrid } from './node-grid';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [RiskBadge],
+  imports: [NodeGrid, RiskBadge],
   template: `
     <section class="dashboard" aria-labelledby="dashboard-title">
       <header class="page-heading">
@@ -74,6 +75,8 @@ import { DashboardStore } from './dashboard-store';
           <p class="empty-summary">Todavía no hay datos de resumen disponibles.</p>
         }
       </section>
+
+      <app-node-grid />
     </section>
   `,
   styles: `

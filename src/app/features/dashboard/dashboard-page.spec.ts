@@ -24,6 +24,7 @@ describe('DashboardPage', () => {
           provide: DashboardStore,
           useValue: {
             summary: signal(summary),
+            nodes: signal([]),
             loading: signal(false),
             error: signal(null),
           },
