@@ -26,7 +26,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 ## Fase 2 — Dashboard
 
 - [x] style(theme): tokens de diseño (colores de riesgo, tipografía, espaciado) en `styles.css` con modo claro y oscuro [2.7]
-- [ ] feat(layout): cabecera, navegación, pie con aviso de prototipo y enrutado perezoso [2.8]
+- [x] feat(layout): cabecera, navegación, pie con aviso de prototipo y enrutado perezoso [2.8]
 - [ ] feat(shared): componentes `RiskBadge`, `ConnectionBadge` e iconos SVG [2.9]
 - [ ] feat(dashboard): store con signals y sondeo único cada 10 s que se pausa con la pestaña oculta [2.10]
 - [ ] chore(html): `lang="es"`, título y descripción de la página [2.12]
