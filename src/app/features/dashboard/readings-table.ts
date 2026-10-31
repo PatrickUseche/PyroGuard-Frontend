@@ -174,7 +174,7 @@ import { DashboardStore } from './dashboard-store';
 
     select,
     button {
-      min-height: 40px;
+      min-height: 44px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
       border-radius: 8px;

@@ -82,6 +82,7 @@ import { AuthService } from '../services/auth.service';
 
     .brand {
       display: inline-flex;
+      min-height: 44px;
       align-items: center;
       gap: var(--space-2);
       color: var(--color-text);
@@ -104,6 +105,7 @@ import { AuthService } from '../services/auth.service';
 
     .primary-nav a {
       display: inline-flex;
+      min-height: 44px;
       align-items: center;
       padding: 0 var(--space-3);
       border-bottom: 3px solid transparent;

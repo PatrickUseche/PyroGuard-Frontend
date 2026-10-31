@@ -156,6 +156,13 @@ import { DashboardStore } from './dashboard-store';
       font-size: 1rem;
     }
 
+    .node-heading h3 a {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      color: var(--color-link);
+    }
+
     .node-id,
     .reading-details dd {
       overflow-wrap: anywhere;

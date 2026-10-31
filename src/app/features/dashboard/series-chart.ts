@@ -218,7 +218,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
     }
 
     select {
-      min-height: 40px;
+      min-height: 44px;
       max-width: 220px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);

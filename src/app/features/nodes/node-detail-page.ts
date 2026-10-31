@@ -104,8 +104,10 @@ import { SeriesChart } from '../dashboard/series-chart';
     }
 
     .back-link {
+      display: inline-flex;
       width: fit-content;
       min-height: 44px;
+      align-items: center;
       color: var(--color-link);
       font-weight: 650;
     }
