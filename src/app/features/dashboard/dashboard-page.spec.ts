@@ -25,6 +25,7 @@ describe('DashboardPage', () => {
           useValue: {
             summary: signal(summary),
             nodes: signal([]),
+            alerts: signal([]),
             loading: signal(false),
             error: signal(null),
           },

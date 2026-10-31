@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
+import { ActiveAlerts } from './active-alerts';
 import { DashboardStore } from './dashboard-store';
 import { NodeGrid } from './node-grid';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [NodeGrid, RiskBadge],
+  imports: [ActiveAlerts, NodeGrid, RiskBadge],
   template: `
     <section class="dashboard" aria-labelledby="dashboard-title">
       <header class="page-heading">
@@ -77,6 +78,7 @@ import { NodeGrid } from './node-grid';
       </section>
 
       <app-node-grid />
+      <app-active-alerts />
     </section>
   `,
   styles: `
