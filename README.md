@@ -1,59 +1,68 @@
-# PyroGuardFRONTEND
+# PyroGuard Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.0.
+Panel web de monitoreo forestal para visualizar nodos, lecturas de sensores y alertas de PyroGuard. La interfaz consume la API de PyroGuard-Backend; no ejecuta inferencia de IA en el navegador.
 
-## Development server
+> Prototipo académico con datos sintéticos; no es un detector certificado de incendios.
 
-To start a local development server, run:
+## Requisitos
 
-```bash
-ng serve
-```
+- Node.js compatible con Angular CLI 22 (Node.js 22.22.3 o posterior de la rama 22, o 24.15.0 o posterior de la rama 24).
+- npm 8 o posterior. El proyecto fija npm 11.17.0 en `package.json`.
+- PyroGuard-Backend disponible localmente o en Render para obtener datos reales. La aplicación puede iniciarse sin la API, pero mostrará los estados de error o desconocido correspondientes.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Instalación y desarrollo
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Desde la carpeta del frontend:
 
 ```bash
-ng generate component component-name
+npm ci
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Abre `http://localhost:4200/`. Angular recarga los cambios automáticamente.
+
+### Elegir el backend
+
+La URL se incorpora al bundle durante la compilación:
+
+- `npm start` usa `src/environments/environment.development.ts`. Por defecto apunta a `http://localhost:8000/api`.
+- `npm run build` usa `src/environments/environment.ts` y apunta a `https://pyroguard-backend.onrender.com/api`.
+
+Para desarrollar contra Render, cambia `apiUrl` en `src/environments/environment.development.ts` a la URL de Render y reinicia el servidor de desarrollo. Para cambiar el destino de producción, actualiza `src/environments/environment.ts` y vuelve a compilar.
+
+La URL de la API no es un secreto. Vercel no la inyecta en tiempo de ejecución: las variables de entorno de Vercel no cambian el `environment` de Angular. Cualquier cambio de URL requiere un nuevo build.
+
+## Comandos
 
 ```bash
-ng generate --help
+npm start              # servidor local de desarrollo
+npm run build          # build optimizado de producción
+npx ng test --watch=false  # suite Vitest una sola vez
 ```
 
-## Building
+La salida de producción está en `dist/pyro-guard-frontend/browser`.
 
-To build the project run:
+## Pantallas
 
-```bash
-ng build
+- `/` — Resumen global de riesgo y métricas; estado de los nodos, alertas activas, lecturas recientes y gráfico histórico de temperatura, humedad y humo.
+- `/nodos/:id` — Estado de conexión y riesgo del nodo, última lectura, alertas activas y su gráfico histórico.
+- `/alertas` — Historial paginado con filtros por estado, nivel y nodo. Reconocer o cerrar alertas requiere iniciar sesión.
+- `/login` — Inicio de sesión en el backend. La lectura del dashboard es pública; la sesión habilita las acciones de alertas.
+
+El dashboard actualiza el resumen, los nodos y las alertas activas cada 10 segundos; el sondeo se pausa cuando la pestaña está oculta. La tabla de lecturas y los gráficos consultan bajo demanda y se actualizan como máximo cada 30 segundos. Las respuestas HTTP 429 se gestionan respetando `Retry-After`.
+
+## Estructura
+
+```text
+src/app/
+  core/       configuración, interceptores, servicios y layout
+  features/   dashboard, alertas, lecturas, nodos y autenticación
+  shared/     modelos, componentes e utilidades compartidos
+src/environments/  URLs de API para desarrollo y producción
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+La aplicación usa Angular standalone, rutas con carga perezosa y modo SPA; no incluye renderizado del lado del servidor.
 
-## Running unit tests
+## Despliegue en Vercel
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+`vercel.json` configura el build con `npm run build`, publica `dist/pyro-guard-frontend/browser`, conserva el rewrite de SPA y añade cabeceras de seguridad y caché de larga duración para assets con hash. La URL de producción se toma de `src/environments/environment.ts` en el build; no se configura mediante variables de entorno de Vercel. Después de cambiar esa URL, genera y despliega un nuevo build.
