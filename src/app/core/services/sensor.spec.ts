@@ -1,12 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { Sensor } from './sensor';
+import { provideHttpClient } from '@angular/common/http';
+import { SensorService } from './sensor';
 
-describe('Sensor', () => {
-  let service: Sensor;
+describe('SensorService', () => {
+  let service: SensorService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Sensor);
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient()],
+    });
+    service = TestBed.inject(SensorService);
   });
 
   it('should be created', () => {

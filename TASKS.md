@@ -10,6 +10,11 @@ en la task.
 Estado de partida (2026-10-25): una tabla de lecturas que consulta `/readings/` cada 5 segundos, con la URL del backend
 escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `environment.ts` de producción apunta al propio frontend.
 
+## Fase 0 — Preparación
+
+- [x] chore(git): normalizar saltos de línea con .gitattributes [0.1] (no fue necesario: `git status` estaba limpio)
+- [x] test: corregir las pruebas de plantilla que no compilan [0.2]
+
 ## Fase 1 — Base
 
 - [ ] fix(env): que `apiUrl` de producción apunte al backend y no al propio frontend de Vercel [1.1]

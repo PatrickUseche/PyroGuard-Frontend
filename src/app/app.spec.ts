@@ -1,10 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { SensorService } from './core/services/sensor';
+import { of } from 'rxjs';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [
+        {
+          provide: SensorService,
+          useValue: { getLatestReadings: () => of([]) },
+        },
+      ],
     })
       .compileComponents();
   });
@@ -19,6 +27,6 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, PyroGuard-FRONTEND');
+    expect(compiled.querySelector('h1')?.textContent).toContain('PyroGuard - Debug View');
   });
 });
