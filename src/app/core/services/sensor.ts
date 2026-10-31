@@ -1,17 +1,17 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { SensorReading } from "../../shared/models/sensor-reading.model";
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { SensorReading } from '../../shared/models/sensor-reading.model';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class SensorService {
-    private apiUrl = 'https://pyroguard-backend.onrender.com/api/readings/';
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/readings/`;
 
-    constructor(private http: HttpClient){}
-
-    getLatestReadings(): Observable<SensorReading[]>{
-        return this.http.get<SensorReading[]>(this.apiUrl);
-    }
+  getLatestReadings(): Observable<SensorReading[]> {
+    return this.http.get<SensorReading[]>(this.apiUrl);
+  }
 }
