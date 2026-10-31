@@ -55,6 +55,16 @@ export class DashboardStore {
     () => this.summaryState() !== null || this.nodesState().length > 0 || this.alertsState().length > 0,
   );
 
+  replaceAlerts(alerts: Alert[]): void {
+    this.alertsState.set(alerts);
+  }
+
+  updateAlert(alert: Alert): void {
+    this.alertsState.update((alerts) =>
+      alerts.map((current) => (current.id === alert.id ? alert : current)),
+    );
+  }
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       timer(4_000)
