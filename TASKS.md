@@ -73,7 +73,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(readings): versión del modelo y probabilidad visibles, sin depender del tooltip [5.9]
 - [x] feat(dashboard): leyenda de categorías NORMAL, WARNING y FIRE y probabilidad de IA en cada nodo [5.10]
 - [x] feat(map): dependencia Leaflet y componente de mapa base [5.11]
-- [ ] feat(map): marcadores por nivel de riesgo con icono y texto accesible [5.12]
+- [x] feat(map): marcadores por nivel de riesgo con icono y texto accesible [5.12]
 - [ ] feat(map): selección de nodo con ficha y enlace al detalle, y estado sin coordenadas [5.13]
 - [ ] test(map): pruebas del mapa [5.14]
 - [ ] refactor(polling): utilidad de sondeo que se pausa con la pestaña oculta y respeta `Retry-After` [5.15]

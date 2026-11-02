@@ -121,3 +121,55 @@ select {
     transition-duration: 0.01ms !important;
   }
 }
+
+.leaflet-marker-icon.pyroguard-marker-container {
+  border: 0;
+  background: transparent;
+}
+
+.pyroguard-marker {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  box-shadow: 0 1px 5px rgb(23 33 43 / 25%);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.pyroguard-marker svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.pyroguard-marker.normal {
+  border-color: var(--risk-normal-border);
+  background: var(--risk-normal-bg);
+  color: var(--risk-normal-text);
+}
+
+.pyroguard-marker.warning {
+  border-color: var(--risk-warning-border);
+  background: var(--risk-warning-bg);
+  color: var(--risk-warning-text);
+}
+
+.pyroguard-marker.fire {
+  border-color: var(--risk-fire-border);
+  background: var(--risk-fire-bg);
+  color: var(--risk-fire-text);
+}
+
+.pyroguard-marker.offline,
+.pyroguard-marker.unknown {
+  border-color: var(--color-border);
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
