@@ -80,7 +80,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] fix(polling): usar esa utilidad en salud, tabla de lecturas y gráfico [5.16]
 - [x] feat(ui): reintentos automáticos con mensaje durante el arranque en frío del backend [5.17]
 - [x] feat(dashboard): marcar como «Simulado» los nodos con prefijo `SIM-` [5.18]
-- [ ] docs: cómo probar el flujo con el simulador del backend [5.19]
+- [x] docs: cómo probar el flujo con el simulador del backend [5.19]
 - [ ] docs(deploy): CORS, navegadores soportados y pasos de despliegue en Vercel [5.20]
 - [ ] test(layout): pruebas de cabecera, navegación y pie [5.21]
 - [ ] docs(test): registro de resultados de pruebas en `docs/PRUEBAS.md` [5.22]

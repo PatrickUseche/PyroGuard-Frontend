@@ -51,6 +51,38 @@ La salida de producción está en `dist/pyro-guard-frontend/browser`.
 
 El dashboard actualiza el resumen, los nodos y las alertas activas cada 10 segundos; el sondeo se pausa cuando la pestaña está oculta. La tabla de lecturas y los gráficos consultan bajo demanda y se actualizan como máximo cada 30 segundos. Las respuestas HTTP 429 se gestionan respetando `Retry-After`.
 
+## Probar el flujo con el simulador IoT
+
+Este flujo es local y usa el backend de desarrollo en `http://localhost:8000/api`; no envía datos a producción.
+
+1. En una terminal, desde la raíz de `PyroGuard-Backend`, prepara el entorno según su README:
+
+   ```powershell
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+   python -m pip install -r requirements.txt
+   Copy-Item .env.example .env
+   ```
+
+2. Edita el `.env` local y configura `DEBUG=True`, `DATABASE_URL=` (vacía) y `AUTO_REGISTER_NODES=True`. Las demás variables deben seguir la guía de desarrollo del README del backend. Aplica las migraciones e inicia la API:
+
+   ```powershell
+   python manage.py migrate
+   python manage.py runserver
+   ```
+
+3. En otra terminal, desde la misma raíz del backend y con su entorno Python activo, inicia una de estas simulaciones. El backend admite los escenarios `random`, `warning` y `fire`; el intervalo está expresado en segundos:
+
+   ```powershell
+   python simulador_iot.py --node SIM-001 --scenario random --interval 3
+   python simulador_iot.py --node SIM-001 --scenario warning --interval 3
+   python simulador_iot.py --node SIM-001 --scenario fire --interval 3
+   ```
+
+   Pulsa `Ctrl+C` para detener el simulador.
+
+4. Inicia el frontend con `npm start` y abre `http://localhost:4200/`. El nodo `SIM-001` debe aparecer como «Simulado» en la rejilla, el mapa y las vistas que muestran ese nodo; las lecturas nuevas deben reflejarse en el dashboard y en el historial. `random` elige categorías con pesos 85/10/5; las alertas dependen de la clasificación final y de la configuración de alertas del backend.
+
 ## Estructura
 
 ```text
