@@ -61,5 +61,8 @@ describe('DashboardPage', () => {
     expect(text).toContain('Nodos en riesgo');
     expect(text).toContain('Alertas activas');
     expect(text).toContain('Incendio');
+    expect(text).toContain('Categorías de riesgo');
+    expect(text).toContain('condiciones que requieren atención');
+    expect(text).toContain('El sistema determina un riesgo de incendio.');
   });
 });

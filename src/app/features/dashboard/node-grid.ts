@@ -4,6 +4,7 @@ import { ConnectionBadge } from '../../shared/components/connection-badge/connec
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
+import { formatProbability } from '../../shared/utils/probability-format.util';
 import { DashboardStore } from './dashboard-store';
 
 @Component({
@@ -61,6 +62,22 @@ import { DashboardStore } from './dashboard-store';
                       <span class="temperature">{{ reading.temperature }} °C</span>
                     } @else {
                       Sin lecturas recientes
+                    }
+                  </dd>
+                </div>
+                <div>
+                  <dt>Evaluación de IA</dt>
+                  <dd>
+                    @if (aiProbability(node.node_id); as probability) {
+                      Prob. {{ probability }}
+                    } @else {
+                      <span class="ai-unavailable">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+                          <path d="M12 11v5m0-8v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+                        </svg>
+                        IA no disponible
+                      </span>
                     }
                   </dd>
                 </div>
@@ -201,6 +218,19 @@ import { DashboardStore } from './dashboard-store';
       font-weight: 650;
     }
 
+    .ai-unavailable {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      color: var(--color-text-muted);
+    }
+
+    .ai-unavailable svg {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+    }
+
     .skeleton span {
       display: block;
       height: 1.25rem;
@@ -226,4 +256,9 @@ export class NodeGrid {
   );
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;
+
+  aiProbability(nodeId: string): string | null {
+    const ai = this.latestReadingByNode().get(nodeId)?.ai;
+    return ai?.status === 'OK' ? formatProbability(ai.probability) : null;
+  }
 }

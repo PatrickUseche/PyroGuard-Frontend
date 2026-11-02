@@ -66,6 +66,23 @@ describe('NodeGrid', () => {
         risk_level: 'NORMAL',
         ai: null,
       },
+      {
+        node_id: 'node-online',
+        temperature: 27,
+        humidity: 40,
+        smoke: 0,
+        gas: 2,
+        flame: false,
+        timestamp: '2026-10-30T11:55:00Z',
+        risk_level: 'NORMAL',
+        ai: {
+          status: 'OK',
+          risk_level: 'NORMAL',
+          probability: 0.87,
+          probabilities: { NORMAL: 0.87 },
+          model_version: 'model-v1',
+        },
+      },
     ],
   };
 
@@ -97,8 +114,11 @@ describe('NodeGrid', () => {
     expect(cards[0].textContent).toContain('27 °C');
     expect(cards[1].textContent).toContain('Conectado');
     expect(cards[1].textContent).toContain('Normal');
+    expect(cards[1].textContent).toContain('Prob.');
+    expect(cards[1].textContent).toContain('87');
     expect(cards[2].textContent).toContain('Nodo Sin Datos');
     expect(cards[2].textContent).toContain('Sin datos');
+    expect(cards[2].textContent).toContain('IA no disponible');
     expect(cards[2].textContent).not.toContain('Normal');
   });
 });

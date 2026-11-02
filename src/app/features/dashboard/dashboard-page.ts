@@ -39,6 +39,24 @@ import { SeriesChart } from './series-chart';
         </div>
       </header>
 
+      <section class="risk-legend" aria-labelledby="risk-legend-title">
+        <h2 id="risk-legend-title">Categorías de riesgo</h2>
+        <div class="legend-items">
+          <div class="legend-item">
+            <app-risk-badge risk="NORMAL" />
+            <span>El sistema no identifica condiciones de riesgo elevado.</span>
+          </div>
+          <div class="legend-item">
+            <app-risk-badge risk="WARNING" />
+            <span>El sistema detecta condiciones que requieren atención.</span>
+          </div>
+          <div class="legend-item">
+            <app-risk-badge risk="FIRE" />
+            <span>El sistema determina un riesgo de incendio.</span>
+          </div>
+        </div>
+      </section>
+
       @if (store.loading() && store.slowLoading()) {
         <app-state-message
           kind="loading"
@@ -119,6 +137,34 @@ import { SeriesChart } from './series-chart';
       align-items: flex-end;
       justify-content: space-between;
       gap: var(--space-6);
+    }
+
+    .risk-legend {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      background: var(--color-surface);
+    }
+
+    .risk-legend h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .legend-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-3);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--color-text-muted);
+      line-height: 1.4;
     }
 
     .eyebrow {
