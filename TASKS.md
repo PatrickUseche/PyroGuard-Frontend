@@ -82,7 +82,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(dashboard): marcar como «Simulado» los nodos con prefijo `SIM-` [5.18]
 - [x] docs: cómo probar el flujo con el simulador del backend [5.19]
 - [x] docs(deploy): CORS, navegadores soportados y pasos de despliegue en Vercel [5.20]
-- [ ] test(layout): pruebas de cabecera, navegación y pie [5.21]
+- [x] test(layout): pruebas de cabecera, navegación y pie [5.21]
 - [ ] docs(test): registro de resultados de pruebas en `docs/PRUEBAS.md` [5.22]
 
 ## Fase 6 — Calidad (opcional)
