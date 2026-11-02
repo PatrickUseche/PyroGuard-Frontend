@@ -22,6 +22,7 @@ export type VisiblePollResult<T> =
 export function createVisiblePolling<T>(
   intervalMs: number,
   poll: () => Observable<T>,
+  refreshRequests: Observable<void> = EMPTY,
 ): Observable<VisiblePollResult<T>> {
   if (typeof document === 'undefined') {
     return EMPTY;
@@ -37,7 +38,7 @@ export function createVisiblePolling<T>(
     switchMap((hidden) =>
       hidden
         ? EMPTY
-        : concat(of(undefined), timer(intervalMs, intervalMs)).pipe(
+        : merge(concat(of(undefined), timer(intervalMs, intervalMs)), refreshRequests).pipe(
             exhaustMap(() => {
               if (Date.now() < retryAt) {
                 return EMPTY;

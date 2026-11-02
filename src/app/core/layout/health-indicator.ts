@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, concat, exhaustMap, fromEvent, map, merge, of, switchMap, timer } from 'rxjs';
+import { createVisiblePolling } from '../visible-polling';
 import { HealthService } from '../services/health.service';
 import { HealthStatus } from '../../shared/models/health-status.model';
 import { DashboardStore } from '../../features/dashboard/dashboard-store';
@@ -120,21 +120,13 @@ export class HealthIndicator {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      merge(
-        of(document.hidden),
-        fromEvent(document, 'visibilitychange').pipe(map(() => document.hidden)),
-      )
+      createVisiblePolling(30_000, () => this.healthService.check())
         .pipe(
-          switchMap((hidden) =>
-            hidden
-              ? EMPTY
-              : concat(of(0), timer(30_000, 30_000)).pipe(
-                  exhaustMap(() => this.healthService.check()),
-                ),
-          ),
           takeUntilDestroyed(this.destroyRef),
         )
-        .subscribe((health) => this.health.set(health));
+        .subscribe((result) => {
+          this.health.set(result.ok ? result.value : 'unknown');
+        });
     }
   }
 }

@@ -11,9 +11,9 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subject, catchError, startWith, switchMap, timer } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
+import { createVisiblePolling } from '../../core/visible-polling';
 import { ReadingsService } from '../../core/services/readings.service';
-import { ApiError } from '../../shared/models/api-error.model';
 import { Reading } from '../../shared/models/reading.model';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate } from '../../shared/utils/date-format.util';
@@ -530,54 +530,45 @@ export class SeriesChart {
     });
 
     if (isPlatformBrowser(this.platformId)) {
-      this.refreshRequests
-        .pipe(
-          startWith(undefined),
-          switchMap(() => {
-            const nodeId = this.selectedNode();
-            if (nodeId === '') {
-              this.loading.set(false);
-              this.readings.set([]);
-              return EMPTY;
-            }
+      createVisiblePolling(
+        30_000,
+        () => {
+          const nodeId = this.selectedNode();
+          if (nodeId === '') {
+            this.loading.set(false);
+            this.readings.set([]);
+            return EMPTY;
+          }
 
-            this.loading.set(true);
-            this.error.set(null);
-            const range = this.range();
-            const request =
-              range === 'custom'
-                ? this.readingsService.getSeries(
-                    nodeId,
-                    range,
-                    this.appliedFromDate() === ''
-                      ? undefined
-                      : toIsoDateTime(this.appliedFromDate()),
-                    this.appliedToDate() === ''
-                      ? undefined
-                      : toIsoDateTime(this.appliedToDate()),
-                  )
-                : this.readingsService.getSeries(nodeId, range);
-            return request.pipe(
-              catchError((error: unknown) => {
-                this.error.set(apiErrorMessage(error));
-                this.loading.set(false);
-                return EMPTY;
-              }),
-            );
-          }),
+          this.loading.set(true);
+          this.error.set(null);
+          const range = this.range();
+          return range === 'custom'
+            ? this.readingsService.getSeries(
+                nodeId,
+                range,
+                this.appliedFromDate() === ''
+                  ? undefined
+                  : toIsoDateTime(this.appliedFromDate()),
+                this.appliedToDate() === ''
+                  ? undefined
+                  : toIsoDateTime(this.appliedToDate()),
+              )
+            : this.readingsService.getSeries(nodeId, range);
+        },
+        this.refreshRequests,
+      )
+        .pipe(
           takeUntilDestroyed(this.destroyRef),
         )
-        .subscribe((readings) => {
-          this.readings.set(readings);
-          this.loading.set(false);
-        });
-
-      timer(30_000, 30_000)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => {
-          if (this.selectedNode() !== '') {
-            this.refreshRequests.next();
+        .subscribe((result) => {
+          if (!result.ok) {
+            this.error.set(apiErrorMessage(result.error));
+            this.loading.set(false);
+            return;
           }
+          this.readings.set(result.value);
+          this.loading.set(false);
         });
     }
   }

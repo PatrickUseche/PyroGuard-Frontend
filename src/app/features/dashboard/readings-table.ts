@@ -8,7 +8,8 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subject, catchError, startWith, switchMap, timer } from 'rxjs';
+import { Subject } from 'rxjs';
+import { createVisiblePolling } from '../../core/visible-polling';
 import { ReadingsService, PaginatedReadings } from '../../core/services/readings.service';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
@@ -458,44 +459,38 @@ export class ReadingsTable {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      this.refreshRequests
-        .pipe(
-          startWith(undefined),
-          switchMap(() => {
-            this.loading.set(true);
-            this.error.set(null);
-            return this.readingsService.getAll({
-              ...(this.selectedNode() === '' ? {} : { node_id: this.selectedNode() }),
-              ...(this.appliedFromDate() === ''
-                ? {}
-                : { from: toIsoDateTime(this.appliedFromDate()) }),
-              ...(this.appliedToDate() === ''
-                ? {}
-                : { to: toIsoDateTime(this.appliedToDate()) }),
-              limit: this.pageSize,
-              offset: this.offset(),
-              order: 'desc',
-            }).pipe(
-              catchError((error: unknown) => {
-                this.error.set(apiErrorMessage(error));
-                this.loading.set(false);
-                return EMPTY;
-              }),
-            );
-          }),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe({
-          next: (result: PaginatedReadings) => {
-            this.readings.set(result.items);
-            this.total.set(result.total);
-            this.loading.set(false);
-          },
-        });
-
-      timer(30_000, 30_000)
+      createVisiblePolling(
+        30_000,
+        () => {
+          this.loading.set(true);
+          this.error.set(null);
+          return this.readingsService.getAll({
+            ...(this.selectedNode() === '' ? {} : { node_id: this.selectedNode() }),
+            ...(this.appliedFromDate() === ''
+              ? {}
+              : { from: toIsoDateTime(this.appliedFromDate()) }),
+            ...(this.appliedToDate() === ''
+              ? {}
+              : { to: toIsoDateTime(this.appliedToDate()) }),
+            limit: this.pageSize,
+            offset: this.offset(),
+            order: 'desc',
+          });
+        },
+        this.refreshRequests,
+      )
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => this.refreshRequests.next());
+        .subscribe((result) => {
+          if (!result.ok) {
+            this.error.set(apiErrorMessage(result.error));
+            this.loading.set(false);
+            return;
+          }
+          const page: PaginatedReadings = result.value;
+          this.readings.set(page.items);
+          this.total.set(page.total);
+          this.loading.set(false);
+        });
     }
   }
 
