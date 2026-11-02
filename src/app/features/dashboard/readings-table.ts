@@ -139,6 +139,9 @@ import { DashboardStore } from './dashboard-store';
                       <div class="ai-result" [attr.title]="ai.model_version ?? 'Versión del modelo desconocida'">
                         <app-risk-badge [risk]="ai.risk_level" />
                         <span>{{ formatProbability(ai.probability) }}</span>
+                        <span class="ai-model">
+                          Modelo: {{ ai.model_version ?? 'Versión desconocida' }}
+                        </span>
                       </div>
                       @if (reading.risk_level !== null && ai.risk_level !== null && reading.risk_level !== ai.risk_level) {
                         <span class="adjusted">Ajustado por reglas de seguridad</span>

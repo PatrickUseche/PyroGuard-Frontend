@@ -152,6 +152,8 @@ describe('ReadingsTable', () => {
     expect(text).toContain('Ajustado por reglas de seguridad');
     expect(text).toContain('Incendio');
     expect(text).toContain('Advertencia');
+    expect(text).toContain('80');
+    expect(text).toContain('Modelo: model-v1');
   });
 
   it('should apply valid date bounds as ISO 8601 and clear them on request', () => {
