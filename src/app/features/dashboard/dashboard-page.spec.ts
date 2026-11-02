@@ -9,6 +9,12 @@ import { DashboardStore } from './dashboard-store';
 import { DashboardPage } from './dashboard-page';
 
 describe('DashboardPage', () => {
+  let retryAttempt = signal(0);
+  let retryAvailable = signal(false);
+  let retryingConnection = signal(false);
+  let requestActive = signal(false);
+  let retryNow: ReturnType<typeof vi.fn>;
+
   const summary: DashboardSummary = {
     total_nodes: 5,
     nodes_online: 2,
@@ -21,6 +27,11 @@ describe('DashboardPage', () => {
   };
 
   beforeEach(async () => {
+    retryAttempt = signal(0);
+    retryAvailable = signal(false);
+    retryingConnection = signal(false);
+    requestActive = signal(false);
+    retryNow = vi.fn();
     await TestBed.configureTestingModule({
       imports: [DashboardPage],
       providers: [
@@ -34,6 +45,11 @@ describe('DashboardPage', () => {
             slowLoading: signal(false),
             error: signal(null),
             lastUpdated: signal(new Date()),
+            retryAttempt,
+            retryAvailable,
+            retryingConnection,
+            requestActive,
+            retryNow,
           },
         },
         {
@@ -64,5 +80,22 @@ describe('DashboardPage', () => {
     expect(text).toContain('Categorías de riesgo');
     expect(text).toContain('condiciones que requieren atención');
     expect(text).toContain('El sistema determina un riesgo de incendio.');
+  });
+
+  it('should show the cold-start retry attempt and allow an immediate retry', () => {
+    retryAttempt.set(3);
+    retryAvailable.set(true);
+    retryingConnection.set(true);
+    const fixture = TestBed.createComponent(DashboardPage);
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Reintentando conexión (intento 3 de 5)…');
+
+    const retryButton = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(
+      '.connection-retry button',
+    );
+    retryButton?.click();
+    expect(retryNow).toHaveBeenCalledOnce();
   });
 });

@@ -57,12 +57,38 @@ import { SeriesChart } from './series-chart';
         </div>
       </section>
 
-      @if (store.loading() && store.slowLoading()) {
+      @if (store.loading() && store.slowLoading() && !store.retryAvailable()) {
         <app-state-message
           kind="loading"
           title="Conectando con el servidor"
           message="La conexión puede tardar hasta un minuto si el servidor estaba en reposo."
         />
+      }
+      @if (store.retryAvailable()) {
+        <div class="connection-retry" [attr.role]="store.retryingConnection() ? 'status' : 'alert'">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              d="M20 7v5h-5M4 17v-5h5m8-3a7 7 0 0 0-12-2L4 8m16 8-1 1a7 7 0 0 1-12-2"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+          <div>
+            @if (store.retryingConnection() && store.retryAttempt() > 0) {
+              <p>Reintentando conexión (intento {{ store.retryAttempt() }} de 5)…</p>
+            } @else if (store.retryingConnection()) {
+              <p>Reintentando conexión…</p>
+            } @else {
+              <p>No se pudo establecer conexión con el servidor.</p>
+            }
+          </div>
+          <button type="button" [disabled]="store.requestActive()" (click)="store.retryNow()">
+            Reintentar ahora
+          </button>
+        </div>
       }
 
       <section class="summary-section" aria-label="Resumen del sistema">
@@ -137,34 +163,6 @@ import { SeriesChart } from './series-chart';
       align-items: flex-end;
       justify-content: space-between;
       gap: var(--space-6);
-    }
-
-    .risk-legend {
-      display: grid;
-      gap: var(--space-3);
-      padding: var(--space-4);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-card);
-      background: var(--color-surface);
-    }
-
-    .risk-legend h2 {
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .legend-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: var(--space-3);
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      color: var(--color-text-muted);
-      line-height: 1.4;
     }
 
     .eyebrow {

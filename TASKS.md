@@ -78,7 +78,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] test(map): pruebas del mapa [5.14]
 - [x] refactor(polling): utilidad de sondeo que se pausa con la pestaña oculta y respeta `Retry-After` [5.15]
 - [x] fix(polling): usar esa utilidad en salud, tabla de lecturas y gráfico [5.16]
-- [ ] feat(ui): reintentos automáticos con mensaje durante el arranque en frío del backend [5.17]
+- [x] feat(ui): reintentos automáticos con mensaje durante el arranque en frío del backend [5.17]
 - [ ] feat(dashboard): marcar como «Simulado» los nodos con prefijo `SIM-` [5.18]
 - [ ] docs: cómo probar el flujo con el simulador del backend [5.19]
 - [ ] docs(deploy): CORS, navegadores soportados y pasos de despliegue en Vercel [5.20]

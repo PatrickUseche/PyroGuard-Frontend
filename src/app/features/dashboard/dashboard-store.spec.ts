@@ -122,6 +122,35 @@ describe('DashboardStore', () => {
     completeInitialCycle();
   });
 
+  it('should retry cold-start network failures with increasing delays and stop after success', async () => {
+    failInitialCycleWithNetworkErrors();
+
+    expect(store.retryAttempt()).toBe(1);
+    expect(store.retryingConnection()).toBe(true);
+    expect(store.retryAvailable()).toBe(true);
+
+    const delays = [3_000, 6_000, 12_000, 24_000, 45_000];
+    for (let index = 0; index < delays.length; index += 1) {
+      await vi.advanceTimersByTimeAsync(delays[index]);
+      failInitialCycleWithNetworkErrors();
+      if (index < delays.length - 1) {
+        expect(store.retryAttempt()).toBe(index + 2);
+      } else {
+        expect(store.retryingConnection()).toBe(false);
+        expect(store.retryAttempt()).toBe(5);
+      }
+    }
+
+    await vi.advanceTimersByTimeAsync(60_000);
+    httpTestingController.expectNone('https://api.test/api/dashboard/summary/');
+
+    store.retryNow();
+    completeInitialCycle();
+    expect(store.retryAvailable()).toBe(false);
+    expect(store.retryAttempt()).toBe(0);
+    expect(store.loading()).toBe(false);
+  });
+
   function completeInitialCycle(): void {
     httpTestingController.expectOne('https://api.test/api/dashboard/summary/').flush({
       total_nodes: 0,
@@ -135,6 +164,19 @@ describe('DashboardStore', () => {
     });
     httpTestingController.expectOne('https://api.test/api/nodes/').flush([]);
     httpTestingController.expectOne('https://api.test/api/alerts/active/').flush([]);
+  }
+
+  function failInitialCycleWithNetworkErrors(): void {
+    for (const url of [
+      'https://api.test/api/dashboard/summary/',
+      'https://api.test/api/nodes/',
+      'https://api.test/api/alerts/active/',
+    ]) {
+      httpTestingController.expectOne(url).flush(
+        { detail: 'Network error' },
+        { status: 0, statusText: 'Unknown Error' },
+      );
+    }
   }
 
   function setDocumentHidden(hidden: boolean): void {

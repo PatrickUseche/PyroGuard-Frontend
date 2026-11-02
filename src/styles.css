@@ -173,3 +173,59 @@ select {
   background: var(--color-surface-muted);
   color: var(--color-text-muted);
 }
+
+.risk-legend {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.risk-legend h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.legend-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.connection-retry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.connection-retry svg {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  color: var(--color-primary);
+}
+
+.connection-retry p {
+  margin: 0;
+}
+
+.connection-retry button {
+  min-height: 44px;
+  margin-left: auto;
+  cursor: pointer;
+}
