@@ -34,10 +34,14 @@ import { DashboardStore } from './dashboard-store';
 
               <div class="node-risk">
                 <span>Riesgo actual</span>
-                <app-risk-badge
-                  [risk]="node.current_risk ?? latestReadingByNode().get(node.node_id)?.risk_level ?? null"
-                  [stale]="node.connection_status === 'OFFLINE'"
-                />
+                @if (node.connection_status === 'UNKNOWN') {
+                  <app-risk-badge [risk]="null" emptyLabel="Sin datos" />
+                } @else {
+                  <app-risk-badge
+                    [risk]="node.current_risk ?? latestReadingByNode().get(node.node_id)?.risk_level ?? null"
+                    [stale]="node.connection_status === 'OFFLINE'"
+                  />
+                }
               </div>
 
               <dl class="reading-details">

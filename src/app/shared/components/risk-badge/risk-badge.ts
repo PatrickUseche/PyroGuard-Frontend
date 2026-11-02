@@ -63,7 +63,7 @@ import { RISK_LABELS, Risk } from '../../models/risk.model';
           <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
           <path d="M12 11v5m0-8v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
         </svg>
-        Sin evaluar
+        {{ emptyLabel() }}
       </span>
     }
   `,
@@ -118,10 +118,11 @@ import { RISK_LABELS, Risk } from '../../models/risk.model';
 export class RiskBadge {
   readonly risk = input<Risk | null>(null);
   readonly stale = input(false);
+  readonly emptyLabel = input('Sin evaluar');
 
   readonly riskLabel = computed(() => {
     const risk = this.risk();
-    return risk === null ? 'Sin evaluar' : RISK_LABELS[risk];
+    return risk === null ? this.emptyLabel() : RISK_LABELS[risk];
   });
 
   readonly ariaLabel = computed(() => {

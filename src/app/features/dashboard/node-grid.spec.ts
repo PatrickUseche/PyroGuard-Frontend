@@ -20,13 +20,37 @@ describe('NodeGrid', () => {
       connection_status: 'OFFLINE',
       current_risk: 'NORMAL',
     },
+    {
+      node_id: 'node-online',
+      name: 'Nodo Conectado',
+      description: null,
+      latitude: null,
+      longitude: null,
+      is_active: true,
+      created_at: '2026-10-30T12:00:00Z',
+      last_communication: '2026-10-30T11:55:00Z',
+      connection_status: 'ONLINE',
+      current_risk: 'NORMAL',
+    },
+    {
+      node_id: 'node-unknown',
+      name: 'Nodo Sin Datos',
+      description: null,
+      latitude: null,
+      longitude: null,
+      is_active: true,
+      created_at: '2026-10-30T12:00:00Z',
+      last_communication: null,
+      connection_status: 'UNKNOWN',
+      current_risk: 'NORMAL',
+    },
   ];
 
   const summary: DashboardSummary = {
-    total_nodes: 1,
-    nodes_online: 0,
+    total_nodes: 3,
+    nodes_online: 1,
     nodes_offline: 1,
-    nodes_unknown: 0,
+    nodes_unknown: 1,
     nodes_at_risk: 0,
     active_alerts: 0,
     overall_risk: 'NORMAL',
@@ -66,10 +90,15 @@ describe('NodeGrid', () => {
     const fixture = TestBed.createComponent(NodeGrid);
     fixture.detectChanges();
 
-    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('Nodo Sierra');
-    expect(text).toContain('Desconectado');
-    expect(text).toContain('Desactualizado');
-    expect(text).toContain('27 °C');
+    const cards = (fixture.nativeElement as HTMLElement).querySelectorAll('.node-card');
+    expect(cards[0].textContent).toContain('Nodo Sierra');
+    expect(cards[0].textContent).toContain('Desconectado');
+    expect(cards[0].textContent).toContain('Desactualizado');
+    expect(cards[0].textContent).toContain('27 °C');
+    expect(cards[1].textContent).toContain('Conectado');
+    expect(cards[1].textContent).toContain('Normal');
+    expect(cards[2].textContent).toContain('Nodo Sin Datos');
+    expect(cards[2].textContent).toContain('Sin datos');
+    expect(cards[2].textContent).not.toContain('Normal');
   });
 });
