@@ -59,3 +59,35 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [ ] chore(lint): configurar angular-eslint y corregir los avisos [4.7]
 - [ ] chore(format): script format:check con Prettier y archivos formateados [4.8]
 - [ ] docs: capturas del dashboard en el README [4.9]
+
+## Fase 5 — Brechas de la auditoría
+
+- [ ] style(a11y): corregir el contraste del botón primario en modo oscuro con tokens propios [5.1]
+- [ ] feat(alerts): mostrar la probabilidad en las alertas activas y en el historial [5.2]
+- [ ] feat(alerts): `AlertsService.getById` y página de detalle de alerta en `/alertas/:id` [5.3]
+- [ ] feat(alerts): enlazar cada alerta con su detalle y con el nodo [5.4]
+- [ ] feat(nodes): ubicación y fecha de registro en el detalle del nodo [5.5]
+- [ ] fix(nodes): mostrar el riesgo de un nodo UNKNOWN como «sin datos» y no como normal [5.6]
+- [ ] feat(readings): filtro por rango de fechas en la tabla de lecturas [5.7]
+- [ ] feat(charts): filtro por rango de fechas y selector de variables en el gráfico [5.8]
+- [ ] feat(readings): versión del modelo y probabilidad visibles, sin depender del tooltip [5.9]
+- [ ] feat(dashboard): leyenda de categorías NORMAL, WARNING y FIRE y probabilidad de IA en cada nodo [5.10]
+- [ ] feat(map): dependencia Leaflet y componente de mapa base [5.11]
+- [ ] feat(map): marcadores por nivel de riesgo con icono y texto accesible [5.12]
+- [ ] feat(map): selección de nodo con ficha y enlace al detalle, y estado sin coordenadas [5.13]
+- [ ] test(map): pruebas del mapa [5.14]
+- [ ] refactor(polling): utilidad de sondeo que se pausa con la pestaña oculta y respeta `Retry-After` [5.15]
+- [ ] fix(polling): usar esa utilidad en salud, tabla de lecturas y gráfico [5.16]
+- [ ] feat(ui): reintentos automáticos con mensaje durante el arranque en frío del backend [5.17]
+- [ ] feat(dashboard): marcar como «Simulado» los nodos con prefijo `SIM-` [5.18]
+- [ ] docs: cómo probar el flujo con el simulador del backend [5.19]
+- [ ] docs(deploy): CORS, navegadores soportados y pasos de despliegue en Vercel [5.20]
+- [ ] test(layout): pruebas de cabecera, navegación y pie [5.21]
+- [ ] docs(test): registro de resultados de pruebas en `docs/PRUEBAS.md` [5.22]
+
+## Fase 6 — Calidad (opcional)
+
+- [ ] chore(ci): workflow de GitHub Actions con `ng build` y `ng test` [6.1]
+- [ ] chore(lint): angular-eslint y corrección de avisos [6.2]
+- [ ] chore(format): script `format:check` con Prettier [6.3]
+- [ ] docs: capturas del dashboard en el README [6.4]
