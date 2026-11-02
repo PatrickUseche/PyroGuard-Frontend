@@ -40,6 +40,13 @@ import { AuthService } from '../services/auth.service';
           >
             Alertas
           </a>
+          <a
+            routerLink="/mapa"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+          >
+            Mapa
+          </a>
         </nav>
         <app-health-indicator class="health-indicator" />
         @if (auth.isAuthenticated()) {

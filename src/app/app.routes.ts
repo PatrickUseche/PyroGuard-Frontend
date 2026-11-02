@@ -22,6 +22,11 @@ export const routes: Routes = [
           import('./features/nodes/node-detail-page').then((module) => module.NodeDetailPage),
       },
       {
+        path: 'mapa',
+        loadComponent: () =>
+          import('./features/map/node-map').then((module) => module.NodeMap),
+      },
+      {
         path: 'alertas/:id',
         loadComponent: () =>
           import('./features/alerts/alert-detail-page').then(
