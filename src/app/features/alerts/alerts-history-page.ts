@@ -8,6 +8,7 @@ import { StateMessage } from '../../shared/components/state-message/state-messag
 import { AlertStatus, ALERT_STATUS_LABELS } from '../../shared/models/alert-status.model';
 import { Alert } from '../../shared/models/alert.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
+import { formatProbability } from '../../shared/utils/probability-format.util';
 
 type AlertLevelFilter = '' | 'WARNING' | 'FIRE';
 type AlertStatusFilter = '' | AlertStatus;
@@ -77,6 +78,9 @@ type AlertStatusFilter = '' | AlertStatus;
                     <strong>{{ alert.node_id }}</strong>
                     <span>{{ statusLabel(alert.status) }}</span>
                     <span>×{{ alert.occurrences }} ocurrencias</span>
+                    @if (alert.probability !== null) {
+                      <span>Prob. {{ formatProbability(alert.probability) }}</span>
+                    }
                   </div>
                   <p>{{ alert.message }}</p>
                 </div>
@@ -255,6 +259,7 @@ export class AlertsHistoryPage {
   readonly currentPage = () => Math.floor(this.offset() / this.pageSize) + 1;
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;
+  readonly formatProbability = formatProbability;
 
   constructor() {
     this.nodesService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

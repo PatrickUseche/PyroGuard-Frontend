@@ -15,6 +15,7 @@ import { StateMessage } from '../../shared/components/state-message/state-messag
 import { AiResult } from '../../shared/models/ai-result.model';
 import { Reading } from '../../shared/models/reading.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
+import { formatProbability as formatProbabilityValue } from '../../shared/utils/probability-format.util';
 import { DashboardStore } from './dashboard-store';
 
 @Component({
@@ -452,11 +453,7 @@ export class ReadingsTable {
   }
 
   formatProbability(probability: number | null): string {
-    return probability === null
-      ? 'Probabilidad no disponible'
-      : new Intl.NumberFormat('es-CO', { style: 'percent', maximumFractionDigits: 1 }).format(
-          probability,
-        );
+    return formatProbabilityValue(probability);
   }
 
   aiUnavailableReason(ai: AiResult | null): string {

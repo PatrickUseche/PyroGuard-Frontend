@@ -8,6 +8,7 @@ import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { ApiError } from '../../shared/models/api-error.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
+import { formatProbability } from '../../shared/utils/probability-format.util';
 import { DashboardStore } from './dashboard-store';
 
 @Component({
@@ -35,6 +36,9 @@ import { DashboardStore } from './dashboard-store';
                     <strong>{{ alert.node_id }}</strong>
                     <span class="status">{{ statusLabel(alert) }}</span>
                     <span class="occurrences">×{{ alert.occurrences }} ocurrencias</span>
+                    @if (alert.probability !== null) {
+                      <span>Prob. {{ formatProbability(alert.probability) }}</span>
+                    }
                   </div>
                   <p>{{ alert.message }}</p>
                 </div>
@@ -255,6 +259,7 @@ export class ActiveAlerts {
   );
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;
+  readonly formatProbability = formatProbability;
 
   statusLabel(alert: Alert): string {
     return ALERT_STATUS_LABELS[alert.status];

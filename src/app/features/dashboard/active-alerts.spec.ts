@@ -85,7 +85,10 @@ describe('ActiveAlerts', () => {
     expect(cards[0].textContent).toContain('node-fire');
     expect(cards[0].textContent).toContain('Reconocida');
     expect(cards[0].textContent).toContain('×4 ocurrencias');
+    expect(cards[0].textContent).toContain('Prob.');
+    expect(cards[0].textContent).toContain('90');
     expect(cards[1].textContent).toContain('node-warning');
+    expect(cards[1].textContent).toContain('70');
   });
 
   it('should hide alert action buttons without an authenticated session', () => {

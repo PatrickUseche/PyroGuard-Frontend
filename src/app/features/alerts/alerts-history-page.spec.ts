@@ -43,6 +43,8 @@ describe('AlertsHistoryPage', () => {
     expect(text).toContain('Historial de alertas');
     expect(text).toContain('Cerrada');
     expect(text).toContain('×5 ocurrencias');
+    expect(text).toContain('Prob.');
+    expect(text).toContain('90');
     expect(getPage).toHaveBeenCalledWith({ limit: 20, offset: 0 });
 
     const statusSelect = document.createElement('select');
