@@ -16,6 +16,7 @@ import * as L from 'leaflet';
 import { ConnectionBadge } from '../../shared/components/connection-badge/connection-badge';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
+import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { Node } from '../../shared/models/node.model';
 import { Risk } from '../../shared/models/risk.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
@@ -30,7 +31,7 @@ import {
 @Component({
   selector: 'app-node-map',
   standalone: true,
-  imports: [ConnectionBadge, RiskBadge, RouterLink, StateMessage],
+  imports: [ConnectionBadge, RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     <section class="map-page" aria-labelledby="map-title">
       <header>
@@ -55,6 +56,7 @@ import {
             <div>
               <h2 id="selected-node-title">{{ node.name }}</h2>
               <p>{{ node.node_id }}</p>
+              <app-simulated-badge [nodeId]="node.node_id" />
             </div>
             <app-connection-badge [status]="node.connection_status" />
           </div>

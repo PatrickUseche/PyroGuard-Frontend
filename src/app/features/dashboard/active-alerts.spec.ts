@@ -39,7 +39,7 @@ describe('ActiveAlerts', () => {
     },
     {
       id: 2,
-      node_id: 'node-fire',
+      node_id: 'SIM-004',
       reading_id: 2,
       level: 'FIRE',
       probability: 0.9,
@@ -82,13 +82,14 @@ describe('ActiveAlerts', () => {
     fixture.detectChanges();
 
     const cards = (fixture.nativeElement as HTMLElement).querySelectorAll('.alert-card');
-    expect(cards[0].textContent).toContain('node-fire');
+    expect(cards[0].textContent).toContain('SIM-004');
+    expect(cards[0].textContent).toContain('Simulado');
     expect(cards[0].textContent).toContain('Reconocida');
     expect(cards[0].textContent).toContain('×4 ocurrencias');
     expect(cards[0].textContent).toContain('Prob.');
     expect(cards[0].textContent).toContain('90');
     expect(cards[0].querySelector('a[href="/alertas/2"]')?.textContent).toContain('Ver detalle');
-    expect(cards[0].querySelector('a[href="/nodos/node-fire"]')?.textContent).toContain('node-fire');
+    expect(cards[0].querySelector('a[href="/nodos/SIM-004"]')?.textContent).toContain('SIM-004');
     expect(cards[1].textContent).toContain('node-warning');
     expect(cards[1].textContent).toContain('70');
   });

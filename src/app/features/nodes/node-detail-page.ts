@@ -7,6 +7,7 @@ import { NodesService } from '../../core/services/nodes.service';
 import { ConnectionBadge } from '../../shared/components/connection-badge/connection-badge';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
+import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { Alert } from '../../shared/models/alert.model';
 import { ApiError } from '../../shared/models/api-error.model';
 import { Node } from '../../shared/models/node.model';
@@ -17,7 +18,7 @@ import { SeriesChart } from '../dashboard/series-chart';
 @Component({
   selector: 'app-node-detail-page',
   standalone: true,
-  imports: [ConnectionBadge, RiskBadge, RouterLink, SeriesChart, StateMessage],
+  imports: [ConnectionBadge, RiskBadge, RouterLink, SeriesChart, SimulatedBadge, StateMessage],
   template: `
     <a class="back-link" routerLink="/">← Volver al resumen</a>
     @if (loading()) {
@@ -35,6 +36,7 @@ import { SeriesChart } from '../dashboard/series-chart';
             <p class="eyebrow">Detalle del nodo</p>
             <h1 id="node-title">{{ currentNode.name }}</h1>
             <p class="node-id">{{ currentNode.node_id }}</p>
+            <app-simulated-badge [nodeId]="currentNode.node_id" />
           </div>
           @if (status(); as nodeStatus) {
             <div class="status-group">

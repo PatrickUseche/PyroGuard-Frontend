@@ -21,7 +21,7 @@ describe('NodeGrid', () => {
       current_risk: 'NORMAL',
     },
     {
-      node_id: 'node-online',
+      node_id: 'SIM-002',
       name: 'Nodo Conectado',
       description: null,
       latitude: null,
@@ -67,7 +67,7 @@ describe('NodeGrid', () => {
         ai: null,
       },
       {
-        node_id: 'node-online',
+        node_id: 'SIM-002',
         temperature: 27,
         humidity: 40,
         smoke: 0,
@@ -112,6 +112,8 @@ describe('NodeGrid', () => {
     expect(cards[0].textContent).toContain('Desconectado');
     expect(cards[0].textContent).toContain('Desactualizado');
     expect(cards[0].textContent).toContain('27 °C');
+    expect(cards[1].textContent).toContain('SIM-002');
+    expect(cards[1].textContent).toContain('Simulado');
     expect(cards[1].textContent).toContain('Conectado');
     expect(cards[1].textContent).toContain('Normal');
     expect(cards[1].textContent).toContain('Prob.');

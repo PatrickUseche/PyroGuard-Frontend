@@ -6,6 +6,7 @@ import { AlertsService, PaginatedAlerts } from '../../core/services/alerts.servi
 import { NodesService } from '../../core/services/nodes.service';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
+import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { AlertStatus, ALERT_STATUS_LABELS } from '../../shared/models/alert-status.model';
 import { Alert } from '../../shared/models/alert.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
@@ -17,7 +18,7 @@ type AlertStatusFilter = '' | AlertStatus;
 @Component({
   selector: 'app-alerts-history-page',
   standalone: true,
-  imports: [RiskBadge, RouterLink, StateMessage],
+  imports: [RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     <section class="history-page" aria-labelledby="history-title">
       <header class="page-heading">
@@ -77,6 +78,7 @@ type AlertStatusFilter = '' | AlertStatus;
                 <div>
                   <div class="alert-meta">
                     <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
+                    <app-simulated-badge [nodeId]="alert.node_id" />
                     <span>{{ statusLabel(alert.status) }}</span>
                     <span>×{{ alert.occurrences }} ocurrencias</span>
                     @if (alert.probability !== null) {

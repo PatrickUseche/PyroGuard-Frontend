@@ -5,6 +5,7 @@ import { Alert } from '../../shared/models/alert.model';
 import { ALERT_STATUS_LABELS } from '../../shared/models/alert-status.model';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
+import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { formatProbability } from '../../shared/utils/probability-format.util';
 import { AlertActionsService } from '../alerts/alert-actions.service';
@@ -13,7 +14,7 @@ import { DashboardStore } from './dashboard-store';
 @Component({
   selector: 'app-active-alerts',
   standalone: true,
-  imports: [RiskBadge, RouterLink, StateMessage],
+  imports: [RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     <section class="alerts-section" aria-labelledby="alerts-title">
       <header class="section-heading">
@@ -33,6 +34,7 @@ import { DashboardStore } from './dashboard-store';
                 <div class="alert-content">
                   <div class="alert-meta">
                     <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
+                    <app-simulated-badge [nodeId]="alert.node_id" />
                     <span class="status">{{ statusLabel(alert) }}</span>
                     <span class="occurrences">×{{ alert.occurrences }} ocurrencias</span>
                     @if (alert.probability !== null) {

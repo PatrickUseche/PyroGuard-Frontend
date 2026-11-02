@@ -6,6 +6,7 @@ import { AlertsService } from '../../core/services/alerts.service';
 import { AuthService } from '../../core/services/auth.service';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
+import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { ALERT_STATUS_LABELS } from '../../shared/models/alert-status.model';
 import { Alert } from '../../shared/models/alert.model';
 import { formatFullDate } from '../../shared/utils/date-format.util';
@@ -15,7 +16,7 @@ import { AlertActionsService } from './alert-actions.service';
 @Component({
   selector: 'app-alert-detail-page',
   standalone: true,
-  imports: [RiskBadge, RouterLink, StateMessage],
+  imports: [RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     @if (loading()) {
       <app-state-message kind="loading" title="Cargando alerta" message="Consultando sus detalles." />
@@ -31,6 +32,7 @@ import { AlertActionsService } from './alert-actions.service';
             <p class="eyebrow">Detalle de alerta #{{ currentAlert.id }}</p>
             <h1 id="alert-title">
               <a class="node-link" [routerLink]="['/nodos', currentAlert.node_id]">{{ currentAlert.node_id }}</a>
+              <app-simulated-badge [nodeId]="currentAlert.node_id" />
             </h1>
           </div>
           <app-risk-badge [risk]="currentAlert.level" />

@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { ConnectionBadge } from '../../shared/components/connection-badge/connection-badge';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
+import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { formatProbability } from '../../shared/utils/probability-format.util';
 import { DashboardStore } from './dashboard-store';
@@ -10,7 +11,7 @@ import { DashboardStore } from './dashboard-store';
 @Component({
   selector: 'app-node-grid',
   standalone: true,
-  imports: [ConnectionBadge, RiskBadge, RouterLink, StateMessage],
+  imports: [ConnectionBadge, RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     <section class="node-section" aria-labelledby="nodes-title">
       <header class="section-heading">
@@ -29,6 +30,7 @@ import { DashboardStore } from './dashboard-store';
                 <div>
                   <h3><a [routerLink]="['/nodos', node.node_id]">{{ node.name }}</a></h3>
                   <p class="node-id">{{ node.node_id }}</p>
+                  <app-simulated-badge [nodeId]="node.node_id" />
                 </div>
                 <app-connection-badge [status]="node.connection_status" />
               </header>

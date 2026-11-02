@@ -13,6 +13,7 @@ import { createVisiblePolling } from '../../core/visible-polling';
 import { ReadingsService, PaginatedReadings } from '../../core/services/readings.service';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
+import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { AiResult } from '../../shared/models/ai-result.model';
 import { Reading } from '../../shared/models/reading.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
@@ -22,7 +23,7 @@ import { DashboardStore } from './dashboard-store';
 @Component({
   selector: 'app-readings-table',
   standalone: true,
-  imports: [RiskBadge, StateMessage],
+  imports: [RiskBadge, SimulatedBadge, StateMessage],
   template: `
     <section class="readings-section" aria-labelledby="readings-title">
       <header class="section-heading">
@@ -104,7 +105,10 @@ import { DashboardStore } from './dashboard-store';
             <tbody>
               @for (reading of readings(); track reading.node_id + reading.timestamp) {
                 <tr>
-                  <td data-label="Nodo">{{ nodeName(reading.node_id) }}</td>
+                  <td data-label="Nodo">
+                    <span>{{ nodeName(reading.node_id) }}</span>
+                    <app-simulated-badge [nodeId]="reading.node_id" />
+                  </td>
                   <td data-label="Fecha">
                     <time [attr.datetime]="reading.timestamp" [attr.title]="formatFullDate(reading.timestamp)">
                       {{ formatRelativeTime(reading.timestamp) }}

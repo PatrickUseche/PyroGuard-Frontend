@@ -17,14 +17,14 @@ describe('NodeDetailPage', () => {
         provideRouter([]),
         {
           provide: ActivatedRoute,
-          useValue: { paramMap: of(convertToParamMap({ id: 'node-1' })) },
+          useValue: { paramMap: of(convertToParamMap({ id: 'SIM-001' })) },
         },
         {
           provide: NodesService,
           useValue: {
             getById: () =>
               of({
-                node_id: 'node-1',
+                node_id: 'SIM-001',
                 name: 'Nodo Laguna',
                 description: null,
                 latitude: 4.123456,
@@ -37,7 +37,7 @@ describe('NodeDetailPage', () => {
               }),
             getStatus: () =>
               of({
-                node_id: 'node-1',
+                node_id: 'SIM-001',
                 connection_status: 'OFFLINE',
                 last_communication: null,
                 latest_reading: null,
@@ -60,6 +60,7 @@ describe('NodeDetailPage', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Nodo Laguna');
+    expect(text).toContain('Simulado');
     expect(text).toContain('Desconectado');
     expect(text).toContain('Desactualizado');
     expect(text).toContain('No hay alertas activas');

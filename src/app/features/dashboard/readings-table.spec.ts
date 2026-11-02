@@ -13,7 +13,7 @@ describe('ReadingsTable', () => {
       of({
         items: [
           {
-            node_id: 'node-1',
+            node_id: 'SIM-003',
             temperature: 31,
             humidity: 22,
             smoke: 12,
@@ -40,7 +40,7 @@ describe('ReadingsTable', () => {
         {
           provide: DashboardStore,
           useValue: {
-            nodes: signal([{ node_id: 'node-1', name: 'Nodo Bosque' }]),
+            nodes: signal([{ node_id: 'SIM-003', name: 'Nodo Bosque' }]),
           },
         },
         {
@@ -57,6 +57,7 @@ describe('ReadingsTable', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Nodo Bosque');
+    expect(text).toContain('Simulado');
     expect(text).toContain('31 °C');
     expect(text).toContain('—');
     expect(text).toContain('Sin evaluar');

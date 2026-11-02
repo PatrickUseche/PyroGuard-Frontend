@@ -11,7 +11,7 @@ import { AlertDetailPage } from './alert-detail-page';
 describe('AlertDetailPage', () => {
   const alert: Alert = {
     id: 8,
-    node_id: 'node-1',
+    node_id: 'SIM-006',
     reading_id: 3,
     level: 'FIRE',
     probability: 0.9,
@@ -57,7 +57,8 @@ describe('AlertDetailPage', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(getById).toHaveBeenCalledWith(8);
-    expect(text).toContain('node-1');
+    expect(text).toContain('SIM-006');
+    expect(text).toContain('Simulado');
     expect(text).toContain('Incendio');
     expect(text).toContain('Activa');
     expect(text).toContain('90');
@@ -68,7 +69,7 @@ describe('AlertDetailPage', () => {
     expect(text).toContain('Última ocurrencia');
     expect(text).toContain('Reconocida');
     expect(text).toContain('Cerrada');
-    expect((fixture.nativeElement as HTMLElement).querySelector('a[href="/nodos/node-1"]'))
+    expect((fixture.nativeElement as HTMLElement).querySelector('a[href="/nodos/SIM-006"]'))
       .not.toBeNull();
     expect(text).toContain('Reconocer');
     expect(text).toContain('Cerrar');

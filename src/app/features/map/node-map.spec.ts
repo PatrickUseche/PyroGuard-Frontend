@@ -59,6 +59,15 @@ describe('NodeMap', () => {
     expect(html).toContain(`>${label}</span>`);
   });
 
+  it('should mark simulated nodes in the visible and accessible map label', () => {
+    const presentation = mapMarkerPresentation(createNode('SIM-007', 'ONLINE', 'NORMAL'), 'NORMAL');
+    const html = markerAccessibleHtml(presentation);
+
+    expect(presentation.label).toBe('Normal · Simulado');
+    expect(html).toContain('Normal · Simulado');
+    expect(html).toContain('aria-label="Normal · Simulado"');
+  });
+
   it('should show an explanatory empty state instead of an empty map', async () => {
     await TestBed.configureTestingModule({
       imports: [NodeMap],
@@ -81,5 +90,29 @@ describe('NodeMap', () => {
     expect(text).toContain('No hay nodos con ubicación');
     expect(text).toContain('Registra coordenadas');
     expect((fixture.nativeElement as HTMLElement).querySelector('.map-host')).toBeNull();
+  });
+
+  it('should show the simulated badge in the selected node card', async () => {
+    const simulatedNode = createNode('SIM-008', 'ONLINE', 'NORMAL');
+    await TestBed.configureTestingModule({
+      imports: [NodeMap],
+      providers: [
+        { provide: PLATFORM_ID, useValue: 'server' },
+        {
+          provide: DashboardStore,
+          useValue: {
+            nodes: signal([simulatedNode]),
+            summary: signal(null),
+          },
+        },
+        provideRouter([]),
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(NodeMap);
+    fixture.detectChanges();
+    fixture.componentInstance.selectNode(simulatedNode.node_id);
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Simulado');
   });
 });

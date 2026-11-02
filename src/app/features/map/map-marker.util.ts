@@ -1,5 +1,6 @@
 import { Node } from '../../shared/models/node.model';
 import { Risk } from '../../shared/models/risk.model';
+import { isSimulatedNode } from '../../shared/utils/simulated-node.util';
 
 export interface MapMarkerPresentation {
   className: string;
@@ -24,22 +25,24 @@ export function filterLocatedNodes(nodes: Node[]): Array<Node & { latitude: numb
 }
 
 export function mapMarkerPresentation(node: Node, risk: Risk | null): MapMarkerPresentation {
+  let presentation: MapMarkerPresentation;
   if (node.connection_status === 'OFFLINE') {
-    return { className: 'offline', label: 'Desactualizado', icon: statusIcon };
+    presentation = { className: 'offline', label: 'Desactualizado', icon: statusIcon };
+  } else if (node.connection_status === 'UNKNOWN') {
+    presentation = { className: 'unknown', label: 'Sin datos', icon: statusIcon };
+  } else if (risk === 'NORMAL') {
+    presentation = { className: 'normal', label: 'Normal', icon: normalIcon };
+  } else if (risk === 'WARNING') {
+    presentation = { className: 'warning', label: 'Advertencia', icon: warningIcon };
+  } else if (risk === 'FIRE') {
+    presentation = { className: 'fire', label: 'Incendio', icon: fireIcon };
+  } else {
+    presentation = { className: 'unknown', label: 'Sin evaluar', icon: statusIcon };
   }
-  if (node.connection_status === 'UNKNOWN') {
-    return { className: 'unknown', label: 'Sin datos', icon: statusIcon };
-  }
-  if (risk === 'NORMAL') {
-    return { className: 'normal', label: 'Normal', icon: normalIcon };
-  }
-  if (risk === 'WARNING') {
-    return { className: 'warning', label: 'Advertencia', icon: warningIcon };
-  }
-  if (risk === 'FIRE') {
-    return { className: 'fire', label: 'Incendio', icon: fireIcon };
-  }
-  return { className: 'unknown', label: 'Sin evaluar', icon: statusIcon };
+
+  return isSimulatedNode(node.node_id)
+    ? { ...presentation, label: `${presentation.label} · Simulado` }
+    : presentation;
 }
 
 export function markerAccessibleHtml(presentation: MapMarkerPresentation): string {
