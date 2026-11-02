@@ -83,6 +83,24 @@ describe('ReadingsService', () => {
     });
   });
 
+  it('should fetch a custom date series without adding a named range', () => {
+    service
+      .getSeries('node-1', 'custom', '2026-10-30T10:00:00.000Z', '2026-10-30T12:00:00.000Z')
+      .subscribe();
+
+    const request = httpTestingController.expectOne(
+      (candidate) => candidate.url === 'https://api.test/api/nodes/node-1/readings/',
+    );
+    expect(request.request.params.get('from')).toBe('2026-10-30T10:00:00.000Z');
+    expect(request.request.params.get('to')).toBe('2026-10-30T12:00:00.000Z');
+    expect(request.request.params.has('range')).toBe(false);
+    expect(request.request.params.get('order')).toBe('asc');
+    expect(request.request.params.get('limit')).toBe('500');
+    request.flush([], {
+      headers: new HttpHeaders({ 'X-Total-Count': '0' }),
+    });
+  });
+
   it('should report an invalid API response when the total header is missing', () => {
     let actualError: ApiError | undefined;
 

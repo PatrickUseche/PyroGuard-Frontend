@@ -78,4 +78,80 @@ describe('SeriesChart', () => {
       'Ver datos como tabla accesible',
     );
   });
+
+  it('should apply a custom date range to the series request', () => {
+    const fixture = TestBed.createComponent(SeriesChart);
+    const component = fixture.componentInstance;
+    const nodeSelect = document.createElement('select');
+    nodeSelect.add(new Option('Nodo Valle', 'node-1'));
+    nodeSelect.value = 'node-1';
+    const nodeChange = new Event('change');
+    Object.defineProperty(nodeChange, 'target', { value: nodeSelect });
+    component.onNodeChange(nodeChange);
+
+    const rangeSelect = document.createElement('select');
+    rangeSelect.add(new Option('Rango personalizado', 'custom'));
+    rangeSelect.value = 'custom';
+    const rangeChange = new Event('change');
+    Object.defineProperty(rangeChange, 'target', { value: rangeSelect });
+    component.onRangeChange(rangeChange);
+    component.fromDate.set('2026-10-30T10:00');
+    component.toDate.set('2026-10-30T12:00');
+    component.applyCustomRange();
+
+    expect(getSeries).toHaveBeenLastCalledWith(
+      'node-1',
+      'custom',
+      new Date('2026-10-30T10:00').toISOString(),
+      new Date('2026-10-30T12:00').toISOString(),
+    );
+  });
+
+  it('should expose gas only when data exists and ignore null gas values', () => {
+    getSeries.mockReturnValue(
+      of([
+        {
+          node_id: 'node-1',
+          temperature: 28,
+          humidity: 45,
+          smoke: 7,
+          gas: 12,
+          flame: false,
+          timestamp: '2026-10-30T12:00:00Z',
+          risk_level: 'NORMAL' as const,
+          ai: null,
+        },
+        {
+          node_id: 'node-1',
+          temperature: 30,
+          humidity: 43,
+          smoke: 8,
+          gas: null,
+          flame: false,
+          timestamp: '2026-10-30T13:00:00Z',
+          risk_level: 'NORMAL' as const,
+          ai: null,
+        },
+      ]),
+    );
+    const fixture = TestBed.createComponent(SeriesChart);
+    const component = fixture.componentInstance;
+    const nodeSelect = document.createElement('select');
+    nodeSelect.add(new Option('Nodo Valle', 'node-1'));
+    nodeSelect.value = 'node-1';
+    const nodeChange = new Event('change');
+    Object.defineProperty(nodeChange, 'target', { value: nodeSelect });
+    component.onNodeChange(nodeChange);
+    fixture.detectChanges();
+
+    const gasOption = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('fieldset label'),
+    ).find((label) => label.textContent?.includes('Gas'));
+    expect(gasOption).toBeDefined();
+    (gasOption?.querySelector('input') as HTMLInputElement).click();
+    fixture.detectChanges();
+
+    expect(component.plots()).toHaveLength(4);
+    expect(component.plots().find((plot) => plot.key === 'gas')?.points).toHaveLength(1);
+  });
 });

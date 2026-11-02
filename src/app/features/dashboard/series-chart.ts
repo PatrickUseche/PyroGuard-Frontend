@@ -19,8 +19,8 @@ import { StateMessage } from '../../shared/components/state-message/state-messag
 import { formatFullDate } from '../../shared/utils/date-format.util';
 import { DashboardStore } from './dashboard-store';
 
-type MetricKey = 'temperature' | 'humidity' | 'smoke';
-type ChartRange = '24h' | '7d';
+type MetricKey = 'temperature' | 'humidity' | 'smoke' | 'gas';
+type ChartRange = '24h' | '7d' | 'custom';
 
 interface PlotPoint {
   x: number;
@@ -49,6 +49,7 @@ const metrics: Array<{ key: MetricKey; label: string; unit: string }> = [
   { key: 'temperature', label: 'Temperatura', unit: '°C' },
   { key: 'humidity', label: 'Humedad', unit: '%' },
   { key: 'smoke', label: 'Humo', unit: '' },
+  { key: 'gas', label: 'Gas', unit: '' },
 ];
 
 const numberFormatter = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 });
@@ -66,7 +67,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
       <header class="section-heading">
         <div>
           <h2 id="chart-title">Histórico de sensores</h2>
-          <p>Temperatura, humedad y humo en una escala temporal compartida.</p>
+          <p>Selecciona variables para comparar sus series en una escala temporal compartida.</p>
         </div>
         <div class="chart-filters">
           <label>
@@ -86,10 +87,49 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
             <select [value]="range()" (change)="onRangeChange($event)">
               <option value="24h">Últimas 24 horas</option>
               <option value="7d">Últimos 7 días</option>
+              <option value="custom">Rango personalizado</option>
             </select>
           </label>
         </div>
       </header>
+
+      @if (range() === 'custom') {
+        <div class="custom-range">
+          <label>
+            <span>Desde</span>
+            <input type="datetime-local" [value]="fromDate()" (input)="onFromDateChange($event)">
+          </label>
+          <label>
+            <span>Hasta</span>
+            <input type="datetime-local" [value]="toDate()" (input)="onToDateChange($event)">
+          </label>
+          <button type="button" (click)="applyCustomRange()">Aplicar rango</button>
+          <button type="button" class="secondary-button" (click)="clearCustomRange()">Limpiar</button>
+        </div>
+      }
+      @if (rangeError()) {
+        <p class="range-error" role="alert">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3 2.8 20h18.4L12 3Zm0 5.2v5.3m0 3.2v.1" fill="none" stroke="currentColor" stroke-width="2" />
+          </svg>
+          {{ rangeError() }}
+        </p>
+      }
+      <fieldset class="metric-filters">
+        <legend>Variables visibles</legend>
+        @for (metric of metricOptions; track metric.key) {
+          @if (metric.key !== 'gas' || hasGasData()) {
+            <label>
+              <input
+                type="checkbox"
+                [checked]="isMetricVisible(metric.key)"
+                (change)="onMetricToggle(metric.key, $event)"
+              >
+              {{ metric.label }}
+            </label>
+          }
+        }
+      </fieldset>
 
       @if (loading()) {
         <div class="chart-skeleton" aria-label="Cargando histórico" aria-hidden="true">
@@ -112,40 +152,48 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
           message="No hay lecturas en el periodo seleccionado."
         />
       } @else {
-        <div class="plots">
-          @for (plot of plots(); track plot.key) {
-            <article class="plot">
-              <header>
-                <h3>{{ plot.label }}</h3>
-                <span>{{ number(plot.minimum) }}{{ plot.unit }} – {{ number(plot.maximum) }}{{ plot.unit }}</span>
-              </header>
-              <svg
-                viewBox="0 0 640 160"
-                role="img"
-                [attr.aria-label]="plot.label + ', serie temporal para ' + selectedNode()"
-              >
-                <line x1="48" y1="24" x2="624" y2="24" class="grid-line" />
-                <line x1="48" y1="76" x2="624" y2="76" class="grid-line" />
-                <line x1="48" y1="128" x2="624" y2="128" class="grid-line" />
-                <text x="4" y="28" class="axis-label">{{ number(plot.maximum) }}</text>
-                <text x="4" y="132" class="axis-label">{{ number(plot.minimum) }}</text>
-                <polyline [attr.points]="plot.coordinates" class="series-line" />
-                @for (point of plot.points; track point.timestamp) {
-                  <circle [attr.cx]="point.x" [attr.cy]="point.y" r="3" class="series-point">
-                    <title>{{ point.tooltip }}</title>
-                  </circle>
-                }
-                @if (plot.key === 'smoke') {
-                  @for (tick of timeTicks(); track tick.x) {
-                    <text [attr.x]="tick.x" y="153" text-anchor="middle" class="axis-label">
-                      {{ tick.label }}
-                    </text>
+        @if (plots().length > 0) {
+          <div class="plots">
+            @for (plot of plots(); track plot.key) {
+              <article class="plot">
+                <header>
+                  <h3>{{ plot.label }}</h3>
+                  <span>{{ number(plot.minimum) }}{{ plot.unit }} – {{ number(plot.maximum) }}{{ plot.unit }}</span>
+                </header>
+                <svg
+                  viewBox="0 0 640 160"
+                  role="img"
+                  [attr.aria-label]="plot.label + ', serie temporal para ' + selectedNode()"
+                >
+                  <line x1="48" y1="24" x2="624" y2="24" class="grid-line" />
+                  <line x1="48" y1="76" x2="624" y2="76" class="grid-line" />
+                  <line x1="48" y1="128" x2="624" y2="128" class="grid-line" />
+                  <text x="4" y="28" class="axis-label">{{ number(plot.maximum) }}</text>
+                  <text x="4" y="132" class="axis-label">{{ number(plot.minimum) }}</text>
+                  <polyline [attr.points]="plot.coordinates" class="series-line" />
+                  @for (point of plot.points; track point.timestamp) {
+                    <circle [attr.cx]="point.x" [attr.cy]="point.y" r="3" class="series-point">
+                      <title>{{ point.tooltip }}</title>
+                    </circle>
                   }
-                }
-              </svg>
-            </article>
-          }
-        </div>
+                  @if (isLastPlot(plot)) {
+                    @for (tick of timeTicks(); track tick.x) {
+                      <text [attr.x]="tick.x" y="153" text-anchor="middle" class="axis-label">
+                        {{ tick.label }}
+                      </text>
+                    }
+                  }
+                </svg>
+              </article>
+            }
+          </div>
+        } @else {
+          <app-state-message
+            kind="empty"
+            title="No hay variables seleccionadas"
+            message="Activa al menos una variable para mostrar su serie."
+          />
+        }
 
         <details class="data-details">
           <summary>Ver datos como tabla accesible</summary>
@@ -158,6 +206,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
                   <th scope="col">Temperatura (°C)</th>
                   <th scope="col">Humedad (%)</th>
                   <th scope="col">Humo</th>
+                  <th scope="col">Gas</th>
                 </tr>
               </thead>
               <tbody>
@@ -167,6 +216,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
                     <td>{{ reading.temperature }}</td>
                     <td>{{ reading.humidity }}</td>
                     <td>{{ reading.smoke }}</td>
+                    <td>{{ reading.gas === null ? '—' : reading.gas }}</td>
                   </tr>
                 }
               </tbody>
@@ -209,6 +259,18 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
       gap: var(--space-3);
     }
 
+    .custom-range,
+    .metric-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: var(--space-3);
+    }
+
+    .custom-range label {
+      min-width: min(220px, 100%);
+    }
+
     label {
       display: grid;
       gap: var(--space-1);
@@ -217,14 +279,69 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
       font-weight: 650;
     }
 
-    select {
+    select,
+    input,
+    button {
       min-height: 44px;
-      max-width: 220px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
       border-radius: 8px;
       background: var(--color-surface);
       color: var(--color-text);
+    }
+
+    select {
+      max-width: 220px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .secondary-button {
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+
+    .metric-filters {
+      justify-content: flex-start;
+      margin: 0;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--color-border);
+      border-radius: var(--space-2);
+    }
+
+    .metric-filters legend {
+      padding: 0 var(--space-1);
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      font-weight: 650;
+    }
+
+    .metric-filters label {
+      display: flex;
+      min-height: 44px;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .metric-filters input {
+      width: 20px;
+      height: 20px;
+    }
+
+    .range-error {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--risk-fire-text);
+    }
+
+    .range-error svg {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
     }
 
     .plots {
@@ -357,7 +474,8 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
         flex-direction: column;
       }
 
-      select {
+      select,
+      .custom-range label {
         max-width: none;
       }
     }
@@ -373,13 +491,22 @@ export class SeriesChart {
   readonly store = inject(DashboardStore);
   readonly selectedNode = signal('');
   readonly range = signal<ChartRange>('24h');
+  readonly fromDate = signal('');
+  readonly toDate = signal('');
+  readonly rangeError = signal<string | null>(null);
+  readonly metricOptions = metrics;
+  readonly visibleMetrics = signal<Set<MetricKey>>(new Set(['temperature', 'humidity', 'smoke']));
+  private readonly appliedFromDate = signal('');
+  private readonly appliedToDate = signal('');
   readonly readings = signal<Reading[]>([]);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly formatFullDate = formatFullDate;
 
   readonly plots = computed(() =>
-    metrics.map((metric) => this.createPlot(metric.key, metric.label, metric.unit)),
+    metrics
+      .filter((metric) => this.visibleMetrics().has(metric.key))
+      .map((metric) => this.createPlot(metric.key, metric.label, metric.unit)),
   );
   readonly timeTicks = computed(() => {
     const validReadings = this.readings().filter((reading) => Number.isFinite(Date.parse(reading.timestamp)));
@@ -416,7 +543,21 @@ export class SeriesChart {
 
             this.loading.set(true);
             this.error.set(null);
-            return this.readingsService.getSeries(nodeId, this.range()).pipe(
+            const range = this.range();
+            const request =
+              range === 'custom'
+                ? this.readingsService.getSeries(
+                    nodeId,
+                    range,
+                    this.appliedFromDate() === ''
+                      ? undefined
+                      : toIsoDateTime(this.appliedFromDate()),
+                    this.appliedToDate() === ''
+                      ? undefined
+                      : toIsoDateTime(this.appliedToDate()),
+                  )
+                : this.readingsService.getSeries(nodeId, range);
+            return request.pipe(
               catchError((error: unknown) => {
                 this.error.set(apiErrorMessage(error));
                 this.loading.set(false);
@@ -456,12 +597,88 @@ export class SeriesChart {
       return;
     }
     const value = target.value;
-    if (value === '24h' || value === '7d') {
+    if (value === '24h' || value === '7d' || value === 'custom') {
       this.range.set(value);
-      if (this.selectedNode() !== '') {
+      this.rangeError.set(null);
+      if (this.selectedNode() !== '' && value !== 'custom') {
         this.refreshRequests.next();
       }
     }
+  }
+
+  onFromDateChange(event: Event): void {
+    this.fromDate.set(inputValue(event));
+    this.rangeError.set(null);
+  }
+
+  onToDateChange(event: Event): void {
+    this.toDate.set(inputValue(event));
+    this.rangeError.set(null);
+  }
+
+  applyCustomRange(): void {
+    const from = dateTimestamp(this.fromDate());
+    const to = dateTimestamp(this.toDate());
+    if (
+      (this.fromDate() !== '' && from === null) ||
+      (this.toDate() !== '' && to === null) ||
+      (from === null && to === null)
+    ) {
+      this.rangeError.set('Indica al menos una fecha válida para el rango.');
+      return;
+    }
+    if (from !== null && to !== null && from > to) {
+      this.rangeError.set('La fecha Desde debe ser anterior o igual a Hasta.');
+      return;
+    }
+
+    this.rangeError.set(null);
+    this.appliedFromDate.set(this.fromDate());
+    this.appliedToDate.set(this.toDate());
+    if (this.selectedNode() !== '') {
+      this.refreshRequests.next();
+    }
+  }
+
+  clearCustomRange(): void {
+    this.fromDate.set('');
+    this.toDate.set('');
+    this.appliedFromDate.set('');
+    this.appliedToDate.set('');
+    this.rangeError.set(null);
+    this.range.set('24h');
+    if (this.selectedNode() !== '') {
+      this.refreshRequests.next();
+    }
+  }
+
+  onMetricToggle(metric: MetricKey, event: Event): void {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
+    this.visibleMetrics.update((visible) => {
+      const next = new Set(visible);
+      if (target.checked) {
+        next.add(metric);
+      } else {
+        next.delete(metric);
+      }
+      return next;
+    });
+  }
+
+  isMetricVisible(metric: MetricKey): boolean {
+    return this.visibleMetrics().has(metric);
+  }
+
+  hasGasData(): boolean {
+    return this.readings().some((reading) => reading.gas !== null);
+  }
+
+  isLastPlot(plot: SeriesPlot): boolean {
+    const visiblePlots = this.plots();
+    return visiblePlots[visiblePlots.length - 1]?.key === plot.key;
   }
 
   number(value: number): string {
@@ -469,22 +686,25 @@ export class SeriesChart {
   }
 
   private createPlot(key: MetricKey, label: string, unit: string): SeriesPlot {
-    const readings = this.readings().filter((reading) => Number.isFinite(Date.parse(reading.timestamp)));
-    const values = readings.map((reading) => reading[key]);
+    const pointsData = this.readings()
+      .filter((reading) => Number.isFinite(Date.parse(reading.timestamp)))
+      .map((reading) => ({ reading, value: metricValue(reading, key) }))
+      .filter((point): point is { reading: Reading; value: number } => point.value !== null);
+    const values = pointsData.map((point) => point.value);
     const minimum = values.length === 0 ? 0 : Math.min(...values);
     const maximum = values.length === 0 ? 0 : Math.max(...values);
     const spread = maximum - minimum || 1;
 
-    const points = readings.map((reading, index) => {
-      const x = 48 + (readings.length === 1 ? 288 : (index / (readings.length - 1)) * 576);
-      const y = 24 + ((maximum - reading[key]) / spread) * 104;
+    const points = pointsData.map(({ reading, value }, index) => {
+      const x = 48 + (pointsData.length === 1 ? 288 : (index / (pointsData.length - 1)) * 576);
+      const y = 24 + ((maximum - value) / spread) * 104;
       const date = formatFullDate(reading.timestamp);
       return {
         x,
         y,
-        value: reading[key],
+        value,
         timestamp: reading.timestamp,
-        tooltip: `${date}: ${numberFormatter.format(reading[key])}${unit}`,
+        tooltip: `${date}: ${numberFormatter.format(value)}${unit}`,
       };
     });
 
@@ -498,6 +718,27 @@ export class SeriesChart {
       coordinates: points.map((point) => `${point.x},${point.y}`).join(' '),
     };
   }
+}
+
+function metricValue(reading: Reading, key: MetricKey): number | null {
+  return key === 'gas' ? reading.gas : reading[key];
+}
+
+function inputValue(event: Event): string {
+  return event.target instanceof HTMLInputElement ? event.target.value : '';
+}
+
+function dateTimestamp(value: string): number | null {
+  if (value === '') {
+    return null;
+  }
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function toIsoDateTime(value: string): string {
+  const timestamp = dateTimestamp(value);
+  return timestamp === null ? '' : new Date(timestamp).toISOString();
 }
 
 function apiErrorMessage(error: unknown): string {

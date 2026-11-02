@@ -44,8 +44,17 @@ export class ReadingsService {
       .pipe(map((response) => this.toPaginatedReadings(response)));
   }
 
-  getSeries(nodeId: string, range: '24h' | '7d'): Observable<Reading[]> {
-    return this.getForNode(nodeId, { range, order: 'asc', limit: 500 }).pipe(
+  getSeries(
+    nodeId: string,
+    range: '24h' | '7d' | 'custom',
+    from?: string,
+    to?: string,
+  ): Observable<Reading[]> {
+    const filters =
+      range === 'custom'
+        ? { ...(from === undefined ? {} : { from }), ...(to === undefined ? {} : { to }) }
+        : { range };
+    return this.getForNode(nodeId, { ...filters, order: 'asc', limit: 500 }).pipe(
       map((response) => response.items),
     );
   }

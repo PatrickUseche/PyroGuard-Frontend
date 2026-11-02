@@ -69,7 +69,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(nodes): ubicación y fecha de registro en el detalle del nodo [5.5]
 - [x] fix(nodes): mostrar el riesgo de un nodo UNKNOWN como «sin datos» y no como normal [5.6]
 - [x] feat(readings): filtro por rango de fechas en la tabla de lecturas [5.7]
-- [ ] feat(charts): filtro por rango de fechas y selector de variables en el gráfico [5.8]
+- [x] feat(charts): filtro por rango de fechas y selector de variables en el gráfico [5.8]
 - [ ] feat(readings): versión del modelo y probabilidad visibles, sin depender del tooltip [5.9]
 - [ ] feat(dashboard): leyenda de categorías NORMAL, WARNING y FIRE y probabilidad de IA en cada nodo [5.10]
 - [ ] feat(map): dependencia Leaflet y componente de mapa base [5.11]
