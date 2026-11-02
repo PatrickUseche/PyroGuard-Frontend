@@ -20,6 +20,12 @@ import { Node } from '../../shared/models/node.model';
 import { Risk } from '../../shared/models/risk.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { DashboardStore } from '../dashboard/dashboard-store';
+import {
+  filterLocatedNodes,
+  MapMarkerPresentation,
+  mapMarkerPresentation,
+  markerAccessibleHtml,
+} from './map-marker.util';
 
 @Component({
   selector: 'app-node-map',
@@ -163,12 +169,7 @@ export class NodeMap implements OnDestroy {
   private readonly keyboardMarkers = new WeakSet<HTMLElement>();
   readonly selectedNodeId = signal<string | null>(null);
   readonly locatedNodes = computed(() =>
-    this.store
-      .nodes()
-      .filter(
-        (node): node is Node & { latitude: number; longitude: number } =>
-          node.latitude !== null && node.longitude !== null,
-      ),
+    filterLocatedNodes(this.store.nodes()),
   );
   readonly selectedNode = computed(
     () => this.store.nodes().find((node) => node.node_id === this.selectedNodeId()) ?? null,
@@ -265,7 +266,7 @@ export class NodeMap implements OnDestroy {
       const longitude = node.longitude;
 
       const marker = this.markers.get(node.node_id);
-      const details = this.markerDetails(node, this.riskFor(node));
+      const details = mapMarkerPresentation(node, this.riskFor(node));
       const signature = `${details.className}:${details.label}`;
       if (marker === undefined) {
         const newMarker = L.marker([latitude, longitude], {
@@ -302,28 +303,6 @@ export class NodeMap implements OnDestroy {
     }
   }
 
-  private markerDetails(
-    node: Node,
-    risk: Risk | null,
-  ): { className: string; label: string; icon: string } {
-    if (node.connection_status === 'OFFLINE') {
-      return { className: 'offline', label: 'Desactualizado', icon: statusIcon };
-    }
-    if (node.connection_status === 'UNKNOWN') {
-      return { className: 'unknown', label: 'Sin datos', icon: statusIcon };
-    }
-    if (risk === 'NORMAL') {
-      return { className: 'normal', label: 'Normal', icon: normalIcon };
-    }
-    if (risk === 'WARNING') {
-      return { className: 'warning', label: 'Advertencia', icon: warningIcon };
-    }
-    if (risk === 'FIRE') {
-      return { className: 'fire', label: 'Incendio', icon: fireIcon };
-    }
-    return { className: 'unknown', label: 'Sin evaluar', icon: statusIcon };
-  }
-
   private setMarkerAccessibleLabel(marker: L.Marker, node: Node, riskLabel: string): void {
     const element = marker.getElement();
     if (element === undefined) {
@@ -344,25 +323,12 @@ export class NodeMap implements OnDestroy {
     }
   }
 
-  private createMarkerIcon(details: {
-    className: string;
-    label: string;
-    icon: string;
-  }): L.DivIcon {
+  private createMarkerIcon(details: MapMarkerPresentation): L.DivIcon {
     return L.divIcon({
       className: 'pyroguard-marker-container',
-      html: `<span class="pyroguard-marker ${details.className}" role="img" aria-label="${details.label}">${details.icon}<span>${details.label}</span></span>`,
+      html: markerAccessibleHtml(details),
       iconSize: [128, 40],
       iconAnchor: [64, 20],
     });
   }
 }
-
-const normalIcon =
-  '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 4 6v5c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-3Zm-3.5 9 2.3 2.3 4.8-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>';
-const warningIcon =
-  '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 2.8 20h18.4L12 3Zm0 5.2v5.3m0 3.2v.1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>';
-const fireIcon =
-  '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12.4 2.5c.6 3.5-2.9 4.7-2.9 8.1-1.1-.7-1.8-1.8-2-3.1C4.8 10 4 12.1 4 14.3a8 8 0 0 0 16 0c0-4.1-2.6-8.5-7.6-11.8Z" fill="currentColor"/></svg>';
-const statusIcon =
-  '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v5m0-8v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>';
