@@ -95,9 +95,16 @@ src/environments/  URLs de API para desarrollo y producción
 
 La aplicación usa Angular standalone, rutas con carga perezosa y modo SPA; no incluye renderizado del lado del servidor.
 
+## Compatibilidad de navegadores
+
+El proyecto no declara un `.browserslistrc` ni una lista propia en `package.json`. Angular 22 usa su política predeterminada `baseline widely available` (la versión instalada de `@angular/build` resuelve la fecha de baseline `2026-05-07`), que incluye Chrome, Edge, Firefox, Safari, iOS Safari, Android Chrome y Android Firefox. La política efectiva se puede revisar en `node_modules/@angular/build/src/utils/supported-browsers.js` y consultar con Browserslist desde la raíz del frontend.
+
 ## Despliegue en Vercel
 
-`vercel.json` configura el build con `npm run build`, publica `dist/pyro-guard-frontend/browser`, conserva el rewrite de SPA y añade cabeceras de seguridad y caché de larga duración para assets con hash. La URL de producción se toma de `src/environments/environment.ts` en el build; no se configura mediante variables de entorno de Vercel. Después de cambiar esa URL, genera y despliega un nuevo build.
+1. Importa el repositorio en Vercel y deja como raíz del proyecto la carpeta que contiene este `package.json` y `vercel.json`.
+2. Usa el comando de build `npm run build` y el directorio de salida `dist/pyro-guard-frontend/browser`; ambos están configurados en `vercel.json`. El archivo también establece el rewrite necesario para la SPA y las cabeceras de seguridad y caché.
+3. Antes de compilar, comprueba `apiUrl` en `src/environments/environment.ts`. Angular incorpora ese valor al bundle durante el build; las variables de entorno de Vercel no lo reemplazan en runtime. Si cambia el destino de API, actualiza el archivo y genera un despliegue nuevo.
+4. Verifica CORS en el backend, en `config/settings.py`: `CORS_ALLOWED_ORIGINS` incluye los orígenes locales y de Vercel conocidos, `CORS_ALLOWED_ORIGIN_REGEXES` admite los subdominios `*.vercel.app`, y `EXTRA_CORS_ORIGINS` permite añadir otros orígenes desde la configuración del backend. Ese mismo archivo define las cabeceras expuestas `X-Total-Count` y `Retry-After`.
 
 ## Seguridad
 
