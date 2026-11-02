@@ -53,7 +53,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] chore(deploy): revisar `vercel.json` y las variables de entorno de producción [4.1]
 - [x] chore(build): quitar los restos de SSR (server.ts, hidratación, script `serve:ssr`) [4.3]
 - [x] docs: README del frontend con la configuración y los comandos [4.2]
-- [ ] chore(deps): revisar y resolver las vulnerabilidades de npm audit --omit=dev sin subir versiones mayores [4.4]
+- [x] chore(deps): revisar y resolver las vulnerabilidades de npm audit --omit=dev sin subir versiones mayores [4.4]
 - [ ] docs(tasks): corregir las referencias cruzadas a las tasks del backend en TASKS.md [4.5]
 - [ ] chore(ci): workflow de GitHub Actions que corre ng build y ng test en cada pull request [4.6]
 - [ ] chore(lint): configurar angular-eslint y corregir los avisos [4.7]

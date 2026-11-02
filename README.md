@@ -66,3 +66,7 @@ La aplicación usa Angular standalone, rutas con carga perezosa y modo SPA; no i
 ## Despliegue en Vercel
 
 `vercel.json` configura el build con `npm run build`, publica `dist/pyro-guard-frontend/browser`, conserva el rewrite de SPA y añade cabeceras de seguridad y caché de larga duración para assets con hash. La URL de producción se toma de `src/environments/environment.ts` en el build; no se configura mediante variables de entorno de Vercel. Después de cambiar esa URL, genera y despliega un nuevo build.
+
+## Seguridad
+
+`npm audit --omit=dev` reporta una vulnerabilidad alta en `zod@4.6.5` (GHSA-mrhx-c7xc-m3w5), relacionada con agotamiento de memoria al validar colecciones restringidas grandes. `npm update zod` no la resuelve dentro de los rangos semver declarados; no se forzó una actualización mayor. La ruta de dependencia de producción es `@angular/forms@22.2.1 -> zod@4.6.5` (`npm ls zod --all` también muestra una ruta de desarrollo desde `@angular/cli`).
