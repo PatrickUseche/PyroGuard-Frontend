@@ -66,7 +66,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(alerts): mostrar la probabilidad en las alertas activas y en el historial [5.2]
 - [x] feat(alerts): `AlertsService.getById` y página de detalle de alerta en `/alertas/:id` [5.3]
 - [x] feat(alerts): enlazar cada alerta con su detalle y con el nodo [5.4]
-- [ ] feat(nodes): ubicación y fecha de registro en el detalle del nodo [5.5]
+- [x] feat(nodes): ubicación y fecha de registro en el detalle del nodo [5.5]
 - [ ] fix(nodes): mostrar el riesgo de un nodo UNKNOWN como «sin datos» y no como normal [5.6]
 - [ ] feat(readings): filtro por rango de fechas en la tabla de lecturas [5.7]
 - [ ] feat(charts): filtro por rango de fechas y selector de variables en el gráfico [5.8]

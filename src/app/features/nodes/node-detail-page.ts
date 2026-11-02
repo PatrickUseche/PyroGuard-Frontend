@@ -61,6 +61,16 @@ import { SeriesChart } from '../dashboard/series-chart';
             }
           </article>
           <article class="detail-card">
+            <h2>Ubicación</h2>
+            <p>{{ formatCoordinates(currentNode.latitude, currentNode.longitude) }}</p>
+          </article>
+          <article class="detail-card">
+            <h2>Fecha de registro</h2>
+            <p [attr.title]="formatFullDate(currentNode.created_at)">
+              {{ formatFullDate(currentNode.created_at) }}
+            </p>
+          </article>
+          <article class="detail-card">
             <h2>Última lectura</h2>
             @if (status()?.latest_reading; as reading) {
               <p [attr.title]="formatFullDate(reading.timestamp)">
@@ -237,6 +247,13 @@ export class NodeDetailPage {
   readonly error = signal<string | null>(null);
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;
+
+  formatCoordinates(latitude: number | null, longitude: number | null): string {
+    if (latitude === null || longitude === null) {
+      return 'Sin ubicación registrada';
+    }
+    return `Latitud: ${latitude.toFixed(5)}; Longitud: ${longitude.toFixed(5)}`;
+  }
 
   constructor() {
     this.route.paramMap

@@ -1,6 +1,6 @@
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AlertsService } from '../../core/services/alerts.service';
 import { NodesService } from '../../core/services/nodes.service';
@@ -14,6 +14,7 @@ describe('NodeDetailPage', () => {
       imports: [NodeDetailPage],
       providers: [
         { provide: PLATFORM_ID, useValue: 'server' },
+        provideRouter([]),
         {
           provide: ActivatedRoute,
           useValue: { paramMap: of(convertToParamMap({ id: 'node-1' })) },
@@ -26,8 +27,8 @@ describe('NodeDetailPage', () => {
                 node_id: 'node-1',
                 name: 'Nodo Laguna',
                 description: null,
-                latitude: null,
-                longitude: null,
+                latitude: 4.123456,
+                longitude: -74.987654,
                 is_active: true,
                 created_at: '2026-10-30T12:00:00Z',
                 last_communication: null,
@@ -62,5 +63,15 @@ describe('NodeDetailPage', () => {
     expect(text).toContain('Desconectado');
     expect(text).toContain('Desactualizado');
     expect(text).toContain('No hay alertas activas');
+    expect(text).toContain('Latitud: 4.12346; Longitud: -74.98765');
+    expect(text).toContain('Fecha de registro');
+  });
+
+  it('should explain when location is not registered', () => {
+    const fixture = TestBed.createComponent(NodeDetailPage);
+
+    expect(fixture.componentInstance.formatCoordinates(null, null)).toBe(
+      'Sin ubicación registrada',
+    );
   });
 });
