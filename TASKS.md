@@ -34,8 +34,8 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(dashboard): semáforo de riesgo y estado (ONLINE, OFFLINE, UNKNOWN) por nodo [2.2]
 - [x] feat(alerts): lista de alertas activas con nivel y número de ocurrencias [2.3]
 - [x] feat(readings): tabla de lecturas con el riesgo final y el resultado de la IA [2.4]
-- [x] feat(charts): gráfico histórico de temperatura, humo y humedad [2.5] (necesita el backend [2.3])
-- [x] feat(ui): estados de carga, error y sin datos, e indicador de salud con `/health/` [2.6] (necesita el backend [4.2])
+- [x] feat(charts): gráfico histórico de temperatura, humo y humedad [2.5] (necesita el backend [4.8])
+- [x] feat(ui): estados de carga, error y sin datos, e indicador de salud con `/health/` [2.6] (necesita el backend [6.4])
 - [x] refactor(app): eliminar la vista de depuración y `SensorService` [2.11]
 
 ## Fase 3 — Operación
@@ -54,7 +54,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] chore(build): quitar los restos de SSR (server.ts, hidratación, script `serve:ssr`) [4.3]
 - [x] docs: README del frontend con la configuración y los comandos [4.2]
 - [x] chore(deps): revisar y resolver las vulnerabilidades de npm audit --omit=dev sin subir versiones mayores [4.4]
-- [ ] docs(tasks): corregir las referencias cruzadas a las tasks del backend en TASKS.md [4.5]
+- [x] docs(tasks): corregir las referencias cruzadas a las tasks del backend en TASKS.md [4.5]
 - [ ] chore(ci): workflow de GitHub Actions que corre ng build y ng test en cada pull request [4.6]
 - [ ] chore(lint): configurar angular-eslint y corregir los avisos [4.7]
 - [ ] chore(format): script format:check con Prettier y archivos formateados [4.8]
