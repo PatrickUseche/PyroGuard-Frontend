@@ -68,6 +68,8 @@ describe('AlertDetailPage', () => {
     expect(text).toContain('Última ocurrencia');
     expect(text).toContain('Reconocida');
     expect(text).toContain('Cerrada');
+    expect((fixture.nativeElement as HTMLElement).querySelector('a[href="/nodos/node-1"]'))
+      .not.toBeNull();
     expect(text).toContain('Reconocer');
     expect(text).toContain('Cerrar');
   });

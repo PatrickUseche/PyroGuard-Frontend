@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { EMPTY, Subject, catchError, startWith, switchMap } from 'rxjs';
 import { AlertsService, PaginatedAlerts } from '../../core/services/alerts.service';
 import { NodesService } from '../../core/services/nodes.service';
@@ -16,7 +17,7 @@ type AlertStatusFilter = '' | AlertStatus;
 @Component({
   selector: 'app-alerts-history-page',
   standalone: true,
-  imports: [RiskBadge, StateMessage],
+  imports: [RiskBadge, RouterLink, StateMessage],
   template: `
     <section class="history-page" aria-labelledby="history-title">
       <header class="page-heading">
@@ -75,7 +76,7 @@ type AlertStatusFilter = '' | AlertStatus;
                 <app-risk-badge [risk]="alert.level" />
                 <div>
                   <div class="alert-meta">
-                    <strong>{{ alert.node_id }}</strong>
+                    <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
                     <span>{{ statusLabel(alert.status) }}</span>
                     <span>×{{ alert.occurrences }} ocurrencias</span>
                     @if (alert.probability !== null) {
@@ -85,6 +86,7 @@ type AlertStatusFilter = '' | AlertStatus;
                   <p>{{ alert.message }}</p>
                 </div>
               </div>
+              <a class="detail-link" [routerLink]="['/alertas', alert.id]">Ver detalle</a>
               <time [attr.datetime]="alert.last_seen_at" [attr.title]="formatFullDate(alert.last_seen_at)">
                 {{ formatRelativeTime(alert.last_seen_at) }}
               </time>
@@ -209,6 +211,14 @@ type AlertStatusFilter = '' | AlertStatus;
       color: var(--color-text-muted);
       font-size: 0.85rem;
       white-space: nowrap;
+    }
+
+    .alert-card a {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      color: var(--color-link);
+      font-weight: 650;
     }
 
     .pagination {

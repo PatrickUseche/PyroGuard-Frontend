@@ -29,7 +29,9 @@ import { AlertActionsService } from './alert-actions.service';
         <header class="alert-heading">
           <div>
             <p class="eyebrow">Detalle de alerta #{{ currentAlert.id }}</p>
-            <h1 id="alert-title">{{ currentAlert.node_id }}</h1>
+            <h1 id="alert-title">
+              <a class="node-link" [routerLink]="['/nodos', currentAlert.node_id]">{{ currentAlert.node_id }}</a>
+            </h1>
           </div>
           <app-risk-badge [risk]="currentAlert.level" />
         </header>
@@ -120,6 +122,13 @@ import { AlertActionsService } from './alert-actions.service';
       margin-bottom: var(--space-2);
       color: var(--color-text-muted);
       font-size: 0.85rem;
+    }
+
+    .node-link {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      color: var(--color-link);
     }
 
     .detail-grid {

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { Alert } from '../../shared/models/alert.model';
 import { ALERT_STATUS_LABELS } from '../../shared/models/alert-status.model';
@@ -12,7 +13,7 @@ import { DashboardStore } from './dashboard-store';
 @Component({
   selector: 'app-active-alerts',
   standalone: true,
-  imports: [RiskBadge, StateMessage],
+  imports: [RiskBadge, RouterLink, StateMessage],
   template: `
     <section class="alerts-section" aria-labelledby="alerts-title">
       <header class="section-heading">
@@ -31,7 +32,7 @@ import { DashboardStore } from './dashboard-store';
                 <app-risk-badge [risk]="alert.level" />
                 <div class="alert-content">
                   <div class="alert-meta">
-                    <strong>{{ alert.node_id }}</strong>
+                    <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
                     <span class="status">{{ statusLabel(alert) }}</span>
                     <span class="occurrences">×{{ alert.occurrences }} ocurrencias</span>
                     @if (alert.probability !== null) {
@@ -41,6 +42,7 @@ import { DashboardStore } from './dashboard-store';
                   <p>{{ alert.message }}</p>
                 </div>
               </div>
+              <a class="detail-link" [routerLink]="['/alertas', alert.id]">Ver detalle</a>
               @if (auth.isAuthenticated() && alert.status !== 'CLOSED') {
                 <div class="alert-actions">
                   @if (alert.status === 'ACTIVE') {
@@ -120,6 +122,14 @@ import { DashboardStore } from './dashboard-store';
     .count,
     time {
       color: var(--color-text-muted);
+    }
+
+    .alert-card a {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      color: var(--color-link);
+      font-weight: 650;
       font-size: 0.875rem;
       white-space: nowrap;
     }

@@ -1,5 +1,6 @@
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AlertsService } from '../../core/services/alerts.service';
 import { NodesService } from '../../core/services/nodes.service';
@@ -31,6 +32,7 @@ describe('AlertsHistoryPage', () => {
         { provide: PLATFORM_ID, useValue: 'server' },
         { provide: AlertsService, useValue: { getPage } },
         { provide: NodesService, useValue: { getAll: () => of([]) } },
+        provideRouter([]),
       ],
     }).compileComponents();
   });
@@ -45,6 +47,10 @@ describe('AlertsHistoryPage', () => {
     expect(text).toContain('×5 ocurrencias');
     expect(text).toContain('Prob.');
     expect(text).toContain('90');
+    expect((fixture.nativeElement as HTMLElement).querySelector('a[href="/alertas/8"]')?.textContent)
+      .toContain('Ver detalle');
+    expect((fixture.nativeElement as HTMLElement).querySelector('a[href="/nodos/node-1"]')?.textContent)
+      .toContain('node-1');
     expect(getPage).toHaveBeenCalledWith({ limit: 20, offset: 0 });
 
     const statusSelect = document.createElement('select');

@@ -87,6 +87,8 @@ describe('ActiveAlerts', () => {
     expect(cards[0].textContent).toContain('×4 ocurrencias');
     expect(cards[0].textContent).toContain('Prob.');
     expect(cards[0].textContent).toContain('90');
+    expect(cards[0].querySelector('a[href="/alertas/2"]')?.textContent).toContain('Ver detalle');
+    expect(cards[0].querySelector('a[href="/nodos/node-fire"]')?.textContent).toContain('node-fire');
     expect(cards[1].textContent).toContain('node-warning');
     expect(cards[1].textContent).toContain('70');
   });
