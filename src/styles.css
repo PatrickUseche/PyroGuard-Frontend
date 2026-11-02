@@ -19,6 +19,8 @@
   --color-text-muted: #4b5b69;
   --color-border: #c8d2da;
   --color-focus: #0759a5;
+  --color-primary: #0759a5;
+  --color-on-primary: #ffffff;
   --color-link: #0759a5;
   --color-shadow: 0 2px 8px rgb(23 33 43 / 8%);
 
@@ -50,6 +52,8 @@
     --color-text-muted: #bdc9d2;
     --color-border: #42515d;
     --color-focus: #8bc6ff;
+    --color-primary: #8bc6ff;
+    --color-on-primary: #10171d;
     --color-link: #8bc6ff;
     --color-shadow: none;
 

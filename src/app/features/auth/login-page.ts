@@ -100,9 +100,9 @@ import { AuthService } from '../../core/services/auth.service';
 
     button {
       margin-top: var(--space-3);
-      border-color: var(--color-focus);
-      background: var(--color-focus);
-      color: #fff;
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+      color: var(--color-on-primary);
       cursor: pointer;
       font-weight: 700;
     }

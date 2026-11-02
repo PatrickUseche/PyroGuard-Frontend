@@ -62,7 +62,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 
 ## Fase 5 — Brechas de la auditoría
 
-- [ ] style(a11y): corregir el contraste del botón primario en modo oscuro con tokens propios [5.1]
+- [x] style(a11y): corregir el contraste del botón primario en modo oscuro con tokens propios [5.1]
 - [ ] feat(alerts): mostrar la probabilidad en las alertas activas y en el historial [5.2]
 - [ ] feat(alerts): `AlertsService.getById` y página de detalle de alerta en `/alertas/:id` [5.3]
 - [ ] feat(alerts): enlazar cada alerta con su detalle y con el nodo [5.4]
