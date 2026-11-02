@@ -40,6 +40,35 @@ import { DashboardStore } from './dashboard-store';
         </label>
       </header>
 
+      <form class="date-filters" aria-label="Filtrar lecturas por fecha" (ngSubmit)="applyDateFilter()">
+        <label>
+          <span>Desde</span>
+          <input
+            type="datetime-local"
+            [value]="fromDate()"
+            (input)="onFromDateChange($event)"
+          >
+        </label>
+        <label>
+          <span>Hasta</span>
+          <input
+            type="datetime-local"
+            [value]="toDate()"
+            (input)="onToDateChange($event)"
+          >
+        </label>
+        <button type="submit">Aplicar fechas</button>
+        <button type="button" class="clear-filter" (click)="clearDateFilter()">Limpiar</button>
+      </form>
+      @if (filterError()) {
+        <p class="filter-error" role="alert">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3 2.8 20h18.4L12 3Zm0 5.2v5.3m0 3.2v.1" fill="none" stroke="currentColor" stroke-width="2" />
+          </svg>
+          {{ filterError() }}
+        </p>
+      }
+
       @if (loading()) {
         <div class="table-skeleton" aria-label="Cargando lecturas" aria-hidden="true">
           <span></span>
@@ -52,7 +81,7 @@ import { DashboardStore } from './dashboard-store';
         <app-state-message
           kind="empty"
           title="Sin lecturas"
-          message="No hay lecturas para los filtros seleccionados."
+          message="No hay registros en este período."
         />
       } @else {
         <div class="table-scroll">
@@ -173,7 +202,24 @@ import { DashboardStore } from './dashboard-store';
       font-weight: 650;
     }
 
+    .date-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: var(--space-3);
+    }
+
+    .date-filters label {
+      display: grid;
+      min-width: min(220px, 100%);
+      gap: var(--space-1);
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      font-weight: 650;
+    }
+
     select,
+    input,
     button {
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
@@ -268,6 +314,24 @@ import { DashboardStore } from './dashboard-store';
       cursor: pointer;
       color: var(--color-text);
       font-weight: 650;
+    }
+
+    .clear-filter {
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+
+    .filter-error {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--risk-fire-text);
+    }
+
+    .filter-error svg {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
     }
 
     button:disabled {
@@ -377,6 +441,11 @@ export class ReadingsTable {
   readonly total = signal(0);
   readonly offset = signal(0);
   readonly selectedNode = signal('');
+  readonly fromDate = signal('');
+  readonly toDate = signal('');
+  private readonly appliedFromDate = signal('');
+  private readonly appliedToDate = signal('');
+  readonly filterError = signal<string | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly pageSize = 20;
@@ -394,6 +463,12 @@ export class ReadingsTable {
             this.error.set(null);
             return this.readingsService.getAll({
               ...(this.selectedNode() === '' ? {} : { node_id: this.selectedNode() }),
+              ...(this.appliedFromDate() === ''
+                ? {}
+                : { from: toIsoDateTime(this.appliedFromDate()) }),
+              ...(this.appliedToDate() === ''
+                ? {}
+                : { to: toIsoDateTime(this.appliedToDate()) }),
               limit: this.pageSize,
               offset: this.offset(),
               order: 'desc',
@@ -428,6 +503,45 @@ export class ReadingsTable {
     }
 
     this.selectedNode.set(target.value);
+    this.offset.set(0);
+    this.refreshRequests.next();
+  }
+
+  onFromDateChange(event: Event): void {
+    this.fromDate.set(inputValue(event));
+    this.filterError.set(null);
+  }
+
+  onToDateChange(event: Event): void {
+    this.toDate.set(inputValue(event));
+    this.filterError.set(null);
+  }
+
+  applyDateFilter(): void {
+    const from = dateTimestamp(this.fromDate());
+    const to = dateTimestamp(this.toDate());
+    if ((this.fromDate() !== '' && from === null) || (this.toDate() !== '' && to === null)) {
+      this.filterError.set('Ingresa fechas válidas para el período.');
+      return;
+    }
+    if (from !== null && to !== null && from > to) {
+      this.filterError.set('La fecha Desde debe ser anterior o igual a Hasta.');
+      return;
+    }
+
+    this.filterError.set(null);
+    this.appliedFromDate.set(this.fromDate());
+    this.appliedToDate.set(this.toDate());
+    this.offset.set(0);
+    this.refreshRequests.next();
+  }
+
+  clearDateFilter(): void {
+    this.fromDate.set('');
+    this.toDate.set('');
+    this.appliedFromDate.set('');
+    this.appliedToDate.set('');
+    this.filterError.set(null);
     this.offset.set(0);
     this.refreshRequests.next();
   }
@@ -475,6 +589,23 @@ export class ReadingsTable {
     }
   }
 
+}
+
+function inputValue(event: Event): string {
+  return event.target instanceof HTMLInputElement ? event.target.value : '';
+}
+
+function dateTimestamp(value: string): number | null {
+  if (value === '') {
+    return null;
+  }
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function toIsoDateTime(value: string): string {
+  const timestamp = dateTimestamp(value);
+  return timestamp === null ? '' : new Date(timestamp).toISOString();
 }
 
 function apiErrorMessage(error: unknown): string {

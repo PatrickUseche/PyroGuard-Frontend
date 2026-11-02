@@ -153,4 +153,54 @@ describe('ReadingsTable', () => {
     expect(text).toContain('Incendio');
     expect(text).toContain('Advertencia');
   });
+
+  it('should apply valid date bounds as ISO 8601 and clear them on request', () => {
+    const fixture = TestBed.createComponent(ReadingsTable);
+    const component = fixture.componentInstance;
+    component.fromDate.set('2026-10-30T10:00');
+    component.toDate.set('2026-10-30T12:00');
+
+    component.applyDateFilter();
+
+    expect(component.filterError()).toBeNull();
+    expect(getAll).toHaveBeenLastCalledWith({
+      from: new Date('2026-10-30T10:00').toISOString(),
+      to: new Date('2026-10-30T12:00').toISOString(),
+      limit: 20,
+      offset: 0,
+      order: 'desc',
+    });
+
+    component.clearDateFilter();
+    expect(component.fromDate()).toBe('');
+    expect(component.toDate()).toBe('');
+    expect(getAll).toHaveBeenLastCalledWith({
+      limit: 20,
+      offset: 0,
+      order: 'desc',
+    });
+  });
+
+  it('should reject a start date later than the end date without requesting data', () => {
+    const fixture = TestBed.createComponent(ReadingsTable);
+    const component = fixture.componentInstance;
+    const initialRequestCount = getAll.mock.calls.length;
+    component.fromDate.set('2026-10-30T12:00');
+    component.toDate.set('2026-10-30T10:00');
+
+    component.applyDateFilter();
+
+    expect(component.filterError()).toBe('La fecha Desde debe ser anterior o igual a Hasta.');
+    expect(getAll).toHaveBeenCalledTimes(initialRequestCount);
+  });
+
+  it('should explain when the selected period has no readings', () => {
+    getAll.mockReturnValue(of({ items: [], total: 0 }));
+    const fixture = TestBed.createComponent(ReadingsTable);
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      'No hay registros en este período.',
+    );
+  });
 });
