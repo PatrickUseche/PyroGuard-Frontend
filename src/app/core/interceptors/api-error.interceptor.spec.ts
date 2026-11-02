@@ -24,6 +24,7 @@ describe('apiErrorInterceptor', () => {
   it.each([
     { status: 401, kind: 'unauthorized' },
     { status: 409, kind: 'conflict' },
+    { status: 404, kind: 'not-found' },
     { status: 429, kind: 'throttled' },
     { status: 503, kind: 'server' },
     { status: 400, kind: 'unknown' },

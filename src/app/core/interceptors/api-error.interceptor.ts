@@ -47,6 +47,13 @@ function toApiError(error: unknown): ApiError {
     };
   }
 
+  if (error.status === 404) {
+    return {
+      kind: 'not-found',
+      message: 'El recurso solicitado no existe.',
+    };
+  }
+
   if (error.status >= 500) {
     return {
       kind: 'server',

@@ -32,6 +32,14 @@ describe('AlertsService', () => {
     request.flush([]);
   });
 
+  it('should fetch an alert by id', () => {
+    service.getById(8).subscribe();
+
+    const request = httpTestingController.expectOne('https://api.test/api/alerts/8/');
+    expect(request.request.method).toBe('GET');
+    request.flush({ id: 8 });
+  });
+
   it('should send alert filters', () => {
     service
       .getAll({

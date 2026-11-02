@@ -64,7 +64,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 
 - [x] style(a11y): corregir el contraste del botón primario en modo oscuro con tokens propios [5.1]
 - [x] feat(alerts): mostrar la probabilidad en las alertas activas y en el historial [5.2]
-- [ ] feat(alerts): `AlertsService.getById` y página de detalle de alerta en `/alertas/:id` [5.3]
+- [x] feat(alerts): `AlertsService.getById` y página de detalle de alerta en `/alertas/:id` [5.3]
 - [ ] feat(alerts): enlazar cada alerta con su detalle y con el nodo [5.4]
 - [ ] feat(nodes): ubicación y fecha de registro en el detalle del nodo [5.5]
 - [ ] fix(nodes): mostrar el riesgo de un nodo UNKNOWN como «sin datos» y no como normal [5.6]

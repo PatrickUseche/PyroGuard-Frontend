@@ -37,6 +37,10 @@ export class AlertsService {
     });
   }
 
+  getById(id: number): Observable<Alert> {
+    return this.http.get<Alert>(`${this.apiBaseUrl}/alerts/${id}/`);
+  }
+
   getPage(filters: AlertFilters = {}): Observable<PaginatedAlerts> {
     return this.http
       .get<Alert[]>(`${this.apiBaseUrl}/alerts/`, {

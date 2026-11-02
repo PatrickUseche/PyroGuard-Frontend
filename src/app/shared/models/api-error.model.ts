@@ -3,6 +3,7 @@ export type ApiErrorKind =
   | 'unauthorized'
   | 'throttled'
   | 'conflict'
+  | 'not-found'
   | 'server'
   | 'unknown';
 
