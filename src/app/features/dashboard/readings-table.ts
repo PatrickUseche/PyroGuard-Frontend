@@ -42,22 +42,18 @@ import { DashboardStore } from './dashboard-store';
         </label>
       </header>
 
-      <form class="date-filters" aria-label="Filtrar lecturas por fecha" (ngSubmit)="applyDateFilter()">
+      <form
+        class="date-filters"
+        aria-label="Filtrar lecturas por fecha"
+        (ngSubmit)="applyDateFilter()"
+      >
         <label>
           <span>Desde</span>
-          <input
-            type="datetime-local"
-            [value]="fromDate()"
-            (input)="onFromDateChange($event)"
-          >
+          <input type="datetime-local" [value]="fromDate()" (input)="onFromDateChange($event)" />
         </label>
         <label>
           <span>Hasta</span>
-          <input
-            type="datetime-local"
-            [value]="toDate()"
-            (input)="onToDateChange($event)"
-          >
+          <input type="datetime-local" [value]="toDate()" (input)="onToDateChange($event)" />
         </label>
         <button type="submit">Aplicar fechas</button>
         <button type="button" class="clear-filter" (click)="clearDateFilter()">Limpiar</button>
@@ -65,7 +61,12 @@ import { DashboardStore } from './dashboard-store';
       @if (filterError()) {
         <p class="filter-error" role="alert">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M12 3 2.8 20h18.4L12 3Zm0 5.2v5.3m0 3.2v.1" fill="none" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M12 3 2.8 20h18.4L12 3Zm0 5.2v5.3m0 3.2v.1"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            />
           </svg>
           {{ filterError() }}
         </p>
@@ -78,7 +79,11 @@ import { DashboardStore } from './dashboard-store';
           <span></span>
         </div>
       } @else if (error()) {
-        <app-state-message kind="error" title="No se pudieron cargar las lecturas" [message]="error() ?? ''" />
+        <app-state-message
+          kind="error"
+          title="No se pudieron cargar las lecturas"
+          [message]="error() ?? ''"
+        />
       } @else if (readings().length === 0) {
         <app-state-message
           kind="empty"
@@ -88,7 +93,9 @@ import { DashboardStore } from './dashboard-store';
       } @else {
         <div class="table-scroll">
           <table>
-            <caption>Lecturas de sensores y evaluación final de riesgo</caption>
+            <caption>
+              Lecturas de sensores y evaluación final de riesgo
+            </caption>
             <thead>
               <tr>
                 <th scope="col">Nodo</th>
@@ -110,7 +117,10 @@ import { DashboardStore } from './dashboard-store';
                     <app-simulated-badge [nodeId]="reading.node_id" />
                   </td>
                   <td data-label="Fecha">
-                    <time [attr.datetime]="reading.timestamp" [attr.title]="formatFullDate(reading.timestamp)">
+                    <time
+                      [attr.datetime]="reading.timestamp"
+                      [attr.title]="formatFullDate(reading.timestamp)"
+                    >
                       {{ formatRelativeTime(reading.timestamp) }}
                     </time>
                   </td>
@@ -129,8 +139,20 @@ import { DashboardStore } from './dashboard-store';
                         </svg>
                       } @else {
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2" />
-                          <path d="m8 8 8 8" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="8"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          />
+                          <path
+                            d="m8 8 8 8"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-width="2"
+                          />
                         </svg>
                       }
                       {{ reading.flame ? 'Sí' : 'No' }}
@@ -141,14 +163,21 @@ import { DashboardStore } from './dashboard-store';
                   </td>
                   <td data-label="IA">
                     @if (reading.ai?.status === 'OK' && reading.ai; as ai) {
-                      <div class="ai-result" [attr.title]="ai.model_version ?? 'Versión del modelo desconocida'">
+                      <div
+                        class="ai-result"
+                        [attr.title]="ai.model_version ?? 'Versión del modelo desconocida'"
+                      >
                         <app-risk-badge [risk]="ai.risk_level" />
                         <span>{{ formatProbability(ai.probability) }}</span>
                         <span class="ai-model">
                           Modelo: {{ ai.model_version ?? 'Versión desconocida' }}
                         </span>
                       </div>
-                      @if (reading.risk_level !== null && ai.risk_level !== null && reading.risk_level !== ai.risk_level) {
+                      @if (
+                        reading.risk_level !== null &&
+                        ai.risk_level !== null &&
+                        reading.risk_level !== ai.risk_level
+                      ) {
                         <span class="adjusted">Ajustado por reglas de seguridad</span>
                       }
                     } @else {
@@ -165,7 +194,9 @@ import { DashboardStore } from './dashboard-store';
         <nav class="pagination" aria-label="Paginación de lecturas">
           <span>{{ total() }} lecturas</span>
           <div>
-            <button type="button" [disabled]="offset() === 0" (click)="previousPage()">Anterior</button>
+            <button type="button" [disabled]="offset() === 0" (click)="previousPage()">
+              Anterior
+            </button>
             <span>Página {{ currentPage() }}</span>
             <button type="button" [disabled]="offset() + pageSize >= total()" (click)="nextPage()">
               Siguiente
@@ -473,9 +504,7 @@ export class ReadingsTable {
             ...(this.appliedFromDate() === ''
               ? {}
               : { from: toIsoDateTime(this.appliedFromDate()) }),
-            ...(this.appliedToDate() === ''
-              ? {}
-              : { to: toIsoDateTime(this.appliedToDate()) }),
+            ...(this.appliedToDate() === '' ? {} : { to: toIsoDateTime(this.appliedToDate()) }),
             limit: this.pageSize,
             offset: this.offset(),
             order: 'desc',
@@ -590,7 +619,6 @@ export class ReadingsTable {
         return 'resultado disponible';
     }
   }
-
 }
 
 function inputValue(event: Event): string {

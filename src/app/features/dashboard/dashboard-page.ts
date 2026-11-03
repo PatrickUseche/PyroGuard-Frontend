@@ -22,7 +22,11 @@ import { SeriesChart } from './series-chart';
         </div>
         <div class="heading-status">
           @if (store.lastUpdated(); as updatedAt) {
-            <time class="updated" [attr.datetime]="updatedAt.toISOString()" [attr.title]="formatFullDate(updatedAt.toISOString())">
+            <time
+              class="updated"
+              [attr.datetime]="updatedAt.toISOString()"
+              [attr.title]="formatFullDate(updatedAt.toISOString())"
+            >
               Actualizado {{ formatRelativeTime(updatedAt.toISOString()) }}
             </time>
           }
@@ -136,7 +140,11 @@ import { SeriesChart } from './series-chart';
             }
           </div>
         } @else if (store.error()) {
-          <app-state-message kind="error" title="No se pudo cargar el resumen" [message]="store.error() ?? ''" />
+          <app-state-message
+            kind="error"
+            title="No se pudo cargar el resumen"
+            [message]="store.error() ?? ''"
+          />
         } @else {
           <app-state-message
             kind="empty"

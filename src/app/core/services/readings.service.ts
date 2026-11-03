@@ -63,9 +63,7 @@ export class ReadingsService {
     const items = response.body;
     const totalHeader = response.headers.get('X-Total-Count');
     const total =
-      totalHeader !== null && /^\d+$/.test(totalHeader.trim())
-        ? Number(totalHeader)
-        : Number.NaN;
+      totalHeader !== null && /^\d+$/.test(totalHeader.trim()) ? Number(totalHeader) : Number.NaN;
 
     if (items === null || !Number.isSafeInteger(total) || total < 0) {
       throw {

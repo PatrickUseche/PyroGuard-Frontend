@@ -35,9 +35,7 @@ describe('apiErrorInterceptor', () => {
       error: (error: ApiError) => (actualError = error),
     });
 
-    httpTestingController
-      .expectOne('/test')
-      .flush({}, { status, statusText: 'Error' });
+    httpTestingController.expectOne('/test').flush({}, { status, statusText: 'Error' });
 
     expect(actualError?.kind).toBe(kind);
     expect(actualError?.message.length).toBeGreaterThan(0);
@@ -48,9 +46,7 @@ describe('apiErrorInterceptor', () => {
     http.get('/network-error').subscribe({
       error: (error: ApiError) => (networkError = error),
     });
-    httpTestingController
-      .expectOne('/network-error')
-      .error(new ProgressEvent('error'));
+    httpTestingController.expectOne('/network-error').error(new ProgressEvent('error'));
     expect(networkError?.kind).toBe('network');
 
     let throttledError: ApiError | undefined;

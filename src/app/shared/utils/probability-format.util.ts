@@ -4,5 +4,7 @@ const probabilityFormatter = new Intl.NumberFormat('es-CO', {
 });
 
 export function formatProbability(probability: number | null): string {
-  return probability === null ? 'Probabilidad no disponible' : probabilityFormatter.format(probability);
+  return probability === null
+    ? 'Probabilidad no disponible'
+    : probabilityFormatter.format(probability);
 }

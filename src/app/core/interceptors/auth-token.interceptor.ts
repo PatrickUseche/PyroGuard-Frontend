@@ -48,10 +48,5 @@ function isUnauthorized(error: unknown): boolean {
     return true;
   }
 
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'status' in error &&
-    error.status === 401
-  );
+  return typeof error === 'object' && error !== null && 'status' in error && error.status === 401;
 }

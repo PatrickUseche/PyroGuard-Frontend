@@ -11,7 +11,14 @@ describe('HealthIndicator', () => {
       imports: [HealthIndicator],
       providers: [
         { provide: PLATFORM_ID, useValue: 'server' },
-        { provide: HealthService, useValue: { check: () => { throw new Error('not called'); } } },
+        {
+          provide: HealthService,
+          useValue: {
+            check: () => {
+              throw new Error('not called');
+            },
+          },
+        },
         {
           provide: DashboardStore,
           useValue: { lastUpdated: signal(new Date()) },

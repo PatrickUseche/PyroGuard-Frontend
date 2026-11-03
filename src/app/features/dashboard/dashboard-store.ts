@@ -64,7 +64,8 @@ export class DashboardStore {
   readonly retryingConnection = this.retryingConnectionState.asReadonly();
   readonly requestActive = this.requestActiveState.asReadonly();
   readonly hasData = computed(
-    () => this.summaryState() !== null || this.nodesState().length > 0 || this.alertsState().length > 0,
+    () =>
+      this.summaryState() !== null || this.nodesState().length > 0 || this.alertsState().length > 0,
   );
 
   replaceAlerts(alerts: Alert[]): void {

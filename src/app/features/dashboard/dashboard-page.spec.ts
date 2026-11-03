@@ -60,7 +60,10 @@ describe('DashboardPage', () => {
           },
         },
         { provide: AuthService, useValue: { isAuthenticated: signal(false) } },
-        { provide: AlertsService, useValue: { acknowledge: () => of({}), close: () => of({}), getActive: () => of([]) } },
+        {
+          provide: AlertsService,
+          useValue: { acknowledge: () => of({}), close: () => of({}), getActive: () => of([]) },
+        },
       ],
     }).compileComponents();
   });

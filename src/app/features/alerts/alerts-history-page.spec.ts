@@ -47,11 +47,13 @@ describe('AlertsHistoryPage', () => {
     expect(text).toContain('×5 ocurrencias');
     expect(text).toContain('Prob.');
     expect(text).toContain('90');
-    expect((fixture.nativeElement as HTMLElement).querySelector('a[href="/alertas/8"]')?.textContent)
-      .toContain('Ver detalle');
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('a[href="/alertas/8"]')?.textContent,
+    ).toContain('Ver detalle');
     expect(text).toContain('Simulado');
-    expect((fixture.nativeElement as HTMLElement).querySelector('a[href="/nodos/SIM-005"]')?.textContent)
-      .toContain('SIM-005');
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('a[href="/nodos/SIM-005"]')?.textContent,
+    ).toContain('SIM-005');
     expect(getPage).toHaveBeenCalledWith({ limit: 20, offset: 0 });
 
     const statusSelect = document.createElement('select');

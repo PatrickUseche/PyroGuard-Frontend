@@ -75,15 +75,11 @@ export class HealthIndicator {
   readonly displayStatus = computed<HealthDisplay>(() => {
     const health = this.health();
     const lastUpdated = this.store.lastUpdated();
-    const hasRecentCycle =
-      lastUpdated !== null && Date.now() - lastUpdated.getTime() <= 30_000;
+    const hasRecentCycle = lastUpdated !== null && Date.now() - lastUpdated.getTime() <= 30_000;
     if (health === 'checking') {
       return hasRecentCycle ? 'recent' : 'checking';
     }
-    if (
-      health === 'offline' &&
-      hasRecentCycle
-    ) {
+    if (health === 'offline' && hasRecentCycle) {
       return 'recent';
     }
     return health;
@@ -121,9 +117,7 @@ export class HealthIndicator {
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       createVisiblePolling(30_000, () => this.healthService.check())
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-        )
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((result) => {
           this.health.set(result.ok ? result.value : 'unknown');
         });

@@ -59,18 +59,16 @@ describe('DashboardStore', () => {
   });
 
   it('should retain successful data and expose translated partial errors', () => {
-    httpTestingController
-      .expectOne('https://api.test/api/dashboard/summary/')
-      .flush({
-        total_nodes: 0,
-        nodes_online: 0,
-        nodes_offline: 0,
-        nodes_unknown: 0,
-        nodes_at_risk: 0,
-        active_alerts: 0,
-        overall_risk: 'NORMAL',
-        latest_readings: [],
-      });
+    httpTestingController.expectOne('https://api.test/api/dashboard/summary/').flush({
+      total_nodes: 0,
+      nodes_online: 0,
+      nodes_offline: 0,
+      nodes_unknown: 0,
+      nodes_at_risk: 0,
+      active_alerts: 0,
+      overall_risk: 'NORMAL',
+      latest_readings: [],
+    });
     httpTestingController
       .expectOne('https://api.test/api/nodes/')
       .flush({}, { status: 503, statusText: 'Unavailable' });
@@ -172,10 +170,9 @@ describe('DashboardStore', () => {
       'https://api.test/api/nodes/',
       'https://api.test/api/alerts/active/',
     ]) {
-      httpTestingController.expectOne(url).flush(
-        { detail: 'Network error' },
-        { status: 0, statusText: 'Unknown Error' },
-      );
+      httpTestingController
+        .expectOne(url)
+        .flush({ detail: 'Network error' }, { status: 0, statusText: 'Unknown Error' });
     }
   }
 

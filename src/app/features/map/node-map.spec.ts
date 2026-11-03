@@ -3,11 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Node } from '../../shared/models/node.model';
 import { DashboardStore } from '../dashboard/dashboard-store';
-import {
-  filterLocatedNodes,
-  mapMarkerPresentation,
-  markerAccessibleHtml,
-} from './map-marker.util';
+import { filterLocatedNodes, mapMarkerPresentation, markerAccessibleHtml } from './map-marker.util';
 import { NodeMap } from './node-map';
 
 describe('NodeMap', () => {
@@ -46,18 +42,18 @@ describe('NodeMap', () => {
     { status: 'ONLINE', risk: 'FIRE', className: 'fire', label: 'Incendio' },
     { status: 'OFFLINE', risk: 'FIRE', className: 'offline', label: 'Desactualizado' },
     { status: 'UNKNOWN', risk: 'NORMAL', className: 'unknown', label: 'Sin datos' },
-  ] as const)('should render $label with an icon and accessible text', ({ status, risk, className, label }) => {
-    const presentation = mapMarkerPresentation(
-      createNode('node-1', status, risk),
-      risk,
-    );
-    const html = markerAccessibleHtml(presentation);
+  ] as const)(
+    'should render $label with an icon and accessible text',
+    ({ status, risk, className, label }) => {
+      const presentation = mapMarkerPresentation(createNode('node-1', status, risk), risk);
+      const html = markerAccessibleHtml(presentation);
 
-    expect(presentation.className).toBe(className);
-    expect(html).toContain('<svg');
-    expect(html).toContain(`aria-label="${label}"`);
-    expect(html).toContain(`>${label}</span>`);
-  });
+      expect(presentation.className).toBe(className);
+      expect(html).toContain('<svg');
+      expect(html).toContain(`aria-label="${label}"`);
+      expect(html).toContain(`>${label}</span>`);
+    },
+  );
 
   it('should mark simulated nodes in the visible and accessible map label', () => {
     const presentation = mapMarkerPresentation(createNode('SIM-007', 'ONLINE', 'NORMAL'), 'NORMAL');

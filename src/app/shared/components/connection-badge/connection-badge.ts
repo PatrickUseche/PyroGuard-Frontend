@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import {
-  CONNECTION_STATUS_LABELS,
-  ConnectionStatus,
-} from '../../models/connection-status.model';
+import { CONNECTION_STATUS_LABELS, ConnectionStatus } from '../../models/connection-status.model';
 
 @Component({
   selector: 'app-connection-badge',
   standalone: true,
   template: `
-    <span class="badge" [class]="status().toLowerCase()" role="status" [attr.aria-label]="ariaLabel()">
+    <span
+      class="badge"
+      [class]="status().toLowerCase()"
+      role="status"
+      [attr.aria-label]="ariaLabel()"
+    >
       @switch (status()) {
         @case ('ONLINE') {
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -38,7 +40,13 @@ import {
         @case ('UNKNOWN') {
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
-            <path d="M9.8 9a2.3 2.3 0 1 1 3.8 1.7c-1.2 1-1.6 1.3-1.6 2.8m0 3v.1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+            <path
+              d="M9.8 9a2.3 2.3 0 1 1 3.8 1.7c-1.2 1-1.6 1.3-1.6 2.8m0 3v.1"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="2"
+            />
           </svg>
         }
       }

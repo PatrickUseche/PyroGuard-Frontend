@@ -19,11 +19,23 @@ import { AlertActionsService } from './alert-actions.service';
   imports: [RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     @if (loading()) {
-      <app-state-message kind="loading" title="Cargando alerta" message="Consultando sus detalles." />
+      <app-state-message
+        kind="loading"
+        title="Cargando alerta"
+        message="Consultando sus detalles."
+      />
     } @else if (notFound()) {
-      <app-state-message kind="empty" title="La alerta no existe" message="No se encontró una alerta con ese identificador." />
+      <app-state-message
+        kind="empty"
+        title="La alerta no existe"
+        message="No se encontró una alerta con ese identificador."
+      />
     } @else if (error()) {
-      <app-state-message kind="error" title="No se pudo cargar la alerta" [message]="error() ?? ''" />
+      <app-state-message
+        kind="error"
+        title="No se pudo cargar la alerta"
+        [message]="error() ?? ''"
+      />
     } @else if (alert(); as currentAlert) {
       <a class="back-link" routerLink="/alertas">← Volver al historial</a>
       <section class="alert-detail" aria-labelledby="alert-title">
@@ -31,7 +43,9 @@ import { AlertActionsService } from './alert-actions.service';
           <div>
             <p class="eyebrow">Detalle de alerta #{{ currentAlert.id }}</p>
             <h1 id="alert-title">
-              <a class="node-link" [routerLink]="['/nodos', currentAlert.node_id]">{{ currentAlert.node_id }}</a>
+              <a class="node-link" [routerLink]="['/nodos', currentAlert.node_id]">{{
+                currentAlert.node_id
+              }}</a>
               <app-simulated-badge [nodeId]="currentAlert.node_id" />
             </h1>
           </div>
@@ -39,17 +53,44 @@ import { AlertActionsService } from './alert-actions.service';
         </header>
 
         <dl class="detail-grid">
-          <div><dt>Estado</dt><dd>{{ statusLabel(currentAlert) }}</dd></div>
+          <div>
+            <dt>Estado</dt>
+            <dd>{{ statusLabel(currentAlert) }}</dd>
+          </div>
           <div>
             <dt>Probabilidad</dt>
-            <dd>{{ currentAlert.probability === null ? 'Sin probabilidad' : formatProbability(currentAlert.probability) }}</dd>
+            <dd>
+              {{
+                currentAlert.probability === null
+                  ? 'Sin probabilidad'
+                  : formatProbability(currentAlert.probability)
+              }}
+            </dd>
           </div>
-          <div><dt>Ocurrencias</dt><dd>×{{ currentAlert.occurrences }}</dd></div>
-          <div><dt>Lectura asociada</dt><dd>Lectura #{{ currentAlert.reading_id }}</dd></div>
-          <div><dt>Creada</dt><dd>{{ formatDate(currentAlert.created_at) }}</dd></div>
-          <div><dt>Última ocurrencia</dt><dd>{{ formatDate(currentAlert.last_seen_at) }}</dd></div>
-          <div><dt>Reconocida</dt><dd>{{ formatDate(currentAlert.acknowledged_at) }}</dd></div>
-          <div><dt>Cerrada</dt><dd>{{ formatDate(currentAlert.closed_at) }}</dd></div>
+          <div>
+            <dt>Ocurrencias</dt>
+            <dd>×{{ currentAlert.occurrences }}</dd>
+          </div>
+          <div>
+            <dt>Lectura asociada</dt>
+            <dd>Lectura #{{ currentAlert.reading_id }}</dd>
+          </div>
+          <div>
+            <dt>Creada</dt>
+            <dd>{{ formatDate(currentAlert.created_at) }}</dd>
+          </div>
+          <div>
+            <dt>Última ocurrencia</dt>
+            <dd>{{ formatDate(currentAlert.last_seen_at) }}</dd>
+          </div>
+          <div>
+            <dt>Reconocida</dt>
+            <dd>{{ formatDate(currentAlert.acknowledged_at) }}</dd>
+          </div>
+          <div>
+            <dt>Cerrada</dt>
+            <dd>{{ formatDate(currentAlert.closed_at) }}</dd>
+          </div>
         </dl>
 
         <section class="message-panel" aria-labelledby="message-title">
@@ -281,10 +322,7 @@ export class AlertDetailPage {
 
 function isNotFound(error: unknown): boolean {
   return (
-    typeof error === 'object' &&
-    error !== null &&
-    'kind' in error &&
-    error.kind === 'not-found'
+    typeof error === 'object' && error !== null && 'kind' in error && error.kind === 'not-found'
   );
 }
 

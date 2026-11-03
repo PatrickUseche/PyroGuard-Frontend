@@ -20,7 +20,12 @@ import { RISK_LABELS, Risk } from '../../models/risk.model';
         Desactualizado
       </span>
     } @else if (risk(); as currentRisk) {
-      <span class="badge" [class]="currentRisk.toLowerCase()" role="status" [attr.aria-label]="ariaLabel()">
+      <span
+        class="badge"
+        [class]="currentRisk.toLowerCase()"
+        role="status"
+        [attr.aria-label]="ariaLabel()"
+      >
         @switch (currentRisk) {
           @case ('NORMAL') {
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

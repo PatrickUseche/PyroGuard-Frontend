@@ -9,10 +9,7 @@ describe('LoginPage', () => {
     const login = vi.fn(() => of(undefined));
     await TestBed.configureTestingModule({
       imports: [LoginPage],
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: { login } },
-      ],
+      providers: [provideRouter([]), { provide: AuthService, useValue: { login } }],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(LoginPage);

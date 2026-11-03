@@ -15,9 +15,7 @@ import {
 } from 'rxjs';
 import { ApiError } from '../shared/models/api-error.model';
 
-export type VisiblePollResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; error: unknown };
+export type VisiblePollResult<T> = { ok: true; value: T } | { ok: false; error: unknown };
 
 export function createVisiblePolling<T>(
   intervalMs: number,
@@ -48,10 +46,7 @@ export function createVisiblePolling<T>(
                   map((value): VisiblePollResult<T> => ({ ok: true, value })),
                   catchError((error: unknown) => {
                     if (isThrottledError(error)) {
-                      retryAt = Math.max(
-                        retryAt,
-                        Date.now() + (error.retryAfter ?? 60) * 1000,
-                      );
+                      retryAt = Math.max(retryAt, Date.now() + (error.retryAfter ?? 60) * 1000);
                     }
                     return of<VisiblePollResult<T>>({ ok: false, error });
                   }),
@@ -65,9 +60,6 @@ export function createVisiblePolling<T>(
 
 function isThrottledError(error: unknown): error is ApiError {
   return (
-    typeof error === 'object' &&
-    error !== null &&
-    'kind' in error &&
-    error.kind === 'throttled'
+    typeof error === 'object' && error !== null && 'kind' in error && error.kind === 'throttled'
   );
 }

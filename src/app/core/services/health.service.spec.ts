@@ -35,10 +35,9 @@ describe('HealthService', () => {
     let status: string | undefined;
     service.check().subscribe((result) => (status = result));
 
-    httpTestingController.expectOne('https://api.test/api/health/').flush(
-      {},
-      { status: 404, statusText: 'Not Found' },
-    );
+    httpTestingController
+      .expectOne('https://api.test/api/health/')
+      .flush({}, { status: 404, statusText: 'Not Found' });
 
     expect(status).toBe('unknown');
   });

@@ -92,20 +92,27 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
         <div class="custom-range">
           <label>
             <span>Desde</span>
-            <input type="datetime-local" [value]="fromDate()" (input)="onFromDateChange($event)">
+            <input type="datetime-local" [value]="fromDate()" (input)="onFromDateChange($event)" />
           </label>
           <label>
             <span>Hasta</span>
-            <input type="datetime-local" [value]="toDate()" (input)="onToDateChange($event)">
+            <input type="datetime-local" [value]="toDate()" (input)="onToDateChange($event)" />
           </label>
           <button type="button" (click)="applyCustomRange()">Aplicar rango</button>
-          <button type="button" class="secondary-button" (click)="clearCustomRange()">Limpiar</button>
+          <button type="button" class="secondary-button" (click)="clearCustomRange()">
+            Limpiar
+          </button>
         </div>
       }
       @if (rangeError()) {
         <p class="range-error" role="alert">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M12 3 2.8 20h18.4L12 3Zm0 5.2v5.3m0 3.2v.1" fill="none" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M12 3 2.8 20h18.4L12 3Zm0 5.2v5.3m0 3.2v.1"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            />
           </svg>
           {{ rangeError() }}
         </p>
@@ -119,7 +126,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
                 type="checkbox"
                 [checked]="isMetricVisible(metric.key)"
                 (change)="onMetricToggle(metric.key, $event)"
-              >
+              />
               {{ metric.label }}
             </label>
           }
@@ -133,7 +140,11 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
           <span></span>
         </div>
       } @else if (error()) {
-        <app-state-message kind="error" title="No se pudo cargar el histórico" [message]="error() ?? ''" />
+        <app-state-message
+          kind="error"
+          title="No se pudo cargar el histórico"
+          [message]="error() ?? ''"
+        />
       } @else if (!selectedNode()) {
         <app-state-message
           kind="empty"
@@ -153,7 +164,10 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
               <article class="plot">
                 <header>
                   <h3>{{ plot.label }}</h3>
-                  <span>{{ number(plot.minimum) }}{{ plot.unit }} – {{ number(plot.maximum) }}{{ plot.unit }}</span>
+                  <span
+                    >{{ number(plot.minimum) }}{{ plot.unit }} – {{ number(plot.maximum)
+                    }}{{ plot.unit }}</span
+                  >
                 </header>
                 <svg
                   viewBox="0 0 640 160"
@@ -194,7 +208,12 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
           <summary>Ver datos como tabla accesible</summary>
           <div class="data-scroll">
             <table>
-              <caption>Lecturas históricas de {{ selectedNode() }}</caption>
+              <caption>
+                Lecturas históricas de
+                {{
+                  selectedNode()
+                }}
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">Fecha</th>
@@ -207,7 +226,9 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
               <tbody>
                 @for (reading of readings(); track reading.timestamp) {
                   <tr>
-                    <td [attr.title]="formatFullDate(reading.timestamp)">{{ reading.timestamp }}</td>
+                    <td [attr.title]="formatFullDate(reading.timestamp)">
+                      {{ reading.timestamp }}
+                    </td>
                     <td>{{ reading.temperature }}</td>
                     <td>{{ reading.humidity }}</td>
                     <td>{{ reading.smoke }}</td>
@@ -504,11 +525,15 @@ export class SeriesChart {
       .map((metric) => this.createPlot(metric.key, metric.label, metric.unit)),
   );
   readonly timeTicks = computed(() => {
-    const validReadings = this.readings().filter((reading) => Number.isFinite(Date.parse(reading.timestamp)));
+    const validReadings = this.readings().filter((reading) =>
+      Number.isFinite(Date.parse(reading.timestamp)),
+    );
     if (validReadings.length === 0) {
       return [];
     }
-    const indexes = [...new Set([0, Math.floor((validReadings.length - 1) / 2), validReadings.length - 1])];
+    const indexes = [
+      ...new Set([0, Math.floor((validReadings.length - 1) / 2), validReadings.length - 1]),
+    ];
     return indexes.map((index) => ({
       x: 48 + (validReadings.length === 1 ? 288 : (index / (validReadings.length - 1)) * 576),
       label: timeFormatter.format(new Date(validReadings[index].timestamp)),
@@ -542,20 +567,14 @@ export class SeriesChart {
             ? this.readingsService.getSeries(
                 nodeId,
                 range,
-                this.appliedFromDate() === ''
-                  ? undefined
-                  : toIsoDateTime(this.appliedFromDate()),
-                this.appliedToDate() === ''
-                  ? undefined
-                  : toIsoDateTime(this.appliedToDate()),
+                this.appliedFromDate() === '' ? undefined : toIsoDateTime(this.appliedFromDate()),
+                this.appliedToDate() === '' ? undefined : toIsoDateTime(this.appliedToDate()),
               )
             : this.readingsService.getSeries(nodeId, range);
         },
         this.refreshRequests,
       )
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-        )
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((result) => {
           if (!result.ok) {
             this.error.set(apiErrorMessage(result.error));

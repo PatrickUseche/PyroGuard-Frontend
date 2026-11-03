@@ -3,9 +3,7 @@ import { catchError, throwError } from 'rxjs';
 import { ApiError } from '../../shared/models/api-error.model';
 
 export const apiErrorInterceptor: HttpInterceptorFn = (request, next) =>
-  next(request).pipe(
-    catchError((error: unknown) => throwError(() => toApiError(error))),
-  );
+  next(request).pipe(catchError((error: unknown) => throwError(() => toApiError(error))));
 
 function toApiError(error: unknown): ApiError {
   if (!(error instanceof HttpErrorResponse)) {
@@ -33,9 +31,10 @@ function toApiError(error: unknown): ApiError {
     const retryAfter = parseRetryAfter(error.headers.get('Retry-After'));
     return {
       kind: 'throttled',
-      message: retryAfter === undefined
-        ? 'Se alcanzó el límite de intentos. Espera antes de volver a intentarlo.'
-        : `Se alcanzó el límite de intentos. Inténtalo de nuevo en ${retryAfter} s.`,
+      message:
+        retryAfter === undefined
+          ? 'Se alcanzó el límite de intentos. Espera antes de volver a intentarlo.'
+          : `Se alcanzó el límite de intentos. Inténtalo de nuevo en ${retryAfter} s.`,
       ...(retryAfter === undefined ? {} : { retryAfter }),
     };
   }

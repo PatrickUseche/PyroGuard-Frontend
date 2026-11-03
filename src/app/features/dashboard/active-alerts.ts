@@ -65,7 +65,10 @@ import { DashboardStore } from './dashboard-store';
                   </button>
                 </div>
               }
-              <time [attr.datetime]="alert.last_seen_at" [attr.title]="formatFullDate(alert.last_seen_at)">
+              <time
+                [attr.datetime]="alert.last_seen_at"
+                [attr.title]="formatFullDate(alert.last_seen_at)"
+              >
                 {{ formatRelativeTime(alert.last_seen_at) }}
               </time>
             </li>
@@ -260,10 +263,7 @@ export class ActiveAlerts {
   readonly orderedAlerts = computed(() =>
     [...this.store.alerts()].sort((first, second) => {
       const priorityDifference = Number(second.level === 'FIRE') - Number(first.level === 'FIRE');
-      return (
-        priorityDifference ||
-        Date.parse(second.last_seen_at) - Date.parse(first.last_seen_at)
-      );
+      return priorityDifference || Date.parse(second.last_seen_at) - Date.parse(first.last_seen_at);
     }),
   );
   readonly formatFullDate = formatFullDate;

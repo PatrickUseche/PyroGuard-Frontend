@@ -28,7 +28,9 @@ import { DashboardStore } from './dashboard-store';
             <article class="node-card">
               <header class="node-heading">
                 <div>
-                  <h3><a [routerLink]="['/nodos', node.node_id]">{{ node.name }}</a></h3>
+                  <h3>
+                    <a [routerLink]="['/nodos', node.node_id]">{{ node.name }}</a>
+                  </h3>
                   <p class="node-id">{{ node.node_id }}</p>
                   <app-simulated-badge [nodeId]="node.node_id" />
                 </div>
@@ -41,7 +43,11 @@ import { DashboardStore } from './dashboard-store';
                   <app-risk-badge [risk]="null" emptyLabel="Sin datos" />
                 } @else {
                   <app-risk-badge
-                    [risk]="node.current_risk ?? latestReadingByNode().get(node.node_id)?.risk_level ?? null"
+                    [risk]="
+                      node.current_risk ??
+                      latestReadingByNode().get(node.node_id)?.risk_level ??
+                      null
+                    "
                     [stale]="node.connection_status === 'OFFLINE'"
                   />
                 }
@@ -75,8 +81,20 @@ import { DashboardStore } from './dashboard-store';
                     } @else {
                       <span class="ai-unavailable">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
-                          <path d="M12 11v5m0-8v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          />
+                          <path
+                            d="M12 11v5m0-8v.1"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-width="2"
+                          />
                         </svg>
                         IA no disponible
                       </span>
@@ -254,7 +272,8 @@ export class NodeGrid {
   readonly store = inject(DashboardStore);
   readonly skeletons = [1, 2, 3];
   readonly latestReadingByNode = computed(
-    () => new Map(this.store.summary()?.latest_readings.map((reading) => [reading.node_id, reading])),
+    () =>
+      new Map(this.store.summary()?.latest_readings.map((reading) => [reading.node_id, reading])),
   );
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;

@@ -3,8 +3,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./core/layout/app-layout').then((module) => module.AppLayout),
+    loadComponent: () => import('./core/layout/app-layout').then((module) => module.AppLayout),
     children: [
       {
         path: '',
@@ -23,20 +22,19 @@ export const routes: Routes = [
       },
       {
         path: 'mapa',
-        loadComponent: () =>
-          import('./features/map/node-map').then((module) => module.NodeMap),
+        loadComponent: () => import('./features/map/node-map').then((module) => module.NodeMap),
       },
       {
         path: 'alertas/:id',
         loadComponent: () =>
-          import('./features/alerts/alert-detail-page').then(
-            (module) => module.AlertDetailPage,
-          ),
+          import('./features/alerts/alert-detail-page').then((module) => module.AlertDetailPage),
       },
       {
         path: 'alertas',
         loadComponent: () =>
-          import('./features/alerts/alerts-history-page').then((module) => module.AlertsHistoryPage),
+          import('./features/alerts/alerts-history-page').then(
+            (module) => module.AlertsHistoryPage,
+          ),
       },
     ],
   },

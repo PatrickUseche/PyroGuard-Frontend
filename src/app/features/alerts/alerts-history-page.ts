@@ -60,9 +60,17 @@ type AlertStatusFilter = '' | AlertStatus;
       </form>
 
       @if (loading()) {
-        <app-state-message kind="loading" title="Cargando alertas" message="Consultando el historial." />
+        <app-state-message
+          kind="loading"
+          title="Cargando alertas"
+          message="Consultando el historial."
+        />
       } @else if (error()) {
-        <app-state-message kind="error" title="No se pudo cargar el historial" [message]="error() ?? ''" />
+        <app-state-message
+          kind="error"
+          title="No se pudo cargar el historial"
+          [message]="error() ?? ''"
+        />
       } @else if (alerts().length === 0) {
         <app-state-message
           kind="empty"
@@ -89,7 +97,10 @@ type AlertStatusFilter = '' | AlertStatus;
                 </div>
               </div>
               <a class="detail-link" [routerLink]="['/alertas', alert.id]">Ver detalle</a>
-              <time [attr.datetime]="alert.last_seen_at" [attr.title]="formatFullDate(alert.last_seen_at)">
+              <time
+                [attr.datetime]="alert.last_seen_at"
+                [attr.title]="formatFullDate(alert.last_seen_at)"
+              >
                 {{ formatRelativeTime(alert.last_seen_at) }}
               </time>
             </li>
@@ -97,7 +108,9 @@ type AlertStatusFilter = '' | AlertStatus;
         </ul>
 
         <nav class="pagination" aria-label="Paginación del historial de alertas">
-          <button type="button" [disabled]="offset() === 0" (click)="previousPage()">Anterior</button>
+          <button type="button" [disabled]="offset() === 0" (click)="previousPage()">
+            Anterior
+          </button>
           <span>Página {{ currentPage() }}</span>
           <button type="button" [disabled]="offset() + pageSize >= total()" (click)="nextPage()">
             Siguiente
@@ -274,9 +287,12 @@ export class AlertsHistoryPage {
   readonly formatProbability = formatProbability;
 
   constructor() {
-    this.nodesService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (nodes) => this.nodes.set(nodes.map(({ node_id, name }) => ({ node_id, name }))),
-    });
+    this.nodesService
+      .getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (nodes) => this.nodes.set(nodes.map(({ node_id, name }) => ({ node_id, name }))),
+      });
 
     this.filterChanges
       .pipe(

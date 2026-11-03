@@ -14,7 +14,10 @@ import { AuthService } from '../../core/services/auth.service';
       <header>
         <p class="eyebrow">Acceso de operación</p>
         <h1 id="login-title">Iniciar sesión</h1>
-        <p>La consulta de lecturas permanece pública. Inicia sesión para habilitar acciones sobre alertas.</p>
+        <p>
+          La consulta de lecturas permanece pública. Inicia sesión para habilitar acciones sobre
+          alertas.
+        </p>
       </header>
 
       @if (error(); as message) {
@@ -29,7 +32,7 @@ import { AuthService } from '../../core/services/auth.service';
           autocomplete="username"
           required
           [(ngModel)]="username"
-        >
+        />
 
         <label for="password">Contraseña</label>
         <input
@@ -39,7 +42,7 @@ import { AuthService } from '../../core/services/auth.service';
           autocomplete="current-password"
           required
           [(ngModel)]="password"
-        >
+        />
 
         <button type="submit" [disabled]="loading() || loginForm.invalid">
           {{ loading() ? 'Iniciando sesión…' : 'Iniciar sesión' }}

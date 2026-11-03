@@ -43,17 +43,21 @@ describe('AppLayout', () => {
     const fixture = TestBed.createComponent(AppLayout);
     fixture.detectChanges();
 
-    expect((fixture.nativeElement as HTMLElement).querySelector('app-health-indicator')).not.toBeNull();
-    expect((fixture.nativeElement as HTMLElement).querySelector('[role="status"]')?.textContent)
-      .toContain('Comprobando');
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('app-health-indicator'),
+    ).not.toBeNull();
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('[role="status"]')?.textContent,
+    ).toContain('Comprobando');
   });
 
   it('should keep the academic prototype notice in the footer', () => {
     const fixture = TestBed.createComponent(AppLayout);
     fixture.detectChanges();
 
-    expect((fixture.nativeElement as HTMLElement).querySelector('footer')?.textContent)
-      .toContain('Prototipo académico con datos sintéticos; no es un detector certificado de incendios.');
+    expect((fixture.nativeElement as HTMLElement).querySelector('footer')?.textContent).toContain(
+      'Prototipo académico con datos sintéticos; no es un detector certificado de incendios.',
+    );
   });
 
   it('should show the session action based on authentication state', () => {
@@ -68,7 +72,9 @@ describe('AppLayout', () => {
     fixture.detectChanges();
 
     const authenticated = fixture.nativeElement as HTMLElement;
-    expect(authenticated.querySelector('button.auth-button')?.textContent).toContain('Cerrar sesión');
+    expect(authenticated.querySelector('button.auth-button')?.textContent).toContain(
+      'Cerrar sesión',
+    );
     expect(authenticated.querySelector('a.auth-button')).toBeNull();
   });
 });

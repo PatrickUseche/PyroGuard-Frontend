@@ -79,10 +79,22 @@ import { SeriesChart } from '../dashboard/series-chart';
                 {{ formatRelativeTime(reading.timestamp) }}
               </p>
               <dl class="reading-grid">
-                <div><dt>Temperatura</dt><dd>{{ reading.temperature }} °C</dd></div>
-                <div><dt>Humedad</dt><dd>{{ reading.humidity }} %</dd></div>
-                <div><dt>Humo</dt><dd>{{ reading.smoke }}</dd></div>
-                <div><dt>Gas</dt><dd>{{ reading.gas === null ? '—' : reading.gas }}</dd></div>
+                <div>
+                  <dt>Temperatura</dt>
+                  <dd>{{ reading.temperature }} °C</dd>
+                </div>
+                <div>
+                  <dt>Humedad</dt>
+                  <dd>{{ reading.humidity }} %</dd>
+                </div>
+                <div>
+                  <dt>Humo</dt>
+                  <dd>{{ reading.smoke }}</dd>
+                </div>
+                <div>
+                  <dt>Gas</dt>
+                  <dd>{{ reading.gas === null ? '—' : reading.gas }}</dd>
+                </div>
               </dl>
             } @else {
               <p>No hay lecturas recientes.</p>

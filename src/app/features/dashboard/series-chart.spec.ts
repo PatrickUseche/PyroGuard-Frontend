@@ -73,7 +73,9 @@ describe('SeriesChart', () => {
 
     expect(getSeries).toHaveBeenLastCalledWith('node-1', '7d');
     expect(component.plots()).toHaveLength(3);
-    expect((fixture.nativeElement as HTMLElement).querySelectorAll('svg[role="img"]')).toHaveLength(3);
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('svg[role="img"]')).toHaveLength(
+      3,
+    );
     expect((fixture.nativeElement as HTMLElement).textContent).toContain(
       'Ver datos como tabla accesible',
     );

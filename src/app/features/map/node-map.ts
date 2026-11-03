@@ -46,7 +46,13 @@ import {
           message="Registra coordenadas para que los nodos aparezcan en el mapa."
         />
       } @else {
-        <div #mapHost class="map-host" role="application" aria-label="Mapa interactivo de nodos" tabindex="0"></div>
+        <div
+          #mapHost
+          class="map-host"
+          role="application"
+          aria-label="Mapa interactivo de nodos"
+          tabindex="0"
+        ></div>
         <p class="map-attribution">© OpenStreetMap contributors</p>
       }
 
@@ -65,12 +71,18 @@ import {
             @if (node.connection_status === 'UNKNOWN') {
               <app-risk-badge [risk]="null" emptyLabel="Sin datos" />
             } @else {
-              <app-risk-badge [risk]="riskFor(node)" [stale]="node.connection_status === 'OFFLINE'" />
+              <app-risk-badge
+                [risk]="riskFor(node)"
+                [stale]="node.connection_status === 'OFFLINE'"
+              />
             }
           </div>
           <p>
             Última comunicación:
-            <time [attr.datetime]="node.last_communication" [attr.title]="formatFullDate(node.last_communication)">
+            <time
+              [attr.datetime]="node.last_communication"
+              [attr.title]="formatFullDate(node.last_communication)"
+            >
               {{ formatRelativeTime(node.last_communication) }}
             </time>
           </p>
@@ -170,9 +182,7 @@ export class NodeMap implements OnDestroy {
   private readonly markerSignatures = new Map<string, string>();
   private readonly keyboardMarkers = new WeakSet<HTMLElement>();
   readonly selectedNodeId = signal<string | null>(null);
-  readonly locatedNodes = computed(() =>
-    filterLocatedNodes(this.store.nodes()),
-  );
+  readonly locatedNodes = computed(() => filterLocatedNodes(this.store.nodes()));
   readonly selectedNode = computed(
     () => this.store.nodes().find((node) => node.node_id === this.selectedNodeId()) ?? null,
   );
@@ -214,7 +224,8 @@ export class NodeMap implements OnDestroy {
       attributionControl: true,
     });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(this.map);
     this.updateMarkers();
@@ -296,9 +307,7 @@ export class NodeMap implements OnDestroy {
     }
 
     if (refitBounds && locatedNodes.length > 0) {
-      const bounds = L.latLngBounds(
-        locatedNodes.map((node) => [node.latitude, node.longitude]),
-      );
+      const bounds = L.latLngBounds(locatedNodes.map((node) => [node.latitude, node.longitude]));
       this.map.fitBounds(bounds, { padding: [32, 32], maxZoom: 12 });
       this.hasFittedBounds = true;
     }
