@@ -87,7 +87,9 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 
 ## Fase 6 — Calidad (opcional)
 
-- [ ] chore(ci): workflow de GitHub Actions con `ng build` y `ng test` [6.1]
+- [x] chore(ci): workflow de GitHub Actions con `ng build` y `ng test` [6.1]
 - [ ] chore(lint): angular-eslint y corrección de avisos [6.2]
 - [ ] chore(format): script `format:check` con Prettier [6.3]
 - [ ] docs: capturas del dashboard en el README [6.4]
+- [ ] build(leaflet): permitir la dependencia CommonJS de Leaflet en angular.json para silenciar el aviso [6.5]
+- [ ] chore(deps): actualizar `@angular/forms` dentro de su versión menor si corrige `zod` y documentar el resultado [6.6]
