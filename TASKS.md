@@ -93,4 +93,4 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] docs: capturas del dashboard en el README [6.4]
 - [x] build(leaflet): permitir la dependencia CommonJS de Leaflet en angular.json para silenciar el aviso [6.5]
 - [x] chore(deps): actualizar `@angular/forms` dentro de su versión menor si corrige `zod` y documentar el resultado [6.6]
-- [ ] docs: capturas reales del dashboard, detalle de nodo, alertas y mapa en `docs/capturas/` [6.7]
+- [x] docs: capturas reales del dashboard, detalle de nodo, alertas y mapa en `docs/capturas/` [6.7]
