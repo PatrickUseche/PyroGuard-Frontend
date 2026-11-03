@@ -92,4 +92,4 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] chore(format): script `format:check` con Prettier [6.3]
 - [x] docs: capturas del dashboard en el README [6.4]
 - [x] build(leaflet): permitir la dependencia CommonJS de Leaflet en angular.json para silenciar el aviso [6.5]
-- [ ] chore(deps): actualizar `@angular/forms` dentro de su versión menor si corrige `zod` y documentar el resultado [6.6]
+- [x] chore(deps): actualizar `@angular/forms` dentro de su versión menor si corrige `zod` y documentar el resultado [6.6]
