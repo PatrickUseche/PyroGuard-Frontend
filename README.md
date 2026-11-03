@@ -51,6 +51,15 @@ La salida de producción está en `dist/pyro-guard-frontend/browser`.
 
 El dashboard actualiza el resumen, los nodos y las alertas activas cada 10 segundos; el sondeo se pausa cuando la pestaña está oculta. La tabla de lecturas y los gráficos consultan bajo demanda y se actualizan como máximo cada 30 segundos. Las respuestas HTTP 429 se gestionan respetando `Retry-After`.
 
+## Capturas
+
+Pendiente de capturas reales: no se generaron imágenes porque el backend local con datos no estaba disponible. Cuando se ejecute localmente, guardar capturas a 1280 px y 360 px en:
+
+- `docs/capturas/dashboard-1280.png` y `docs/capturas/dashboard-360.png`
+- `docs/capturas/detalle-nodo-1280.png` y `docs/capturas/detalle-nodo-360.png`
+- `docs/capturas/alertas-1280.png` y `docs/capturas/alertas-360.png`
+- `docs/capturas/mapa-1280.png` y `docs/capturas/mapa-360.png`
+
 ## Probar el flujo con el simulador IoT
 
 Este flujo es local y usa el backend de desarrollo en `http://localhost:8000/api`; no envía datos a producción.
