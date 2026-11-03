@@ -40,12 +40,7 @@ interface SeriesPlot {
   coordinates: string;
 }
 
-interface TimeTick {
-  x: number;
-  label: string;
-}
-
-const metrics: Array<{ key: MetricKey; label: string; unit: string }> = [
+const metrics: { key: MetricKey; label: string; unit: string }[] = [
   { key: 'temperature', label: 'Temperatura', unit: '°C' },
   { key: 'humidity', label: 'Humedad', unit: '%' },
   { key: 'smoke', label: 'Humo', unit: '' },

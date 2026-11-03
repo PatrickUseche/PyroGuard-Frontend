@@ -17,7 +17,9 @@ const fireIcon =
 const statusIcon =
   '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v5m0-8v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>';
 
-export function filterLocatedNodes(nodes: Node[]): Array<Node & { latitude: number; longitude: number }> {
+export function filterLocatedNodes(
+  nodes: Node[],
+): (Node & { latitude: number; longitude: number })[] {
   return nodes.filter(
     (node): node is Node & { latitude: number; longitude: number } =>
       node.latitude !== null && node.longitude !== null,

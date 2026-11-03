@@ -3,7 +3,8 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": false
+    "analytics": false,
+    "schematicCollections": ["angular-eslint"]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -20,9 +21,7 @@
             "outputPath": "dist/pyro-guard-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -30,10 +29,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "node_modules/leaflet/dist/leaflet.css",
-              "src/styles.css"
-            ],
+            "styles": ["node_modules/leaflet/dist/leaflet.css", "src/styles.css"],
             "scripts": []
           },
           "configurations": {
@@ -80,6 +76,12 @@
         },
         "test": {
           "builder": "@angular/build:unit-test"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+          }
         }
       }
     }

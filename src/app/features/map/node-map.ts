@@ -182,11 +182,10 @@ export class NodeMap implements OnDestroy {
 
   constructor() {
     effect(() => {
-      const nodes = this.store.nodes();
       if (this.locatedNodes().length === 0) {
         this.destroyMap();
       } else if (this.map !== null) {
-        this.updateMarkers(nodes);
+        this.updateMarkers();
       }
     });
   }
@@ -218,7 +217,7 @@ export class NodeMap implements OnDestroy {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(this.map);
-    this.updateMarkers(this.store.nodes());
+    this.updateMarkers();
   }
 
   ngOnDestroy(): void {
@@ -246,7 +245,7 @@ export class NodeMap implements OnDestroy {
     this.hasFittedBounds = false;
   }
 
-  private updateMarkers(nodes: Node[]): void {
+  private updateMarkers(): void {
     if (this.map === null) {
       return;
     }
