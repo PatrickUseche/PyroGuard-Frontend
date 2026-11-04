@@ -56,15 +56,32 @@ function toApiError(error: unknown): ApiError {
   if (error.status >= 500) {
     return {
       kind: 'server',
-      message: 'El servidor no pudo completar la solicitud. Inténtalo más tarde.',
+      message:
+        getDetailError(error.error) ??
+        'El servidor no pudo completar la solicitud. Inténtalo más tarde.',
     };
   }
 
-  const validationMessage = getNonFieldError(error.error);
+  const validationMessage = getDetailError(error.error) ?? getNonFieldError(error.error);
   return {
     kind: 'unknown',
     message: validationMessage ?? 'La solicitud no pudo completarse. Inténtalo de nuevo.',
   };
+}
+
+function getDetailError(body: unknown): string | undefined {
+  if (
+    typeof body !== 'object' ||
+    body === null ||
+    !('errors' in body) ||
+    typeof body.errors !== 'object' ||
+    body.errors === null ||
+    !('detail' in body.errors) ||
+    typeof body.errors.detail !== 'string'
+  ) {
+    return undefined;
+  }
+  return body.errors.detail;
 }
 
 function parseRetryAfter(value: string | null): number | undefined {

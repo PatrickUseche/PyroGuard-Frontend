@@ -100,7 +100,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(auth): `googleClientId` en los environments y tipos mínimos del SDK de Google [7.1]
 - [x] feat(auth): servicio que carga el SDK de Google solo en la página de acceso y entrega la credencial [7.2]
 - [x] feat(auth): `AuthService` con acceso con Google, usuario actual y cierre de sesión en el servidor [7.3]
-- [ ] feat(auth): página `/login` con el botón «Continuar con Google» y estados de error [7.4]
+- [x] feat(auth): página `/login` con el botón «Continuar con Google» y estados de error [7.4]
 - [ ] refactor(auth): retirar el formulario de usuario y contraseña y redirigir `/registro` a `/login` [7.5]
 - [ ] feat(alerts): mostrar reconocer y cerrar solo a quien puede gestionar alertas, y el usuario en la cabecera [7.6]
 - [ ] test(auth): pruebas del acceso con Google y de los permisos [7.7]

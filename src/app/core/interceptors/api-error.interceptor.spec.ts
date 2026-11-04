@@ -82,4 +82,22 @@ describe('apiErrorInterceptor', () => {
 
     expect(actualError?.message).toBe('Credenciales inválidas.');
   });
+
+  it('should surface backend details for server errors', () => {
+    let actualError: ApiError | undefined;
+
+    http.post('/auth/google/', {}).subscribe({
+      error: (error: ApiError) => (actualError = error),
+    });
+
+    httpTestingController.expectOne('/auth/google/').flush(
+      {
+        status: 'error',
+        errors: { detail: 'El acceso con Google no está configurado.' },
+      },
+      { status: 503, statusText: 'Service Unavailable' },
+    );
+
+    expect(actualError?.message).toBe('El acceso con Google no está configurado.');
+  });
 });
