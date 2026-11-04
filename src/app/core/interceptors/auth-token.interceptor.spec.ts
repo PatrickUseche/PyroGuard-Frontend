@@ -33,12 +33,7 @@ describe('authTokenInterceptor', () => {
   });
 
   it('should add the Token authorization header only to API requests', () => {
-    localStorage.setItem('pyroguard-token', 'operator-token');
-    authService = TestBed.inject(AuthService);
-    authService.login('operator', 'secret').subscribe();
-    httpTestingController
-      .expectOne('https://api.test/api/auth/login/')
-      .flush({ token: 'operator-token' });
+    loginViaGoogle('operator-token');
 
     http.get('https://api.test/api/nodes/').subscribe();
     const apiRequest = httpTestingController.expectOne('https://api.test/api/nodes/');
@@ -52,10 +47,7 @@ describe('authTokenInterceptor', () => {
   });
 
   it('should not send credentials to a URL that only shares the API path prefix', () => {
-    authService.login('operator', 'secret').subscribe();
-    httpTestingController
-      .expectOne('https://api.test/api/auth/login/')
-      .flush({ token: 'operator-token' });
+    loginViaGoogle('operator-token');
 
     http.get('https://api.test/api-elsewhere/resource').subscribe();
     const unrelatedRequest = httpTestingController.expectOne(
@@ -66,19 +58,27 @@ describe('authTokenInterceptor', () => {
   });
 
   it('should clear the session after an API 401', () => {
-    localStorage.setItem('pyroguard-token', 'expired-token');
-    const auth = TestBed.inject(AuthService);
-    auth.login('operator', 'secret').subscribe();
-    httpTestingController
-      .expectOne('https://api.test/api/auth/login/')
-      .flush({ token: 'expired-token' });
+    loginViaGoogle('expired-token');
 
     http.get('https://api.test/api/nodes/').subscribe({ error: () => undefined });
     httpTestingController
       .expectOne('https://api.test/api/nodes/')
       .flush({}, { status: 401, statusText: 'Unauthorized' });
 
-    expect(auth.token()).toBeNull();
-    expect(auth.isAuthenticated()).toBe(false);
+    expect(authService.token()).toBeNull();
+    expect(authService.isAuthenticated()).toBe(false);
   });
+
+  function loginViaGoogle(token: string): void {
+    authService.loginWithGoogle('simulated-credential').subscribe();
+    httpTestingController.expectOne('https://api.test/api/auth/google/').flush({
+      token,
+      user: {
+        username: 'operator',
+        email: 'operator@gmail.com',
+        name: 'Operador',
+        can_manage_alerts: false,
+      },
+    });
+  }
 });

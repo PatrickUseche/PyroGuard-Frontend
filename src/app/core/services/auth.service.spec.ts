@@ -119,21 +119,6 @@ describe('AuthService', () => {
     expect(service.authError()).toContain('No se pudo conectar');
   });
 
-  it('should post legacy credentials and persist the returned token until the form is removed', () => {
-    let completed = false;
-    service.login('operator', 'secret').subscribe(() => (completed = true));
-
-    const request = httpTestingController.expectOne('https://api.test/api/auth/login/');
-    expect(request.request.method).toBe('POST');
-    expect(request.request.body).toEqual({ username: 'operator', password: 'secret' });
-    request.flush({ token: 'legacy-token' });
-
-    expect(completed).toBe(true);
-    expect(service.token()).toBe('legacy-token');
-    expect(service.isAuthenticated()).toBe(true);
-    expect(localStorage.getItem('pyroguard-token')).toBe('legacy-token');
-  });
-
   function configureTestingModule(): void {
     TestBed.configureTestingModule({
       providers: [

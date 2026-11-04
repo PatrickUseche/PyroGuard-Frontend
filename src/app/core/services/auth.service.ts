@@ -4,10 +4,6 @@ import { isPlatformBrowser } from '@angular/common';
 import { finalize, map, Observable, Subscription, tap } from 'rxjs';
 import { API_BASE_URL } from '../config/api-base-url.token';
 
-interface LoginResponse {
-  token: string;
-}
-
 interface ApiUser {
   username: string;
   email: string;
@@ -110,21 +106,6 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.storageKey);
     }
-  }
-
-  login(username: string, password: string): Observable<void> {
-    return this.http
-      .post<LoginResponse>(`${this.apiBaseUrl}/auth/login/`, { username, password })
-      .pipe(
-        tap(({ token }) => {
-          if (token.trim() === '') {
-            throw new Error('El servidor devolvió un token vacío.');
-          }
-          this.tokenState.set(token);
-          this.persistToken(token);
-        }),
-        map(() => undefined),
-      );
   }
 
   private toAuthUser(user: ApiUser): AuthUser {

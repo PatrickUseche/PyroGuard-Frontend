@@ -65,22 +65,22 @@ describe('apiErrorInterceptor', () => {
     expect(throttledError?.retryAfter).toBe(60);
   });
 
-  it('should surface backend non-field login errors', () => {
+  it('should surface backend detail errors', () => {
     let actualError: ApiError | undefined;
 
-    http.post('/auth/login/', { username: 'operator', password: 'wrong' }).subscribe({
+    http.post('/auth/google/', { credential: 'invalid' }).subscribe({
       error: (error: ApiError) => (actualError = error),
     });
 
-    httpTestingController.expectOne('/auth/login/').flush(
+    httpTestingController.expectOne('/auth/google/').flush(
       {
         status: 'error',
-        errors: { non_field_errors: ['Credenciales inválidas.'] },
+        errors: { detail: 'No se pudo verificar la cuenta de Google.' },
       },
       { status: 400, statusText: 'Bad Request' },
     );
 
-    expect(actualError?.message).toBe('Credenciales inválidas.');
+    expect(actualError?.message).toBe('No se pudo verificar la cuenta de Google.');
   });
 
   it('should surface backend details for server errors', () => {

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  { path: 'registro', redirectTo: '/login', pathMatch: 'full' },
   {
     path: '',
     loadComponent: () => import('./core/layout/app-layout').then((module) => module.AppLayout),
