@@ -109,6 +109,32 @@ describe('LoginPage', () => {
     );
   });
 
+  it('should retry a blocked SDK load', async () => {
+    load
+      .mockImplementationOnce(() => {
+        googleError.set('No se pudo cargar Google. Comprueba tu conexión.');
+        return Promise.resolve();
+      })
+      .mockImplementationOnce(() => {
+        googleError.set(null);
+        return Promise.resolve();
+      });
+    const fixture = TestBed.createComponent(LoginPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.textContent).toContain('No se pudo cargar Google.');
+    const retryButton = (fixture.nativeElement as HTMLElement).querySelector('button');
+    expect(retryButton?.textContent).toContain('Reintentar');
+
+    retryButton?.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(load).toHaveBeenCalledTimes(2);
+    expect(renderButton).toHaveBeenCalledOnce();
+  });
+
   it('should show the Retry-After message returned for a throttled request', async () => {
     loginWithGoogle.mockReturnValue(
       throwError(() => ({
@@ -143,6 +169,20 @@ describe('LoginPage', () => {
 
     expect(navigate).toHaveBeenCalledWith('/');
     expect(load).not.toHaveBeenCalled();
+  });
+
+  it('should submit the credential and navigate to the dashboard on success', async () => {
+    const fixture = TestBed.createComponent(LoginPage);
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    credential.set('simulated-credential');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(loginWithGoogle).toHaveBeenCalledWith('simulated-credential');
+    expect(navigate).toHaveBeenCalledWith('/');
   });
 
   it('should display a server configuration error from the API', async () => {

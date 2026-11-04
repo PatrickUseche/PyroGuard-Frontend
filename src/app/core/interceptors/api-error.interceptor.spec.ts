@@ -100,4 +100,22 @@ describe('apiErrorInterceptor', () => {
 
     expect(actualError?.message).toBe('El acceso con Google no está configurado.');
   });
+
+  it('should preserve backend details for forbidden responses', () => {
+    let actualError: ApiError | undefined;
+
+    http.post('/alerts/1/acknowledge/', {}).subscribe({
+      error: (error: ApiError) => (actualError = error),
+    });
+
+    httpTestingController.expectOne('/alerts/1/acknowledge/').flush(
+      {
+        status: 'error',
+        errors: { detail: 'Tu cuenta no tiene permiso para gestionar alertas.' },
+      },
+      { status: 403, statusText: 'Forbidden' },
+    );
+
+    expect(actualError?.message).toBe('Tu cuenta no tiene permiso para gestionar alertas.');
+  });
 });
