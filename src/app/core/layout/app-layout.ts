@@ -34,10 +34,16 @@ import { AuthService } from '../services/auth.service';
           <a routerLink="/mapa" routerLinkActive="active" ariaCurrentWhenActive="page"> Mapa </a>
         </nav>
         <app-health-indicator class="health-indicator" />
-        @if (auth.isAuthenticated()) {
+        @if (auth.currentUser(); as user) {
+          <span class="auth-user">{{ user.name || user.email }}</span>
           <button type="button" class="auth-button" (click)="logout()">Cerrar sesión</button>
+        } @else if (auth.restoring()) {
+          <span class="auth-user" role="status">Comprobando sesión</span>
         } @else {
           <a class="auth-button" routerLink="/login">Iniciar sesión</a>
+        }
+        @if (auth.authError(); as message) {
+          <span class="auth-user" role="status">{{ message }}</span>
         }
       </header>
 
@@ -128,6 +134,15 @@ import { AuthService } from '../services/auth.service';
       cursor: pointer;
       font-weight: 650;
       text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .auth-user {
+      max-width: 220px;
+      overflow: hidden;
+      color: var(--color-text-muted);
+      font-weight: 650;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
 

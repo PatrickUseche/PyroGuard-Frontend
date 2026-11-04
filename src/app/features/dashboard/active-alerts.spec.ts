@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { AlertsService } from '../../core/services/alerts.service';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, AuthUser } from '../../core/services/auth.service';
 import { Alert } from '../../shared/models/alert.model';
 import { DashboardStore } from './dashboard-store';
 import { ActiveAlerts } from './active-alerts';
@@ -15,7 +15,9 @@ describe('ActiveAlerts', () => {
     updateAlert: ReturnType<typeof vi.fn>;
     replaceAlerts: ReturnType<typeof vi.fn>;
   };
-  let authState: ReturnType<typeof signal<boolean>>;
+  let canManageAlerts: ReturnType<typeof signal<boolean>>;
+  let currentUser: ReturnType<typeof signal<AuthUser | null>>;
+  let restoring: ReturnType<typeof signal<boolean>>;
   let alertServiceMock: {
     acknowledge: ReturnType<typeof vi.fn>;
     close: ReturnType<typeof vi.fn>;
@@ -60,7 +62,9 @@ describe('ActiveAlerts', () => {
       updateAlert: vi.fn(),
       replaceAlerts: vi.fn(),
     };
-    authState = signal(false);
+    canManageAlerts = signal(false);
+    currentUser = signal<AuthUser | null>(null);
+    restoring = signal(false);
     alertServiceMock = {
       acknowledge: vi.fn((id: number) => of(alerts.find((alert) => alert.id === id)!)),
       close: vi.fn((id: number) => of(alerts.find((alert) => alert.id === id)!)),
@@ -70,7 +74,7 @@ describe('ActiveAlerts', () => {
       imports: [ActiveAlerts],
       providers: [
         { provide: DashboardStore, useValue: storeMock },
-        { provide: AuthService, useValue: { isAuthenticated: authState } },
+        { provide: AuthService, useValue: { canManageAlerts, currentUser, restoring } },
         { provide: AlertsService, useValue: alertServiceMock },
         provideRouter([]),
       ],
@@ -94,15 +98,44 @@ describe('ActiveAlerts', () => {
     expect(cards[1].textContent).toContain('70');
   });
 
-  it('should hide alert action buttons without an authenticated session', () => {
+  it('should hide alert action buttons and link to login without a session', () => {
     const fixture = TestBed.createComponent(ActiveAlerts);
     fixture.detectChanges();
 
-    expect((fixture.nativeElement as HTMLElement).querySelector('.alert-actions')).toBeNull();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('.alert-actions')).toBeNull();
+    expect(
+      [...element.querySelectorAll('a')].find((link) =>
+        link.getAttribute('href')?.startsWith('/login'),
+      )?.textContent,
+    ).toContain('Inicia sesión para gestionar alertas.');
   });
 
-  it('should show alert actions when a session is active', () => {
-    authState.set(true);
+  it('should explain missing permissions to a signed-in user', () => {
+    currentUser.set({
+      username: 'operator',
+      email: 'operator@gmail.com',
+      name: 'Operador',
+      canManageAlerts: false,
+    });
+    const fixture = TestBed.createComponent(ActiveAlerts);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain(
+      'Tu cuenta no tiene permiso para gestionar alertas. Pídelo al administrador.',
+    );
+    expect(element.querySelector('.alert-actions')).toBeNull();
+  });
+
+  it('should show alert actions only to users who can manage alerts', () => {
+    canManageAlerts.set(true);
+    currentUser.set({
+      username: 'operator',
+      email: 'operator@gmail.com',
+      name: 'Operador',
+      canManageAlerts: true,
+    });
     const fixture = TestBed.createComponent(ActiveAlerts);
     fixture.detectChanges();
 
@@ -140,6 +173,28 @@ describe('ActiveAlerts', () => {
     expect(component.actionMessage()).toContain('La alerta ya cambió de estado');
     expect(alertServiceMock.getActive).toHaveBeenCalled();
     expect(storeMock.replaceAlerts).toHaveBeenCalledWith(alerts);
+  });
+
+  it('should show the backend message for an unexpected forbidden action', () => {
+    canManageAlerts.set(true);
+    currentUser.set({
+      username: 'operator',
+      email: 'operator@gmail.com',
+      name: 'Operador',
+      canManageAlerts: true,
+    });
+    alertServiceMock.acknowledge.mockReturnValue(
+      throwError(() => ({
+        kind: 'unknown',
+        message: 'Tu cuenta no tiene permiso para gestionar alertas.',
+      })),
+    );
+    const fixture = TestBed.createComponent(ActiveAlerts);
+    fixture.componentInstance.acknowledge(alerts[0]);
+
+    expect(fixture.componentInstance.actionMessage()).toBe(
+      'Tu cuenta no tiene permiso para gestionar alertas.',
+    );
   });
 
   it('should require confirmation before closing an alert', () => {

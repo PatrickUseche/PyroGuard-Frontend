@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { AlertsService } from '../../core/services/alerts.service';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, AuthUser } from '../../core/services/auth.service';
 import { Alert } from '../../shared/models/alert.model';
 import { AlertActionsService } from './alert-actions.service';
 import { AlertDetailPage } from './alert-detail-page';
@@ -24,6 +24,9 @@ describe('AlertDetailPage', () => {
     closed_at: null,
   };
   let getById: ReturnType<typeof vi.fn>;
+  let canManageAlerts: ReturnType<typeof signal<boolean>>;
+  let currentUser: ReturnType<typeof signal<AuthUser | null>>;
+  let restoring: ReturnType<typeof signal<boolean>>;
   let actions: {
     acknowledge: ReturnType<typeof vi.fn>;
     close: ReturnType<typeof vi.fn>;
@@ -33,6 +36,14 @@ describe('AlertDetailPage', () => {
 
   beforeEach(async () => {
     getById = vi.fn(() => of(alert));
+    canManageAlerts = signal(true);
+    currentUser = signal<AuthUser | null>({
+      username: 'operator',
+      email: 'operator@gmail.com',
+      name: 'Operador',
+      canManageAlerts: true,
+    });
+    restoring = signal(false);
     actions = {
       acknowledge: vi.fn(),
       close: vi.fn(),
@@ -46,7 +57,7 @@ describe('AlertDetailPage', () => {
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ id: '8' })) } },
         { provide: AlertsService, useValue: { getById } },
         { provide: AlertActionsService, useValue: actions },
-        { provide: AuthService, useValue: { isAuthenticated: signal(true) } },
+        { provide: AuthService, useValue: { canManageAlerts, currentUser, restoring } },
       ],
     }).compileComponents();
   });
@@ -98,5 +109,30 @@ describe('AlertDetailPage', () => {
 
     buttons[1].click();
     expect(actions.close).toHaveBeenCalledWith(alert, expect.any(Function), expect.any(Function));
+  });
+
+  it('should explain missing permissions and hide actions for non-managers', () => {
+    canManageAlerts.set(false);
+    const fixture = TestBed.createComponent(AlertDetailPage);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain(
+      'Tu cuenta no tiene permiso para gestionar alertas. Pídelo al administrador.',
+    );
+    expect(element.querySelectorAll('button')).toHaveLength(0);
+  });
+
+  it('should link an anonymous visitor to login from the detail page', () => {
+    canManageAlerts.set(false);
+    currentUser.set(null);
+    const fixture = TestBed.createComponent(AlertDetailPage);
+    fixture.detectChanges();
+
+    expect(
+      [...(fixture.nativeElement as HTMLElement).querySelectorAll('a')].some((link) =>
+        link.getAttribute('href')?.startsWith('/login'),
+      ),
+    ).toBe(true);
   });
 });

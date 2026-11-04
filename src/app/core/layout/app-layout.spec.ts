@@ -1,18 +1,22 @@
 import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService, AuthUser } from '../services/auth.service';
 import { HealthService } from '../services/health.service';
 import { DashboardStore } from '../../features/dashboard/dashboard-store';
 import { AppLayout } from './app-layout';
 
 describe('AppLayout', () => {
-  let isAuthenticated: ReturnType<typeof signal<boolean>>;
+  let currentUser: ReturnType<typeof signal<AuthUser | null>>;
+  let restoring: ReturnType<typeof signal<boolean>>;
+  let authError: ReturnType<typeof signal<string | null>>;
   let logout: ReturnType<typeof vi.fn>;
   let restoreSession: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
-    isAuthenticated = signal(false);
+    currentUser = signal<AuthUser | null>(null);
+    restoring = signal(false);
+    authError = signal<string | null>(null);
     logout = vi.fn();
     restoreSession = vi.fn();
     await TestBed.configureTestingModule({
@@ -20,7 +24,10 @@ describe('AppLayout', () => {
       providers: [
         provideRouter([]),
         { provide: PLATFORM_ID, useValue: 'server' },
-        { provide: AuthService, useValue: { isAuthenticated, logout, restoreSession } },
+        {
+          provide: AuthService,
+          useValue: { currentUser, restoring, authError, logout, restoreSession },
+        },
         { provide: HealthService, useValue: { check: vi.fn() } },
         { provide: DashboardStore, useValue: { lastUpdated: signal(null) } },
       ],
@@ -77,10 +84,16 @@ describe('AppLayout', () => {
     expect(unauthenticated.querySelector('a.auth-button')?.textContent).toContain('Iniciar sesión');
     expect(unauthenticated.querySelector('button.auth-button')).toBeNull();
 
-    isAuthenticated.set(true);
+    currentUser.set({
+      username: 'operator',
+      email: 'operator@gmail.com',
+      name: 'Operador',
+      canManageAlerts: true,
+    });
     fixture.detectChanges();
 
     const authenticated = fixture.nativeElement as HTMLElement;
+    expect(authenticated.querySelector('.auth-user')?.textContent).toContain('Operador');
     expect(authenticated.querySelector('button.auth-button')?.textContent).toContain(
       'Cerrar sesión',
     );

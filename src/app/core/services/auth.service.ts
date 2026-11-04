@@ -85,15 +85,20 @@ export class AuthService {
   }
 
   logout(): void {
-    if (this.tokenState() === null) {
+    const token = this.tokenState();
+    if (token === null) {
       this.clearSession();
       return;
     }
 
     this.authError.set(null);
+    this.clearSession();
     this.http
-      .post<void>(`${this.apiBaseUrl}/auth/logout/`, {})
-      .pipe(finalize(() => this.clearSession()))
+      .post<void>(
+        `${this.apiBaseUrl}/auth/logout/`,
+        {},
+        { headers: { Authorization: `Token ${token}` } },
+      )
       .subscribe({
         error: (error: unknown) => this.authError.set(this.getErrorMessage(error)),
       });

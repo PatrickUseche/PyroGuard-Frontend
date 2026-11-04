@@ -1,5 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AlertsService } from '../../core/services/alerts.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -35,6 +36,7 @@ describe('DashboardPage', () => {
     await TestBed.configureTestingModule({
       imports: [DashboardPage],
       providers: [
+        provideRouter([]),
         {
           provide: DashboardStore,
           useValue: {
@@ -59,7 +61,14 @@ describe('DashboardPage', () => {
             getSeries: () => of([]),
           },
         },
-        { provide: AuthService, useValue: { isAuthenticated: signal(false) } },
+        {
+          provide: AuthService,
+          useValue: {
+            canManageAlerts: signal(false),
+            currentUser: signal(null),
+            restoring: signal(false),
+          },
+        },
         {
           provide: AlertsService,
           useValue: { acknowledge: () => of({}), close: () => of({}), getActive: () => of([]) },

@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { EMPTY, Subject, catchError, startWith, switchMap } from 'rxjs';
+import { AlertActionsService } from './alert-actions.service';
 import { AlertsService, PaginatedAlerts } from '../../core/services/alerts.service';
+import { AuthService } from '../../core/services/auth.service';
 import { NodesService } from '../../core/services/nodes.service';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
 import { StateMessage } from '../../shared/components/state-message/state-message';
@@ -59,6 +61,18 @@ type AlertStatusFilter = '' | AlertStatus;
         </label>
       </form>
 
+      @if (!auth.restoring() && !auth.canManageAlerts()) {
+        <p class="permission-message">
+          @if (auth.currentUser()) {
+            Tu cuenta no tiene permiso para gestionar alertas. Pídelo al administrador.
+          } @else {
+            <a routerLink="/login" [queryParams]="{ returnUrl: '/alertas' }">
+              Inicia sesión para gestionar alertas.
+            </a>
+          }
+        </p>
+      }
+
       @if (loading()) {
         <app-state-message
           kind="loading"
@@ -97,6 +111,26 @@ type AlertStatusFilter = '' | AlertStatus;
                 </div>
               </div>
               <a class="detail-link" [routerLink]="['/alertas', alert.id]">Ver detalle</a>
+              @if (auth.canManageAlerts() && alert.status !== 'CLOSED') {
+                <div class="alert-actions">
+                  @if (alert.status === 'ACTIVE') {
+                    <button
+                      type="button"
+                      [disabled]="actions.loadingAlertId() === alert.id"
+                      (click)="acknowledge(alert)"
+                    >
+                      {{ actions.loadingAlertId() === alert.id ? 'Guardando…' : 'Reconocer' }}
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    [disabled]="actions.loadingAlertId() === alert.id"
+                    (click)="close(alert)"
+                  >
+                    {{ actions.loadingAlertId() === alert.id ? 'Guardando…' : 'Cerrar' }}
+                  </button>
+                </div>
+              }
               <time
                 [attr.datetime]="alert.last_seen_at"
                 [attr.title]="formatFullDate(alert.last_seen_at)"
@@ -116,6 +150,10 @@ type AlertStatusFilter = '' | AlertStatus;
             Siguiente
           </button>
         </nav>
+      }
+
+      @if (actions.actionMessage(); as message) {
+        <p class="action-message" role="status">{{ message }}</p>
       }
     </section>
   `,
@@ -236,6 +274,18 @@ type AlertStatusFilter = '' | AlertStatus;
       font-weight: 650;
     }
 
+    .alert-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .action-message,
+    .permission-message {
+      margin: 0;
+      color: var(--color-text-muted);
+    }
+
     .pagination {
       justify-content: center;
     }
@@ -271,6 +321,8 @@ export class AlertsHistoryPage {
   private readonly destroyRef = inject(DestroyRef);
   private readonly filterChanges = new Subject<void>();
 
+  readonly actions = inject(AlertActionsService);
+  readonly auth = inject(AuthService);
   readonly alerts = signal<Alert[]>([]);
   readonly nodes = signal<{ node_id: string; name: string }[]>([]);
   readonly total = signal(0);
@@ -369,9 +421,31 @@ export class AlertsHistoryPage {
     return ALERT_STATUS_LABELS[status];
   }
 
+  acknowledge(alert: Alert): void {
+    this.actions.acknowledge(
+      alert,
+      (updatedAlert) => this.updateAlert(updatedAlert),
+      () => this.filterChanges.next(),
+    );
+  }
+
+  close(alert: Alert): void {
+    this.actions.close(
+      alert,
+      (updatedAlert) => this.updateAlert(updatedAlert),
+      () => this.filterChanges.next(),
+    );
+  }
+
   private refreshFromFirstPage(): void {
     this.offset.set(0);
     this.filterChanges.next();
+  }
+
+  private updateAlert(updatedAlert: Alert): void {
+    this.alerts.update((alerts) =>
+      alerts.map((alert) => (alert.id === updatedAlert.id ? updatedAlert : alert)),
+    );
   }
 }
 
