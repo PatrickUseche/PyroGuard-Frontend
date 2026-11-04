@@ -94,3 +94,14 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] build(leaflet): permitir la dependencia CommonJS de Leaflet en angular.json para silenciar el aviso [6.5]
 - [x] chore(deps): actualizar `@angular/forms` dentro de su versión menor si corrige `zod` y documentar el resultado [6.6]
 - [x] docs: capturas reales del dashboard, detalle de nodo, alertas y mapa en `docs/capturas/` [6.7]
+
+## Fase 7 — Acceso con Google
+
+- [x] feat(auth): `googleClientId` en los environments y tipos mínimos del SDK de Google [7.1]
+- [ ] feat(auth): servicio que carga el SDK de Google solo en la página de acceso y entrega la credencial [7.2]
+- [ ] feat(auth): `AuthService` con acceso con Google, usuario actual y cierre de sesión en el servidor [7.3]
+- [ ] feat(auth): página `/login` con el botón «Continuar con Google» y estados de error [7.4]
+- [ ] refactor(auth): retirar el formulario de usuario y contraseña y redirigir `/registro` a `/login` [7.5]
+- [ ] feat(alerts): mostrar reconocer y cerrar solo a quien puede gestionar alertas, y el usuario en la cabecera [7.6]
+- [ ] test(auth): pruebas del acceso con Google y de los permisos [7.7]
+- [ ] docs(auth): README con la configuración del Client ID [7.8]

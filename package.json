@@ -8,8 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "format:check": "prettier --check \"**/*.{ts,html,css,json,js,md,yml,yaml}\"",
-    "format": "prettier --write \"**/*.{ts,html,css,json,js,md,yml,yaml}\""
+    "format:check": "prettier --check --end-of-line auto \"**/*.{ts,html,css,json,js,md,yml,yaml}\"",
+    "format": "prettier --write --end-of-line auto \"**/*.{ts,html,css,json,js,md,yml,yaml}\""
   },
   "private": true,
   "packageManager": "npm@11.17.0",
