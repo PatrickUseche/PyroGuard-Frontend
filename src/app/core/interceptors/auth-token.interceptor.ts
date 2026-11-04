@@ -17,7 +17,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (request, next) => {
   return next(authenticatedRequest).pipe(
     catchError((error: unknown) => {
       if (isUnauthorized(error)) {
-        authService.logout();
+        authService.clearSession();
       }
       return throwError(() => error);
     }),

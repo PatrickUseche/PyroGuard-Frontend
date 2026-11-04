@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { HealthIndicator } from './health-indicator';
 import { AuthService } from '../services/auth.service';
@@ -174,9 +174,13 @@ import { AuthService } from '../services/auth.service';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppLayout {
+export class AppLayout implements OnInit {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.auth.restoreSession();
+  }
 
   logout(): void {
     this.auth.logout();
