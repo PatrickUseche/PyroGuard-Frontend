@@ -47,7 +47,28 @@ La salida de producción está en `dist/pyro-guard-frontend/browser`.
 - `/` — Resumen global de riesgo y métricas; estado de los nodos, alertas activas, lecturas recientes y gráfico histórico de temperatura, humedad y humo.
 - `/nodos/:id` — Estado de conexión y riesgo del nodo, última lectura, alertas activas y su gráfico histórico.
 - `/alertas` — Historial paginado con filtros por estado, nivel y nodo. Reconocer o cerrar alertas requiere iniciar sesión.
-- `/login` — Inicio de sesión en el backend. La lectura del dashboard es pública; la sesión habilita las acciones de alertas.
+- `/login` — Acceso exclusivo con Google. La lectura del dashboard es pública; solo quienes pueden gestionar alertas ven sus acciones.
+
+## Acceso con Google
+
+La autenticación usa Google Identity Services en el navegador. Solo se aceptan cuentas `@gmail.com` verificadas por Google.
+
+### Configurar el Client ID
+
+1. En Google Cloud Console, crea o selecciona un proyecto.
+2. Configura la pantalla de consentimiento OAuth como **Externa** y deja la aplicación en modo de pruebas mientras se valida.
+3. En **Usuarios de prueba**, añade cada cuenta que necesite iniciar sesión mientras la aplicación esté en pruebas.
+4. Crea un ID de cliente OAuth de tipo **Aplicación web**.
+5. En **Orígenes autorizados de JavaScript**, añade:
+   - `http://localhost:4200`
+   - El origen de producción de Vercel, sin barra final (por ejemplo, `https://pyroguard.vercel.app`).
+6. Copia el **Client ID** a `googleClientId` en `src/environments/environment.development.ts` y `src/environments/environment.ts`. Configura el mismo valor en `GOOGLE_CLIENT_ID` en el backend.
+
+El Client ID es público y queda incorporado al bundle del frontend. El **Client Secret no se usa en el navegador**: nunca lo pegues en `googleClientId`, en el código ni en el repositorio.
+
+Las vistas previas de Vercel no admiten comodines en los orígenes OAuth autorizados. Google requiere autorizar cada origen exacto; las URL variables de las vistas previas normalmente no se pueden cubrir con un comodín. Usa el dominio de producción o registra manualmente un origen de vista previa estable si está disponible.
+
+Mientras la pantalla de consentimiento esté en modo de pruebas, solo los usuarios añadidos a **Usuarios de prueba** podrán iniciar sesión.
 
 El dashboard actualiza el resumen, los nodos y las alertas activas cada 10 segundos; el sondeo se pausa cuando la pestaña está oculta. La tabla de lecturas y los gráficos consultan bajo demanda y se actualizan como máximo cada 30 segundos. Las respuestas HTTP 429 se gestionan respetando `Retry-After`.
 

@@ -104,4 +104,4 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] refactor(auth): retirar el formulario de usuario y contraseña y redirigir `/registro` a `/login` [7.5]
 - [x] feat(alerts): mostrar reconocer y cerrar solo a quien puede gestionar alertas, y el usuario en la cabecera [7.6]
 - [x] test(auth): pruebas del acceso con Google y de los permisos [7.7]
-- [ ] docs(auth): README con la configuración del Client ID [7.8]
+- [x] docs(auth): README con la configuración del Client ID [7.8]
