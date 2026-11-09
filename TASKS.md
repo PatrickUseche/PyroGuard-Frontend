@@ -115,4 +115,4 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(auth): `/login` lleva a `/registro` cuando la cuenta de Google aún no existe [8.5]
 - [x] feat(auth): cierre de sesión y respuestas 401 llevan a `/login`, y la cabecera muestra el nombre de usuario [8.6]
 - [x] test(auth): pruebas de guards, registro y navegación [8.7]
-- [ ] docs(auth): README del flujo de registro e inicio de sesión [8.8]
+- [x] docs(auth): README del flujo de registro e inicio de sesión [8.8]

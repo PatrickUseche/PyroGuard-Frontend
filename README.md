@@ -47,11 +47,24 @@ La salida de producción está en `dist/pyro-guard-frontend/browser`.
 - `/` — Resumen global de riesgo y métricas; estado de los nodos, alertas activas, lecturas recientes y gráfico histórico de temperatura, humedad y humo.
 - `/nodos/:id` — Estado de conexión y riesgo del nodo, última lectura, alertas activas y su gráfico histórico.
 - `/alertas` — Historial paginado con filtros por estado, nivel y nodo. Reconocer o cerrar alertas requiere iniciar sesión.
-- `/login` — Acceso exclusivo con Google. La lectura del dashboard es pública; solo quienes pueden gestionar alertas ven sus acciones.
+- `/login` — Acceso exclusivo con Google.
+- `/registro` — Completa el registro de una cuenta nueva de Google eligiendo un nombre de usuario.
 
 ## Acceso con Google
 
 La autenticación usa Google Identity Services en el navegador. Solo se aceptan cuentas `@gmail.com` verificadas por Google.
+
+### Flujo de acceso y registro
+
+1. En `/login`, selecciona **Continuar con Google**. Si la cuenta ya está registrada, se inicia sesión y se abre el dashboard (o la ruta protegida que se solicitó).
+2. La primera vez que se verifica una cuenta, se abre `/registro`. Elige un nombre de usuario para terminar de crear la cuenta; no se crea hasta enviar ese nombre. Al completarse el registro, se inicia sesión y se abre el dashboard (o la ruta protegida solicitada).
+3. Si cancelas el registro, puedes volver a verificar la cuenta de Google más tarde. La verificación pendiente se conserva solo en memoria y se pierde al recargar la página.
+
+Los nombres de usuario deben tener entre 4 y 16 caracteres y usar solo letras, números, guion bajo (`_`), punto (`.`) o guion (`-`). Los nombres reservados y los ya utilizados no están disponibles; la comprobación final, sin distinguir mayúsculas, la realiza el backend.
+
+Sin sesión, la interfaz permite únicamente `/login` y `/registro`; el resto de rutas, incluida una ruta desconocida, conduce al acceso. Una sesión activa es necesaria para usar el dashboard, nodos, mapa e historial de alertas.
+
+La API permite lecturas públicas por defecto. Para exigir sesión también en las lecturas de la API, configura `PUBLIC_READ_ACCESS=False` en el `.env` local del backend y en las variables de entorno del servicio de backend en Render. El frontend adjunta automáticamente el token a las solicitudes de API; la ingesta de nodos no depende de esta opción.
 
 ### Configurar el Client ID
 
