@@ -47,7 +47,41 @@ La salida de producción está en `dist/pyro-guard-frontend/browser`.
 - `/` — Resumen global de riesgo y métricas; estado de los nodos, alertas activas, lecturas recientes y gráfico histórico de temperatura, humedad y humo.
 - `/nodos/:id` — Estado de conexión y riesgo del nodo, última lectura, alertas activas y su gráfico histórico.
 - `/alertas` — Historial paginado con filtros por estado, nivel y nodo. Reconocer o cerrar alertas requiere iniciar sesión.
-- `/login` — Inicio de sesión en el backend. La lectura del dashboard es pública; la sesión habilita las acciones de alertas.
+- `/login` — Acceso exclusivo con Google.
+- `/registro` — Completa el registro de una cuenta nueva de Google eligiendo un nombre de usuario.
+
+## Acceso con Google
+
+La autenticación usa Google Identity Services en el navegador. Solo se aceptan cuentas `@gmail.com` verificadas por Google.
+
+### Flujo de acceso y registro
+
+1. En `/login`, selecciona **Continuar con Google**. Si la cuenta ya está registrada, se inicia sesión y se abre el dashboard (o la ruta protegida que se solicitó).
+2. La primera vez que se verifica una cuenta, se abre `/registro`. Elige un nombre de usuario para terminar de crear la cuenta; no se crea hasta enviar ese nombre. Al completarse el registro, se inicia sesión y se abre el dashboard (o la ruta protegida solicitada).
+3. Si cancelas el registro, puedes volver a verificar la cuenta de Google más tarde. La verificación pendiente se conserva solo en memoria y se pierde al recargar la página.
+
+Los nombres de usuario deben tener entre 4 y 16 caracteres y usar solo letras, números, guion bajo (`_`), punto (`.`) o guion (`-`). Los nombres reservados y los ya utilizados no están disponibles; la comprobación final, sin distinguir mayúsculas, la realiza el backend.
+
+Sin sesión, la interfaz permite únicamente `/login` y `/registro`; el resto de rutas, incluida una ruta desconocida, conduce al acceso. Una sesión activa es necesaria para usar el dashboard, nodos, mapa e historial de alertas.
+
+La API permite lecturas públicas por defecto. Para exigir sesión también en las lecturas de la API, configura `PUBLIC_READ_ACCESS=False` en el `.env` local del backend y en las variables de entorno del servicio de backend en Render. El frontend adjunta automáticamente el token a las solicitudes de API; la ingesta de nodos no depende de esta opción.
+
+### Configurar el Client ID
+
+1. En Google Cloud Console, crea o selecciona un proyecto.
+2. Configura la pantalla de consentimiento OAuth como **Externa** y deja la aplicación en modo de pruebas mientras se valida.
+3. En **Usuarios de prueba**, añade cada cuenta que necesite iniciar sesión mientras la aplicación esté en pruebas.
+4. Crea un ID de cliente OAuth de tipo **Aplicación web**.
+5. En **Orígenes autorizados de JavaScript**, añade:
+   - `http://localhost:4200`
+   - El origen de producción de Vercel, sin barra final (por ejemplo, `https://pyroguard.vercel.app`).
+6. Copia el **Client ID** a `googleClientId` en `src/environments/environment.development.ts` y `src/environments/environment.ts`. Configura el mismo valor en `GOOGLE_CLIENT_ID` en el backend.
+
+El Client ID es público y queda incorporado al bundle del frontend. El **Client Secret no se usa en el navegador**: nunca lo pegues en `googleClientId`, en el código ni en el repositorio.
+
+Las vistas previas de Vercel no admiten comodines en los orígenes OAuth autorizados. Google requiere autorizar cada origen exacto; las URL variables de las vistas previas normalmente no se pueden cubrir con un comodín. Usa el dominio de producción o registra manualmente un origen de vista previa estable si está disponible.
+
+Mientras la pantalla de consentimiento esté en modo de pruebas, solo los usuarios añadidos a **Usuarios de prueba** podrán iniciar sesión.
 
 El dashboard actualiza el resumen, los nodos y las alertas activas cada 10 segundos; el sondeo se pausa cuando la pestaña está oculta. La tabla de lecturas y los gráficos consultan bajo demanda y se actualizan como máximo cada 30 segundos. Las respuestas HTTP 429 se gestionan respetando `Retry-After`.
 

@@ -25,6 +25,18 @@ import { DashboardStore } from './dashboard-store';
         <span class="count">{{ orderedAlerts().length }} alertas</span>
       </header>
 
+      @if (!auth.restoring() && !auth.canManageAlerts()) {
+        <p class="permission-message">
+          @if (auth.currentUser()) {
+            Tu cuenta no tiene permiso para gestionar alertas. Pídelo al administrador.
+          } @else {
+            <a [routerLink]="['/login']" [queryParams]="{ returnUrl: '/' }">
+              Inicia sesión para gestionar alertas.
+            </a>
+          }
+        </p>
+      }
+
       @if (orderedAlerts().length > 0) {
         <ul class="alert-list">
           @for (alert of orderedAlerts(); track alert.id) {
@@ -45,7 +57,7 @@ import { DashboardStore } from './dashboard-store';
                 </div>
               </div>
               <a class="detail-link" [routerLink]="['/alertas', alert.id]">Ver detalle</a>
-              @if (auth.isAuthenticated() && alert.status !== 'CLOSED') {
+              @if (auth.canManageAlerts() && alert.status !== 'CLOSED') {
                 <div class="alert-actions">
                   @if (alert.status === 'ACTIVE') {
                     <button
@@ -161,6 +173,11 @@ import { DashboardStore } from './dashboard-store';
     }
 
     .action-message {
+      margin: 0;
+      color: var(--color-text-muted);
+    }
+
+    .permission-message {
       margin: 0;
       color: var(--color-text-muted);
     }

@@ -1,7 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 import { HealthIndicator } from './health-indicator';
 import { AuthService } from '../services/auth.service';
+import { DestroyRef, computed, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-layout',
@@ -19,25 +29,35 @@ import { AuthService } from '../services/auth.service';
           </svg>
           <span>PyroGuard</span>
         </a>
-        <nav class="primary-nav" aria-label="Navegación principal">
-          <a
-            routerLink="/"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }"
-            ariaCurrentWhenActive="page"
-          >
-            Resumen
-          </a>
-          <a routerLink="/alertas" routerLinkActive="active" ariaCurrentWhenActive="page">
-            Alertas
-          </a>
-          <a routerLink="/mapa" routerLinkActive="active" ariaCurrentWhenActive="page"> Mapa </a>
-        </nav>
-        <app-health-indicator class="health-indicator" />
-        @if (auth.isAuthenticated()) {
-          <button type="button" class="auth-button" (click)="logout()">Cerrar sesión</button>
-        } @else {
-          <a class="auth-button" routerLink="/login">Iniciar sesión</a>
+        @if (showNavigation()) {
+          <nav class="primary-nav" aria-label="Navegación principal">
+            <a
+              routerLink="/"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              ariaCurrentWhenActive="page"
+            >
+              Resumen
+            </a>
+            <a routerLink="/alertas" routerLinkActive="active" ariaCurrentWhenActive="page">
+              Alertas
+            </a>
+            <a routerLink="/mapa" routerLinkActive="active" ariaCurrentWhenActive="page"> Mapa </a>
+          </nav>
+          <app-health-indicator class="health-indicator" />
+        }
+        @if (!authenticationPage()) {
+          @if (auth.currentUser(); as user) {
+            <span class="auth-user">{{ '@' + user.username }}</span>
+            <button type="button" class="auth-button" (click)="logout()">Cerrar sesión</button>
+          } @else if (auth.restoring()) {
+            <span class="auth-user" role="status">Comprobando sesión</span>
+          } @else {
+            <a class="auth-button" routerLink="/login">Iniciar sesión</a>
+          }
+          @if (auth.authError(); as message) {
+            <span class="auth-user" role="status">{{ message }}</span>
+          }
         }
       </header>
 
@@ -131,6 +151,15 @@ import { AuthService } from '../services/auth.service';
       white-space: nowrap;
     }
 
+    .auth-user {
+      max-width: 220px;
+      overflow: hidden;
+      color: var(--color-text-muted);
+      font-weight: 650;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .main-content {
       width: min(1200px, 100%);
       flex: 1;
@@ -174,9 +203,37 @@ import { AuthService } from '../services/auth.service';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppLayout {
+export class AppLayout implements OnInit {
   readonly auth = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  readonly authenticationPage = signal(false);
+  readonly showNavigation = computed(
+    () => !this.authenticationPage() && this.auth.currentUser() !== null,
+  );
+
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        startWith(null),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.updateLayoutMode());
+  }
+
+  ngOnInit(): void {
+    this.auth.restoreSession();
+  }
+
+  private updateLayoutMode(): void {
+    let activeRoute = this.route.snapshot;
+    while (activeRoute.firstChild !== null) {
+      activeRoute = activeRoute.firstChild;
+    }
+    this.authenticationPage.set(activeRoute.data['layout'] === 'authentication');
+  }
 
   logout(): void {
     this.auth.logout();

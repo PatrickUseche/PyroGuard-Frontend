@@ -71,7 +71,9 @@ export class AlertActionsService {
 
         if (error.kind === 'unauthorized') {
           this.actionMessage.set('Tu sesión expiró. Inicia sesión para continuar.');
-          void this.router.navigateByUrl('/login');
+          void this.router.navigate(['/login'], {
+            queryParams: { returnUrl: this.router.url },
+          });
           return;
         }
 

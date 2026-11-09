@@ -65,21 +65,88 @@ describe('apiErrorInterceptor', () => {
     expect(throttledError?.retryAfter).toBe(60);
   });
 
-  it('should surface backend non-field login errors', () => {
+  it('should surface backend detail errors', () => {
     let actualError: ApiError | undefined;
 
-    http.post('/auth/login/', { username: 'operator', password: 'wrong' }).subscribe({
+    http.post('/auth/google/', { credential: 'invalid' }).subscribe({
       error: (error: ApiError) => (actualError = error),
     });
 
-    httpTestingController.expectOne('/auth/login/').flush(
+    httpTestingController.expectOne('/auth/google/').flush(
       {
         status: 'error',
-        errors: { non_field_errors: ['Credenciales inválidas.'] },
+        errors: { detail: 'No se pudo verificar la cuenta de Google.' },
       },
       { status: 400, statusText: 'Bad Request' },
     );
 
-    expect(actualError?.message).toBe('Credenciales inválidas.');
+    expect(actualError?.message).toBe('No se pudo verificar la cuenta de Google.');
+  });
+
+  it('should retain registration code and extra fields without the response envelope', () => {
+    let actualError: ApiError | undefined;
+
+    http.post('/auth/google/', { credential: 'simulated' }).subscribe({
+      error: (error: ApiError) => (actualError = error),
+    });
+    httpTestingController.expectOne('/auth/google/').flush(
+      {
+        status: 'error',
+        code: 'registration_required',
+        errors: { detail: 'Esta cuenta de Google aún no está registrada.' },
+        email: 'new.user@gmail.com',
+        name: 'Ada',
+        suggested_username: 'new.user',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    expect(actualError?.code).toBe('registration_required');
+    expect(actualError?.message).toBe('Esta cuenta de Google aún no está registrada.');
+    expect(actualError?.data).toEqual({
+      code: 'registration_required',
+      email: 'new.user@gmail.com',
+      name: 'Ada',
+      suggested_username: 'new.user',
+    });
+    expect(actualError?.errors).toEqual({
+      detail: 'Esta cuenta de Google aún no está registrada.',
+    });
+  });
+
+  it('should surface backend details for server errors', () => {
+    let actualError: ApiError | undefined;
+
+    http.post('/auth/google/', {}).subscribe({
+      error: (error: ApiError) => (actualError = error),
+    });
+
+    httpTestingController.expectOne('/auth/google/').flush(
+      {
+        status: 'error',
+        errors: { detail: 'El acceso con Google no está configurado.' },
+      },
+      { status: 503, statusText: 'Service Unavailable' },
+    );
+
+    expect(actualError?.message).toBe('El acceso con Google no está configurado.');
+  });
+
+  it('should preserve backend details for forbidden responses', () => {
+    let actualError: ApiError | undefined;
+
+    http.post('/alerts/1/acknowledge/', {}).subscribe({
+      error: (error: ApiError) => (actualError = error),
+    });
+
+    httpTestingController.expectOne('/alerts/1/acknowledge/').flush(
+      {
+        status: 'error',
+        errors: { detail: 'Tu cuenta no tiene permiso para gestionar alertas.' },
+      },
+      { status: 403, statusText: 'Forbidden' },
+    );
+
+    expect(actualError?.message).toBe('Tu cuenta no tiene permiso para gestionar alertas.');
   });
 });

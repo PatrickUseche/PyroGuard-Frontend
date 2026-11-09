@@ -1,53 +1,71 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ApiError } from '../../shared/models/api-error.model';
-import { StateMessage } from '../../shared/components/state-message/state-message';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { GoogleSignInService } from '../../core/services/google-sign-in.service';
+import { StateMessage } from '../../shared/components/state-message/state-message';
+import { environment } from '../../../environments/environment';
+import { safeReturnUrl } from '../../core/guards/auth.guard';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormsModule, StateMessage],
+  imports: [RouterLink, StateMessage],
   template: `
     <section class="login-panel" aria-labelledby="login-title">
       <header>
         <p class="eyebrow">Acceso de operación</p>
         <h1 id="login-title">Iniciar sesión</h1>
         <p>
-          La consulta de lecturas permanece pública. Inicia sesión para habilitar acciones sobre
-          alertas.
+          Inicia sesión con tu cuenta de Gmail. Solo se admiten cuentas @gmail.com verificadas por
+          Google.
         </p>
       </header>
 
-      @if (error(); as message) {
-        <app-state-message kind="error" title="No se pudo iniciar sesión" [message]="message" />
+      @if (!clientIdConfigured) {
+        <app-state-message
+          kind="error"
+          title="Acceso no disponible"
+          message="El acceso con Google no está configurado."
+        />
+      } @else if (auth.restoring()) {
+        <app-state-message
+          kind="loading"
+          title="Comprobando sesión"
+          message="Espera mientras verificamos tu cuenta."
+        />
+      } @else if (googleSignIn.loading()) {
+        <app-state-message
+          kind="loading"
+          title="Cargando Google"
+          message="Preparando el acceso seguro."
+        />
+      } @else if (googleSignIn.error(); as sdkError) {
+        <app-state-message kind="error" title="No se pudo cargar Google" [message]="sdkError" />
+        <button type="button" class="retry-button" (click)="retrySdk()">Reintentar</button>
+      } @else {
+        @if (signingIn()) {
+          <app-state-message
+            kind="loading"
+            title="Iniciando sesión"
+            message="Verificando tu cuenta de Google."
+          />
+        }
+        @if (backendError(); as message) {
+          <app-state-message kind="error" title="No se pudo iniciar sesión" [message]="message" />
+        }
+        @if (sdkReady()) {
+          <div class="google-button" #googleButton aria-label="Continuar con Google"></div>
+        }
       }
-
-      <form (ngSubmit)="submit()" #loginForm="ngForm">
-        <label for="username">Usuario</label>
-        <input
-          id="username"
-          name="username"
-          autocomplete="username"
-          required
-          [(ngModel)]="username"
-        />
-
-        <label for="password">Contraseña</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          required
-          [(ngModel)]="password"
-        />
-
-        <button type="submit" [disabled]="loading() || loginForm.invalid">
-          {{ loading() ? 'Iniciando sesión…' : 'Iniciar sesión' }}
-        </button>
-      </form>
+      <a class="registration-link" routerLink="/registro">¿Primera vez? Crear cuenta</a>
     </section>
   `,
   styles: `
@@ -81,67 +99,141 @@ import { AuthService } from '../../core/services/auth.service';
       line-height: 1.5;
     }
 
-    form {
-      display: grid;
-      gap: var(--space-2);
+    .google-button {
+      display: flex;
+      min-height: 44px;
+      justify-content: center;
+      overflow: hidden;
     }
 
-    label {
-      margin-top: var(--space-2);
-      font-weight: 650;
-    }
-
-    input,
-    button {
+    .retry-button {
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
       border-radius: 8px;
       background: var(--color-surface);
       color: var(--color-text);
-    }
-
-    button {
-      margin-top: var(--space-3);
-      border-color: var(--color-primary);
-      background: var(--color-primary);
-      color: var(--color-on-primary);
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 650;
     }
 
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
+    .registration-link {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-link);
+      font-weight: 650;
+      text-align: center;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPage {
-  private readonly authService = inject(AuthService);
+  private readonly auth = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly googleButton = viewChild<ElementRef<HTMLElement>>('googleButton');
+  private sdkLoadStarted = false;
+  private renderedButton: HTMLElement | null = null;
 
-  username = '';
-  password = '';
-  readonly loading = signal(false);
-  readonly error = signal<string | null>(null);
+  readonly googleSignIn = inject(GoogleSignInService);
+  readonly clientIdConfigured = environment.googleClientId.trim() !== '';
+  readonly sdkReady = signal(false);
+  readonly signingIn = signal(false);
+  readonly backendError = signal<string | null>(null);
 
-  submit(): void {
-    if (this.loading() || this.username.trim() === '' || this.password === '') {
+  constructor() {
+    effect(() => {
+      if (this.auth.currentUser() !== null) {
+        void this.router.navigateByUrl(this.getReturnUrl());
+      } else if (!this.auth.restoring()) {
+        this.ensureSdkLoaded();
+      }
+    });
+
+    effect(() => {
+      const credential = this.googleSignIn.credential();
+      if (credential !== null) {
+        this.googleSignIn.credential.set(null);
+        this.signIn(credential);
+      }
+    });
+
+    effect(() => {
+      const button = this.googleButton()?.nativeElement;
+      if (!this.sdkReady() || button === undefined || this.renderedButton === button) {
+        return;
+      }
+      this.renderedButton = button;
+      this.googleSignIn.renderButton(button, {
+        type: 'standard',
+        text: 'continue_with',
+        locale: 'es',
+        width: 320,
+        size: 'large',
+      });
+    });
+  }
+
+  retrySdk(): void {
+    this.sdkReady.set(false);
+    this.renderedButton = null;
+    this.sdkLoadStarted = false;
+    this.ensureSdkLoaded();
+  }
+
+  private ensureSdkLoaded(): void {
+    if (!this.clientIdConfigured || this.sdkLoadStarted) {
       return;
     }
+    this.sdkLoadStarted = true;
+    void this.googleSignIn.load().then(() => {
+      this.sdkLoadStarted = false;
+      this.sdkReady.set(this.googleSignIn.error() === null);
+    });
+  }
 
-    this.loading.set(true);
-    this.error.set(null);
-    this.authService.login(this.username.trim(), this.password).subscribe({
-      next: () => {
-        this.loading.set(false);
-        void this.router.navigateByUrl('/');
+  private signIn(credential: string): void {
+    if (this.signingIn()) {
+      return;
+    }
+    this.backendError.set(null);
+    this.signingIn.set(true);
+    this.auth.loginWithGoogle(credential).subscribe({
+      next: (result) => {
+        this.signingIn.set(false);
+        if (result.kind === 'registration-required') {
+          this.auth.setPendingRegistrationNotice(
+            'Es tu primera vez con esta cuenta: elige un nombre de usuario para terminar.',
+          );
+          void this.router.navigate(['/registro'], {
+            queryParams: { returnUrl: this.getReturnUrl() },
+          });
+          return;
+        }
+        void this.router.navigateByUrl(this.getReturnUrl());
       },
-      error: (error: ApiError) => {
-        this.loading.set(false);
-        this.error.set(error.message);
+      error: (error: unknown) => {
+        this.signingIn.set(false);
+        this.backendError.set(this.getErrorMessage(error));
       },
     });
+  }
+
+  private getReturnUrl(): string {
+    return safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'message' in error &&
+      typeof error.message === 'string'
+    ) {
+      return error.message;
+    }
+    return 'No se pudo completar el inicio de sesión. Inténtalo de nuevo.';
   }
 }

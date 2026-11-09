@@ -98,7 +98,7 @@ import { AlertActionsService } from './alert-actions.service';
           <p>{{ currentAlert.message }}</p>
         </section>
 
-        @if (auth.isAuthenticated() && currentAlert.status !== 'CLOSED') {
+        @if (auth.canManageAlerts() && currentAlert.status !== 'CLOSED') {
           <div class="actions">
             @if (currentAlert.status === 'ACTIVE') {
               <button
@@ -117,6 +117,17 @@ import { AlertActionsService } from './alert-actions.service';
               {{ actions.loadingAlertId() === currentAlert.id ? 'Guardando…' : 'Cerrar' }}
             </button>
           </div>
+        }
+        @if (!auth.restoring() && !auth.canManageAlerts()) {
+          <p class="permission-message">
+            @if (auth.currentUser()) {
+              Tu cuenta no tiene permiso para gestionar alertas. Pídelo al administrador.
+            } @else {
+              <a routerLink="/login" [queryParams]="{ returnUrl: '/alertas/' + currentAlert.id }">
+                Inicia sesión para gestionar alertas.
+              </a>
+            }
+          </p>
         }
         @if (actions.actionMessage(); as message) {
           <p class="action-message" role="status">{{ message }}</p>
@@ -227,6 +238,11 @@ import { AlertActionsService } from './alert-actions.service';
     }
 
     .action-message {
+      color: var(--color-text-muted);
+    }
+
+    .permission-message {
+      margin: 0;
       color: var(--color-text-muted);
     }
 

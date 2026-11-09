@@ -94,3 +94,25 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] build(leaflet): permitir la dependencia CommonJS de Leaflet en angular.json para silenciar el aviso [6.5]
 - [x] chore(deps): actualizar `@angular/forms` dentro de su versión menor si corrige `zod` y documentar el resultado [6.6]
 - [x] docs: capturas reales del dashboard, detalle de nodo, alertas y mapa en `docs/capturas/` [6.7]
+
+## Fase 7 — Acceso con Google
+
+- [x] feat(auth): `googleClientId` en los environments y tipos mínimos del SDK de Google [7.1]
+- [x] feat(auth): servicio que carga el SDK de Google solo en la página de acceso y entrega la credencial [7.2]
+- [x] feat(auth): `AuthService` con acceso con Google, usuario actual y cierre de sesión en el servidor [7.3]
+- [x] feat(auth): página `/login` con el botón «Continuar con Google» y estados de error [7.4]
+- [x] refactor(auth): retirar el formulario de usuario y contraseña y redirigir `/registro` a `/login` [7.5]
+- [x] feat(alerts): mostrar reconocer y cerrar solo a quien puede gestionar alertas, y el usuario en la cabecera [7.6]
+- [x] test(auth): pruebas del acceso con Google y de los permisos [7.7]
+- [x] docs(auth): README con la configuración del Client ID [7.8]
+
+## Fase 8 — Acceso con registro
+
+- [x] feat(auth): guards que exigen sesión y llevan a `/login` conservando `returnUrl` [8.1]
+- [x] feat(layout): mostrar solo la marca en las pantallas de acceso y la navegación solo con sesión [8.2]
+- [x] feat(auth): `ApiError` con código y datos extra, y `AuthService` con registro pendiente de Google [8.3]
+- [x] feat(auth): página `/registro` con la verificación de Google y el formulario de nombre de usuario [8.4]
+- [x] feat(auth): `/login` lleva a `/registro` cuando la cuenta de Google aún no existe [8.5]
+- [x] feat(auth): cierre de sesión y respuestas 401 llevan a `/login`, y la cabecera muestra el nombre de usuario [8.6]
+- [x] test(auth): pruebas de guards, registro y navegación [8.7]
+- [x] docs(auth): README del flujo de registro e inicio de sesión [8.8]
