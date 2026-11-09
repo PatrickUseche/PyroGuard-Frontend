@@ -2,11 +2,17 @@ import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: 'registro', redirectTo: '/login', pathMatch: 'full' },
   {
     path: '',
     loadComponent: () => import('./core/layout/app-layout').then((module) => module.AppLayout),
     children: [
+      {
+        path: 'registro',
+        canActivate: [guestGuard],
+        data: { layout: 'authentication' },
+        loadComponent: () =>
+          import('./features/auth/registration-page').then((module) => module.RegistrationPage),
+      },
       {
         path: 'login',
         canActivate: [guestGuard],
