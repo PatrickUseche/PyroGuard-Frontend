@@ -113,6 +113,12 @@ export class AuthService {
     this.pendingRegistrationState.set(null);
   }
 
+  setPendingRegistrationNotice(notice: string): void {
+    this.pendingRegistrationState.update((pending) =>
+      pending === null ? null : { ...pending, notice },
+    );
+  }
+
   restoreSession(): void {
     if (
       this.tokenState() === null ||

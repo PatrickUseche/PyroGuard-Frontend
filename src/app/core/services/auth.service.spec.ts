@@ -85,6 +85,25 @@ describe('AuthService', () => {
     expect(sessionStorage.getItem('google-credential')).toBeNull();
   });
 
+  it('should attach the first-time notice to the pending registration', () => {
+    service.loginWithGoogle('temporary-google-credential').subscribe();
+    httpTestingController.expectOne('https://api.test/api/auth/google/').flush(
+      {
+        status: 'error',
+        code: 'registration_required',
+        errors: { detail: 'Esta cuenta de Google aún no está registrada.' },
+        email: 'new.user@gmail.com',
+        name: 'Ada',
+        suggested_username: 'new.user',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    service.setPendingRegistrationNotice('Es tu primera vez con esta cuenta.');
+
+    expect(service.pendingRegistration()?.notice).toBe('Es tu primera vez con esta cuenta.');
+  });
+
   it('should register using the pending credential and clear it after success', () => {
     service.loginWithGoogle('temporary-google-credential').subscribe();
     httpTestingController.expectOne('https://api.test/api/auth/google/').flush(

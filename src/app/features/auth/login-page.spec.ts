@@ -15,6 +15,7 @@ describe('LoginPage', () => {
   let currentUser: ReturnType<typeof signal<AuthUser | null>>;
   let restoring: ReturnType<typeof signal<boolean>>;
   let loginWithGoogle: ReturnType<typeof vi.fn>;
+  let setPendingRegistrationNotice: ReturnType<typeof vi.fn>;
   let load: ReturnType<typeof vi.fn>;
   let renderButton: ReturnType<typeof vi.fn>;
 
@@ -26,6 +27,7 @@ describe('LoginPage', () => {
     currentUser = signal<AuthUser | null>(null);
     restoring = signal(false);
     loginWithGoogle = vi.fn(() => of({ kind: 'signed-in' as const }));
+    setPendingRegistrationNotice = vi.fn();
     load = vi.fn(() => Promise.resolve());
     renderButton = vi.fn();
 
@@ -35,7 +37,12 @@ describe('LoginPage', () => {
         provideRouter([]),
         {
           provide: AuthService,
-          useValue: { currentUser, restoring, loginWithGoogle },
+          useValue: {
+            currentUser,
+            restoring,
+            loginWithGoogle,
+            setPendingRegistrationNotice,
+          },
         },
         {
           provide: GoogleSignInService,
@@ -185,11 +192,11 @@ describe('LoginPage', () => {
     expect(navigate).toHaveBeenCalledWith('/');
   });
 
-  it('should not treat an unregistered Google account as a signed-in session', async () => {
+  it('should navigate to registration with a notice when the account is unregistered', async () => {
     loginWithGoogle.mockReturnValue(of({ kind: 'registration-required' as const }));
     const fixture = TestBed.createComponent(LoginPage);
     const router = TestBed.inject(Router);
-    const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
     await fixture.whenStable();
     credential.set('simulated-credential');
@@ -197,10 +204,21 @@ describe('LoginPage', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(navigate).not.toHaveBeenCalled();
-    expect(fixture.nativeElement.textContent).toContain(
-      'Esta cuenta de Google aún no está registrada.',
+    expect(setPendingRegistrationNotice).toHaveBeenCalledWith(
+      'Es tu primera vez con esta cuenta: elige un nombre de usuario para terminar.',
     );
+    expect(navigate).toHaveBeenCalledWith(['/registro'], {
+      queryParams: { returnUrl: '/' },
+    });
+  });
+
+  it('should provide a first-time registration link', () => {
+    const fixture = TestBed.createComponent(LoginPage);
+    fixture.detectChanges();
+
+    const link = (fixture.nativeElement as HTMLElement).querySelector('.registration-link');
+    expect(link?.textContent).toContain('¿Primera vez? Crear cuenta');
+    expect(link?.getAttribute('href')).toBe('/registro');
   });
 
   it('should display a server configuration error from the API', async () => {

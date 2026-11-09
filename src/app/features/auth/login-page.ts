@@ -7,16 +7,17 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { GoogleSignInService } from '../../core/services/google-sign-in.service';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { environment } from '../../../environments/environment';
+import { safeReturnUrl } from '../../core/guards/auth.guard';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [StateMessage],
+  imports: [RouterLink, StateMessage],
   template: `
     <section class="login-panel" aria-labelledby="login-title">
       <header>
@@ -64,6 +65,7 @@ import { environment } from '../../../environments/environment';
           <div class="google-button" #googleButton aria-label="Continuar con Google"></div>
         }
       }
+      <a class="registration-link" routerLink="/registro">¿Primera vez? Crear cuenta</a>
     </section>
   `,
   styles: `
@@ -113,6 +115,16 @@ import { environment } from '../../../environments/environment';
       color: var(--color-text);
       cursor: pointer;
       font-weight: 650;
+    }
+
+    .registration-link {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-link);
+      font-weight: 650;
+      text-align: center;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -192,9 +204,12 @@ export class LoginPage {
       next: (result) => {
         this.signingIn.set(false);
         if (result.kind === 'registration-required') {
-          this.backendError.set(
-            'Esta cuenta de Google aún no está registrada. Puedes crearla desde el registro.',
+          this.auth.setPendingRegistrationNotice(
+            'Es tu primera vez con esta cuenta: elige un nombre de usuario para terminar.',
           );
+          void this.router.navigate(['/registro'], {
+            queryParams: { returnUrl: this.getReturnUrl() },
+          });
           return;
         }
         void this.router.navigateByUrl(this.getReturnUrl());
@@ -207,10 +222,7 @@ export class LoginPage {
   }
 
   private getReturnUrl(): string {
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    return returnUrl !== null && returnUrl.startsWith('/') && !returnUrl.startsWith('//')
-      ? returnUrl
-      : '/';
+    return safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
   }
 
   private getErrorMessage(error: unknown): string {

@@ -15,6 +15,7 @@ describe('RegistrationPage', () => {
     email: 'ada@gmail.com',
     name: 'Ada',
     suggestedUsername: 'ada.user',
+    notice: 'Es tu primera vez con esta cuenta: elige un nombre de usuario para terminar.',
   };
   let credential: ReturnType<typeof signal<string | null>>;
   let pendingRegistration: ReturnType<typeof signal<PendingGoogleRegistration | null>>;
@@ -100,6 +101,9 @@ describe('RegistrationPage', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('ada@gmail.com');
     expect(element.textContent).toContain('Verificado por Google');
+    expect(element.textContent).toContain(
+      'Es tu primera vez con esta cuenta: elige un nombre de usuario para terminar.',
+    );
     expect(element.querySelector<HTMLInputElement>('#username')?.value).toBe('ada.user');
     expect(element.querySelector('.username-input')?.textContent).toContain('8/16');
     expect(element.querySelector('[aria-live="polite"]')?.textContent).toContain('8 de 16');
