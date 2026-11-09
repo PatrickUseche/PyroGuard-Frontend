@@ -109,7 +109,7 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 ## Fase 8 — Acceso con registro
 
 - [x] feat(auth): guards que exigen sesión y llevan a `/login` conservando `returnUrl` [8.1]
-- [ ] feat(layout): mostrar solo la marca en las pantallas de acceso y la navegación solo con sesión [8.2]
+- [x] feat(layout): mostrar solo la marca en las pantallas de acceso y la navegación solo con sesión [8.2]
 - [ ] feat(auth): `ApiError` con código y datos extra, y `AuthService` con registro pendiente de Google [8.3]
 - [ ] feat(auth): página `/registro` con la verificación de Google y el formulario de nombre de usuario [8.4]
 - [ ] feat(auth): `/login` lleva a `/registro` cuando la cuenta de Google aún no existe [8.5]

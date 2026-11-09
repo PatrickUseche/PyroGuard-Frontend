@@ -10,6 +10,7 @@ export const routes: Routes = [
       {
         path: 'login',
         canActivate: [guestGuard],
+        data: { layout: 'authentication' },
         loadComponent: () =>
           import('./features/auth/login-page').then((module) => module.LoginPage),
       },
