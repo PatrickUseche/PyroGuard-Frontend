@@ -105,3 +105,14 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(alerts): mostrar reconocer y cerrar solo a quien puede gestionar alertas, y el usuario en la cabecera [7.6]
 - [x] test(auth): pruebas del acceso con Google y de los permisos [7.7]
 - [x] docs(auth): README con la configuración del Client ID [7.8]
+
+## Fase 8 — Acceso con registro
+
+- [x] feat(auth): guards que exigen sesión y llevan a `/login` conservando `returnUrl` [8.1]
+- [ ] feat(layout): mostrar solo la marca en las pantallas de acceso y la navegación solo con sesión [8.2]
+- [ ] feat(auth): `ApiError` con código y datos extra, y `AuthService` con registro pendiente de Google [8.3]
+- [ ] feat(auth): página `/registro` con la verificación de Google y el formulario de nombre de usuario [8.4]
+- [ ] feat(auth): `/login` lleva a `/registro` cuando la cuenta de Google aún no existe [8.5]
+- [ ] feat(auth): cierre de sesión y respuestas 401 llevan a `/login`, y la cabecera muestra el nombre de usuario [8.6]
+- [ ] test(auth): pruebas de guards, registro y navegación [8.7]
+- [ ] docs(auth): README del flujo de registro e inicio de sesión [8.8]
