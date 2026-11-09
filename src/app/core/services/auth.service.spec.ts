@@ -6,6 +6,7 @@ import { API_BASE_URL } from '../config/api-base-url.token';
 import { apiErrorInterceptor } from '../interceptors/api-error.interceptor';
 import { authTokenInterceptor } from '../interceptors/auth-token.interceptor';
 import { AuthService } from './auth.service';
+import { ApiError } from '../../shared/models/api-error.model';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -23,7 +24,11 @@ describe('AuthService', () => {
 
   it('should post Google credentials and persist the token and user', () => {
     let completed = false;
-    service.loginWithGoogle('google-credential').subscribe(() => (completed = true));
+    let result: unknown;
+    service.loginWithGoogle('google-credential').subscribe((value) => {
+      completed = true;
+      result = value;
+    });
 
     const request = httpTestingController.expectOne('https://api.test/api/auth/google/');
     expect(request.request.method).toBe('POST');
@@ -39,6 +44,7 @@ describe('AuthService', () => {
     });
 
     expect(completed).toBe(true);
+    expect(result).toEqual({ kind: 'signed-in' });
     expect(service.token()).toBe('access-token');
     expect(service.isAuthenticated()).toBe(true);
     expect(service.currentUser()).toEqual({
@@ -49,6 +55,121 @@ describe('AuthService', () => {
     });
     expect(service.canManageAlerts()).toBe(true);
     expect(localStorage.getItem('pyroguard-token')).toBe('access-token');
+  });
+
+  it('should keep an unregistered Google identity pending in memory', () => {
+    let result: unknown;
+    service.loginWithGoogle('temporary-google-credential').subscribe((value) => (result = value));
+    httpTestingController.expectOne('https://api.test/api/auth/google/').flush(
+      {
+        status: 'error',
+        code: 'registration_required',
+        errors: { detail: 'Esta cuenta de Google aún no está registrada.' },
+        email: 'new.user@gmail.com',
+        name: 'Ada',
+        suggested_username: 'new.user',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    expect(result).toEqual({ kind: 'registration-required' });
+    expect(service.pendingRegistration()).toEqual({
+      credential: 'temporary-google-credential',
+      email: 'new.user@gmail.com',
+      name: 'Ada',
+      suggestedUsername: 'new.user',
+    });
+    expect(service.token()).toBeNull();
+    expect(localStorage.getItem('pyroguard-token')).toBeNull();
+    expect(localStorage.getItem('google-credential')).toBeNull();
+    expect(sessionStorage.getItem('google-credential')).toBeNull();
+  });
+
+  it('should register using the pending credential and clear it after success', () => {
+    service.loginWithGoogle('temporary-google-credential').subscribe();
+    httpTestingController.expectOne('https://api.test/api/auth/google/').flush(
+      {
+        status: 'error',
+        code: 'registration_required',
+        errors: { detail: 'Esta cuenta de Google aún no está registrada.' },
+        email: 'new.user@gmail.com',
+        name: 'Ada',
+        suggested_username: 'new.user',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    service.registerWithGoogle('ChosenName').subscribe();
+    const request = httpTestingController.expectOne('https://api.test/api/auth/google/register/');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({
+      credential: 'temporary-google-credential',
+      username: 'ChosenName',
+    });
+    request.flush({
+      token: 'registered-token',
+      user: {
+        username: 'ChosenName',
+        email: 'new.user@gmail.com',
+        name: 'Ada',
+        can_manage_alerts: false,
+      },
+    });
+
+    expect(service.pendingRegistration()).toBeNull();
+    expect(service.token()).toBe('registered-token');
+    expect(service.currentUser()?.username).toBe('ChosenName');
+    expect(localStorage.getItem('pyroguard-token')).toBe('registered-token');
+  });
+
+  it('should clear an expired Google credential and return a clear message', () => {
+    service.loginWithGoogle('expired-google-credential').subscribe();
+    httpTestingController.expectOne('https://api.test/api/auth/google/').flush(
+      {
+        status: 'error',
+        code: 'registration_required',
+        errors: { detail: 'Esta cuenta de Google aún no está registrada.' },
+        email: 'new.user@gmail.com',
+        name: '',
+        suggested_username: 'new.user',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    let actualError: ApiError | undefined;
+    service.registerWithGoogle('ChosenName').subscribe({
+      error: (error: ApiError) => (actualError = error),
+    });
+    httpTestingController.expectOne('https://api.test/api/auth/google/register/').flush(
+      {
+        status: 'error',
+        errors: { detail: 'No se pudo verificar la cuenta de Google.' },
+      },
+      { status: 400, statusText: 'Bad Request' },
+    );
+
+    expect(actualError?.message).toBe(
+      'La verificación de Google venció. Verifica tu cuenta otra vez.',
+    );
+    expect(service.pendingRegistration()).toBeNull();
+  });
+
+  it('should cancel pending registration without sending the credential', () => {
+    service.loginWithGoogle('temporary-google-credential').subscribe();
+    httpTestingController.expectOne('https://api.test/api/auth/google/').flush(
+      {
+        status: 'error',
+        code: 'registration_required',
+        errors: { detail: 'Esta cuenta de Google aún no está registrada.' },
+        email: 'new.user@gmail.com',
+        name: '',
+        suggested_username: 'new.user',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+    service.cancelRegistration();
+
+    expect(service.pendingRegistration()).toBeNull();
   });
 
   it('should restore the user from /auth/me/ when a token is stored', () => {
@@ -102,6 +223,25 @@ describe('AuthService', () => {
     expect(service.token()).toBeNull();
     expect(service.currentUser()).toBeNull();
     expect(localStorage.getItem('pyroguard-token')).toBeNull();
+  });
+
+  it('should clear pending registration when logging out', () => {
+    service.loginWithGoogle('temporary-google-credential').subscribe();
+    httpTestingController.expectOne('https://api.test/api/auth/google/').flush(
+      {
+        status: 'error',
+        code: 'registration_required',
+        errors: { detail: 'Esta cuenta de Google aún no está registrada.' },
+        email: 'new.user@gmail.com',
+        name: '',
+        suggested_username: 'new.user',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    service.logout();
+
+    expect(service.pendingRegistration()).toBeNull();
   });
 
   it('should clear the local token when server logout fails', () => {

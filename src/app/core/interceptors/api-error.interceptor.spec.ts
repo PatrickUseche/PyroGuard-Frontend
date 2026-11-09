@@ -83,6 +83,37 @@ describe('apiErrorInterceptor', () => {
     expect(actualError?.message).toBe('No se pudo verificar la cuenta de Google.');
   });
 
+  it('should retain registration code and extra fields without the response envelope', () => {
+    let actualError: ApiError | undefined;
+
+    http.post('/auth/google/', { credential: 'simulated' }).subscribe({
+      error: (error: ApiError) => (actualError = error),
+    });
+    httpTestingController.expectOne('/auth/google/').flush(
+      {
+        status: 'error',
+        code: 'registration_required',
+        errors: { detail: 'Esta cuenta de Google aún no está registrada.' },
+        email: 'new.user@gmail.com',
+        name: 'Ada',
+        suggested_username: 'new.user',
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    expect(actualError?.code).toBe('registration_required');
+    expect(actualError?.message).toBe('Esta cuenta de Google aún no está registrada.');
+    expect(actualError?.data).toEqual({
+      code: 'registration_required',
+      email: 'new.user@gmail.com',
+      name: 'Ada',
+      suggested_username: 'new.user',
+    });
+    expect(actualError?.errors).toEqual({
+      detail: 'Esta cuenta de Google aún no está registrada.',
+    });
+  });
+
   it('should surface backend details for server errors', () => {
     let actualError: ApiError | undefined;
 

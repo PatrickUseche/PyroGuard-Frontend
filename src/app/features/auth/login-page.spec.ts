@@ -25,7 +25,7 @@ describe('LoginPage', () => {
     googleLoading = signal(false);
     currentUser = signal<AuthUser | null>(null);
     restoring = signal(false);
-    loginWithGoogle = vi.fn(() => of(undefined));
+    loginWithGoogle = vi.fn(() => of({ kind: 'signed-in' as const }));
     load = vi.fn(() => Promise.resolve());
     renderButton = vi.fn();
 
@@ -183,6 +183,24 @@ describe('LoginPage', () => {
 
     expect(loginWithGoogle).toHaveBeenCalledWith('simulated-credential');
     expect(navigate).toHaveBeenCalledWith('/');
+  });
+
+  it('should not treat an unregistered Google account as a signed-in session', async () => {
+    loginWithGoogle.mockReturnValue(of({ kind: 'registration-required' as const }));
+    const fixture = TestBed.createComponent(LoginPage);
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    credential.set('simulated-credential');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain(
+      'Esta cuenta de Google aún no está registrada.',
+    );
   });
 
   it('should display a server configuration error from the API', async () => {

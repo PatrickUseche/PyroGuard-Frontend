@@ -189,8 +189,14 @@ export class LoginPage {
     this.backendError.set(null);
     this.signingIn.set(true);
     this.auth.loginWithGoogle(credential).subscribe({
-      next: () => {
+      next: (result) => {
         this.signingIn.set(false);
+        if (result.kind === 'registration-required') {
+          this.backendError.set(
+            'Esta cuenta de Google aún no está registrada. Puedes crearla desde el registro.',
+          );
+          return;
+        }
         void this.router.navigateByUrl(this.getReturnUrl());
       },
       error: (error: unknown) => {

@@ -5,4 +5,7 @@ export interface ApiError {
   kind: ApiErrorKind;
   message: string;
   retryAfter?: number;
+  code?: string;
+  data?: Record<string, unknown>;
+  errors?: Record<string, unknown>;
 }
