@@ -115,11 +115,27 @@ describe('AppLayout', () => {
     fixture.detectChanges();
 
     const authenticated = fixture.nativeElement as HTMLElement;
-    expect(authenticated.querySelector('.auth-user')?.textContent).toContain('Operador');
+    expect(authenticated.querySelector('.auth-user')?.textContent).toContain('@operator');
     expect(authenticated.querySelector('button.auth-button')?.textContent).toContain(
       'Cerrar sesión',
     );
     expect(authenticated.querySelector('a.auth-button')).toBeNull();
+  });
+
+  it('should call server logout and navigate to login', () => {
+    currentUser.set({
+      username: 'operator',
+      email: 'operator@gmail.com',
+      name: 'Operador',
+      canManageAlerts: false,
+    });
+    const fixture = TestBed.createComponent(AppLayout);
+    const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    fixture.componentInstance.logout();
+
+    expect(logout).toHaveBeenCalledOnce();
+    expect(navigate).toHaveBeenCalledWith('/login');
   });
 
   it('should show only the brand on auth routes and keep the footer without starting health', async () => {

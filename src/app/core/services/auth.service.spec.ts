@@ -2,6 +2,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { API_BASE_URL } from '../config/api-base-url.token';
 import { apiErrorInterceptor } from '../interceptors/api-error.interceptor';
 import { authTokenInterceptor } from '../interceptors/auth-token.interceptor';
@@ -283,6 +284,7 @@ describe('AuthService', () => {
       providers: [
         { provide: API_BASE_URL, useValue: 'https://api.test/api' },
         { provide: PLATFORM_ID, useValue: 'browser' },
+        provideRouter([]),
         provideHttpClient(withInterceptors([authTokenInterceptor, apiErrorInterceptor])),
         provideHttpClientTesting(),
       ],

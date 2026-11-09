@@ -48,7 +48,7 @@ import { filter, startWith } from 'rxjs';
         }
         @if (!authenticationPage()) {
           @if (auth.currentUser(); as user) {
-            <span class="auth-user">{{ user.name || user.email }}</span>
+            <span class="auth-user">{{ '@' + user.username }}</span>
             <button type="button" class="auth-button" (click)="logout()">Cerrar sesión</button>
           } @else if (auth.restoring()) {
             <span class="auth-user" role="status">Comprobando sesión</span>

@@ -113,6 +113,6 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(auth): `ApiError` con código y datos extra, y `AuthService` con registro pendiente de Google [8.3]
 - [x] feat(auth): página `/registro` con la verificación de Google y el formulario de nombre de usuario [8.4]
 - [x] feat(auth): `/login` lleva a `/registro` cuando la cuenta de Google aún no existe [8.5]
-- [ ] feat(auth): cierre de sesión y respuestas 401 llevan a `/login`, y la cabecera muestra el nombre de usuario [8.6]
+- [x] feat(auth): cierre de sesión y respuestas 401 llevan a `/login`, y la cabecera muestra el nombre de usuario [8.6]
 - [ ] test(auth): pruebas de guards, registro y navegación [8.7]
 - [ ] docs(auth): README del flujo de registro e inicio de sesión [8.8]
