@@ -125,6 +125,27 @@ describe('authTokenInterceptor', () => {
     expect(navigate).toHaveBeenCalledOnce();
   });
 
+  it('should not start a redirect loop when an API 401 occurs on an auth page', () => {
+    loginViaGoogle('expired-token');
+    let currentUrl = '/login?returnUrl=%2Falertas';
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    vi.spyOn(router, 'url', 'get').mockImplementation(() => currentUrl);
+
+    http.get('https://api.test/api/nodes/').subscribe({ error: () => undefined });
+    httpTestingController
+      .expectOne('https://api.test/api/nodes/')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
+
+    currentUrl = '/registro';
+    http.get('https://api.test/api/alerts/').subscribe({ error: () => undefined });
+    httpTestingController
+      .expectOne('https://api.test/api/alerts/')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
+
+    expect(authService.token()).toBeNull();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
   it('should not clear the session for a 401 from a non-API URL', () => {
     loginViaGoogle('valid-token');
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);

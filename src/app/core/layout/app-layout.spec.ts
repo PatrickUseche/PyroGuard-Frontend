@@ -30,6 +30,7 @@ describe('AppLayout', () => {
       providers: [
         provideRouter([
           { path: 'login', component: TestPage, data: { layout: 'authentication' } },
+          { path: 'registro', component: TestPage, data: { layout: 'authentication' } },
           { path: '', component: TestPage },
         ]),
         { provide: PLATFORM_ID, useValue: 'server' },
@@ -138,20 +139,22 @@ describe('AppLayout', () => {
     expect(navigate).toHaveBeenCalledWith('/login');
   });
 
-  it('should show only the brand on auth routes and keep the footer without starting health', async () => {
+  it('should show only the brand on login and registration without starting health', async () => {
     const fixture = TestBed.createComponent(AppLayout);
-    await router.navigateByUrl('/login');
-    fixture.detectChanges();
+    for (const route of ['/login', '/registro']) {
+      await router.navigateByUrl(route);
+      fixture.detectChanges();
 
-    const element = fixture.nativeElement as HTMLElement;
-    expect(element.querySelector('.brand')?.textContent).toContain('PyroGuard');
-    expect(element.querySelector('.primary-nav')).toBeNull();
-    expect(element.querySelector('app-health-indicator')).toBeNull();
-    expect(element.querySelector('a.auth-button')).toBeNull();
-    expect(element.querySelector('button.auth-button')).toBeNull();
-    expect(element.querySelector('footer')?.textContent).toContain(
-      'Prototipo académico con datos sintéticos; no es un detector certificado de incendios.',
-    );
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.querySelector('.brand')?.textContent).toContain('PyroGuard');
+      expect(element.querySelector('.primary-nav')).toBeNull();
+      expect(element.querySelector('app-health-indicator')).toBeNull();
+      expect(element.querySelector('a.auth-button')).toBeNull();
+      expect(element.querySelector('button.auth-button')).toBeNull();
+      expect(element.querySelector('footer')?.textContent).toContain(
+        'Prototipo académico con datos sintéticos; no es un detector certificado de incendios.',
+      );
+    }
     expect(healthCheck).not.toHaveBeenCalled();
   });
 
