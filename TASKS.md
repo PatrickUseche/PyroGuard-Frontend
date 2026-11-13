@@ -116,3 +116,10 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] feat(auth): cierre de sesión y respuestas 401 llevan a `/login`, y la cabecera muestra el nombre de usuario [8.6]
 - [x] test(auth): pruebas de guards, registro y navegación [8.7]
 - [x] docs(auth): README del flujo de registro e inicio de sesión [8.8]
+
+## Fase 9 — Pruebas E2E con Playwright
+
+- [x] chore(e2e): instalar Playwright y configurar los proyectos de escritorio y móvil [9.1]
+- [x] test(e2e): sesión, panel, mapa y detalle de nodo contra el backend local [9.2]
+- [x] test(e2e): alertas (reconocer, permisos del usuario sin grupo y filtro por estado) [9.3]
+- [x] docs(e2e): README de `e2e/` con el backend de pruebas y los tokens [9.4]
