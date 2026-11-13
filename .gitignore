@@ -29,3 +29,6 @@ yarn-error.log*
 # Sistema operativo
 .DS_Store
 Thumbs.db
+# Pruebas E2E con Playwright
+/test-results/
+/playwright-report/
