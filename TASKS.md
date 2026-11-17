@@ -55,10 +55,10 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] docs: README del frontend con la configuración y los comandos [4.2]
 - [x] chore(deps): revisar y resolver las vulnerabilidades de npm audit --omit=dev sin subir versiones mayores [4.4]
 - [x] docs(tasks): corregir las referencias cruzadas a las tasks del backend en TASKS.md [4.5]
-- [ ] chore(ci): workflow de GitHub Actions que corre ng build y ng test en cada pull request [4.6]
-- [ ] chore(lint): configurar angular-eslint y corregir los avisos [4.7]
-- [ ] chore(format): script format:check con Prettier y archivos formateados [4.8]
-- [ ] docs: capturas del dashboard en el README [4.9]
+- [x] chore(ci): workflow de GitHub Actions que corre ng build y ng test en cada pull request [4.6] (hecha como [6.1])
+- [x] chore(lint): configurar angular-eslint y corregir los avisos [4.7] (hecha como [6.2])
+- [x] chore(format): script format:check con Prettier y archivos formateados [4.8] (hecha como [6.3])
+- [x] docs: capturas del dashboard en el README [4.9] (hecha como [6.4] y [6.7])
 
 ## Fase 5 — Brechas de la auditoría
 
