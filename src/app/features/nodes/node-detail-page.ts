@@ -183,7 +183,7 @@ import { SeriesChart } from '../dashboard/series-chart';
       align-content: start;
       gap: var(--space-3);
       padding: var(--space-4);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
     }

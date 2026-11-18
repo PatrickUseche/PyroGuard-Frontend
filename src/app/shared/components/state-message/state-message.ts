@@ -63,15 +63,19 @@ export type StateMessageKind = 'loading' | 'error' | 'empty';
       align-items: flex-start;
       gap: var(--space-3);
       padding: var(--space-4);
-      border: 1px dashed var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
       color: var(--color-text-muted);
     }
 
+    .state-message.loading {
+      border-style: dashed;
+    }
+
     .state-message.error {
-      border-style: solid;
       border-color: var(--risk-fire-border);
+      background: var(--risk-fire-bg);
       color: var(--risk-fire-text);
     }
 
@@ -91,8 +95,14 @@ export type StateMessageKind = 'loading' | 'error' | 'empty';
     }
 
     h3 {
+      color: inherit;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .state-message:not(.error) h3 {
       color: var(--color-text);
-      font-size: 0.95rem;
     }
 
     p {

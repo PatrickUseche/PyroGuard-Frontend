@@ -114,7 +114,7 @@ import {
 
     .map-host {
       min-height: 480px;
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       overflow: hidden;
       background: var(--color-surface-muted);
@@ -124,7 +124,7 @@ import {
       display: grid;
       gap: var(--space-3);
       padding: var(--space-4);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
     }

@@ -300,7 +300,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
     button {
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--color-border);
+      border: 2px solid var(--color-ink);
       border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
@@ -367,7 +367,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
 
     .plot {
       padding: var(--space-3);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
     }
@@ -433,7 +433,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
       max-height: 320px;
       overflow: auto;
       margin-top: var(--space-3);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-control);
     }
 

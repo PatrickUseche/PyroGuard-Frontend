@@ -28,7 +28,7 @@ type AlertStatusFilter = '' | AlertStatus;
           <h1 id="history-title">Historial de alertas</h1>
           <p>Consulta alertas activas, reconocidas y cerradas.</p>
         </div>
-        <span>{{ total() }} alertas</span>
+        <span>{{ total() }} {{ total() === 1 ? 'alerta' : 'alertas' }}</span>
       </header>
 
       <form class="filters" aria-label="Filtros de alertas">
@@ -93,7 +93,7 @@ type AlertStatusFilter = '' | AlertStatus;
       } @else {
         <ul class="alert-list">
           @for (alert of alerts(); track alert.id) {
-            <li class="alert-card">
+            <li class="alert-card" [class.fire]="alert.level === 'FIRE'">
               <div class="alert-main">
                 <app-risk-badge [risk]="alert.level" />
                 <div>
@@ -101,7 +101,10 @@ type AlertStatusFilter = '' | AlertStatus;
                     <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
                     <app-simulated-badge [nodeId]="alert.node_id" />
                     <span>{{ statusLabel(alert.status) }}</span>
-                    <span>×{{ alert.occurrences }} ocurrencias</span>
+                    <span
+                      >×{{ alert.occurrences }}
+                      {{ alert.occurrences === 1 ? 'ocurrencia' : 'ocurrencias' }}</span
+                    >
                     @if (alert.probability !== null) {
                       <span>Prob. {{ formatProbability(alert.probability) }}</span>
                     }
@@ -206,7 +209,7 @@ type AlertStatusFilter = '' | AlertStatus;
     button {
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--color-border);
+      border: 2px solid var(--color-ink);
       border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
@@ -222,9 +225,14 @@ type AlertStatusFilter = '' | AlertStatus;
 
     .alert-card {
       padding: var(--space-4);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
+    }
+
+    .alert-card.fire {
+      border-color: var(--risk-fire-border);
+      background: var(--risk-fire-bg);
     }
 
     .alert-main {
