@@ -196,7 +196,7 @@ import { AlertActionsService } from './alert-actions.service';
     .detail-grid > div,
     .message-panel {
       padding: var(--space-4);
-      border-radius: var(--space-2);
+      border-radius: var(--radius-control);
       background: var(--color-surface-muted);
     }
 
@@ -226,7 +226,7 @@ import { AlertActionsService } from './alert-actions.service';
       min-height: 44px;
       padding: var(--space-2) var(--space-4);
       border: 2px solid var(--color-ink);
-      border-radius: var(--space-2);
+      border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
       cursor: pointer;

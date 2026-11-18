@@ -325,7 +325,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
       margin: 0;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
-      border-radius: var(--space-2);
+      border-radius: var(--radius-control);
     }
 
     .metric-filters legend {

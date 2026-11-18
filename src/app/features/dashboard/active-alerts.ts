@@ -256,7 +256,7 @@ import { DashboardStore } from './dashboard-store';
 
     .alert-skeleton span {
       height: 3.5rem;
-      border-radius: var(--space-2);
+      border-radius: var(--radius-control);
       background: var(--color-surface-muted);
     }
 

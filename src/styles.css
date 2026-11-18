@@ -209,7 +209,7 @@ select {
   border: 1px solid var(--color-border);
   border-radius: 2px;
   background: var(--color-surface);
-  box-shadow: 0 1px 4px rgb(17 25 21 / 30%);
+  outline: 2px solid var(--color-ink);
   color: var(--color-text);
   font-size: 0.75rem;
   font-weight: 750;

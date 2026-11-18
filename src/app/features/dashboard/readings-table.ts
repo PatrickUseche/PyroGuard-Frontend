@@ -399,7 +399,7 @@ import { DashboardStore } from './dashboard-store';
 
     .table-skeleton span {
       height: 2rem;
-      border-radius: var(--space-1);
+      border-radius: var(--radius-control);
       background: var(--color-surface-muted);
     }
 
