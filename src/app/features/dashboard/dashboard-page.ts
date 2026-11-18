@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RiskScale } from '../../shared/components/risk-scale/risk-scale';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
@@ -109,6 +109,14 @@ import { SeriesChart } from './series-chart';
             <div>
               <dt>Nodos totales</dt>
               <dd>{{ summary.total_nodes }}</dd>
+            </div>
+            <div>
+              <dt>Temp. media (en línea)</dt>
+              <dd>{{ means().temperature }}</dd>
+            </div>
+            <div>
+              <dt>Humedad media (en línea)</dt>
+              <dd>{{ means().humidity }}</dd>
             </div>
           </dl>
           @if (summary.total_nodes === 0) {
@@ -287,6 +295,28 @@ import { SeriesChart } from './series-chart';
 })
 export class DashboardPage {
   readonly store = inject(DashboardStore);
+
+  /** Promedios de la última lectura de cada nodo en línea; «—» si no hay datos. */
+  readonly means = computed(() => {
+    const online = new Set(
+      this.store
+        .nodes()
+        .filter((node) => node.connection_status === 'ONLINE')
+        .map((node) => node.node_id),
+    );
+    const readings = (this.store.summary()?.latest_readings ?? []).filter((reading) =>
+      online.has(reading.node_id),
+    );
+    if (readings.length === 0) {
+      return { temperature: '—', humidity: '—' };
+    }
+    const mean = (values: number[]): number => values.reduce((a, b) => a + b, 0) / values.length;
+    const format = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
+    return {
+      temperature: `${format.format(mean(readings.map((r) => r.temperature)))} °C`,
+      humidity: `${format.format(mean(readings.map((r) => r.humidity)))} %`,
+    };
+  });
   readonly skeletons = [1, 2, 3, 4, 5, 6];
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;
