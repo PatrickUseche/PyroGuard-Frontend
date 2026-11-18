@@ -154,3 +154,10 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 
 - [x] fix(auth): usar el Client ID de OAuth propio en desarrollo y producción [11.1]
 - [x] docs(readme): dominio de producción, orígenes de Google, capturas y revisión de zod [11.2]
+
+## Fase 12 — Mantenimiento final
+
+- [x] chore(deps): parches de seguridad (`zod` 4.6.6) y de Angular 22.2.6 / CLI 22.2.7; `npm audit` en 0 [12.1]
+- [x] feat(map): los marcadores a pocos píxeles se abren en abanico (solo visual, recalculado en cada zoom) [12.2]
+- [x] docs(readme): sección de seguridad al día [12.3]
+- Medido (12.4): login en móvil con red 4G lenta y CPU 4× más lenta, FCP/LCP 1,8 s, CLS 0,014, 89,7 kB iniciales comprimidos; sin scroll horizontal en 768 px (panel, alertas, mapa).
