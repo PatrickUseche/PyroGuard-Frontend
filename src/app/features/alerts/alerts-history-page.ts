@@ -247,7 +247,11 @@ type AlertStatusFilter = '' | AlertStatus;
     }
 
     .stamp {
-      padding: 0 var(--space-2);
+      display: inline-flex;
+      align-items: center;
+      padding: 2px var(--space-2);
+      line-height: 1;
+      transform: rotate(-2deg);
       border: 2px solid var(--color-ink);
       color: var(--color-text);
       font-family: var(--font-display);
@@ -317,6 +321,28 @@ type AlertStatusFilter = '' | AlertStatus;
     button:disabled {
       cursor: not-allowed;
       opacity: 0.55;
+    }
+
+    @media (min-width: 641px) {
+      .alert-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 6.5rem 9rem 6rem;
+      }
+
+      .alert-card > .detail-link {
+        grid-column: 2;
+      }
+
+      .alert-card > .alert-actions {
+        grid-column: 3;
+        justify-content: flex-end;
+      }
+
+      .alert-card > time {
+        grid-column: 4;
+        justify-self: end;
+        text-align: right;
+      }
     }
 
     @media (max-width: 640px) {

@@ -99,7 +99,7 @@ import { SeriesChart } from '../dashboard/series-chart';
               <p>No hay lecturas recientes.</p>
             }
           </article>
-          <article class="detail-card">
+          <article class="detail-card wide">
             <h2>Alertas activas</h2>
             @if (alerts().length > 0) {
               <ul>
@@ -176,6 +176,10 @@ import { SeriesChart } from '../dashboard/series-chart';
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: var(--space-4);
+    }
+
+    .detail-card.wide {
+      grid-column: 1 / -1;
     }
 
     .detail-card {

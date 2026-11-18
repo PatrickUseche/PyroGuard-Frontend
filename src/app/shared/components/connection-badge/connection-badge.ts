@@ -62,8 +62,11 @@ import { CONNECTION_STATUS_LABELS, ConnectionStatus } from '../../models/connect
       padding: 3px var(--space-2);
       border: 1px solid transparent;
       border-radius: 2px;
+      font-family: var(--font-display);
       font-size: 0.8rem;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       line-height: 1.2;
       white-space: nowrap;
     }
