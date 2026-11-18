@@ -123,3 +123,11 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 - [x] test(e2e): sesión, panel, mapa y detalle de nodo contra el backend local [9.2]
 - [x] test(e2e): alertas (reconocer, permisos del usuario sin grupo y filtro por estado) [9.3]
 - [x] docs(e2e): README de `e2e/` con el backend de pruebas y los tokens [9.4]
+
+## Fase 10 — Auditoría y pulido del frontend con impeccable
+
+Alcance: pulido, no rediseño (se conserva identidad visual, texto y comportamiento). Rama `polish/impeccable-audit`.
+Las tareas de corrección se añaden aquí tras presentar el informe de auditoría.
+
+- [x] docs(design): PRODUCT.md con usuarios, propósito y restricciones del panel [10.1]
+- [ ] docs(design): DESIGN.md y `.impeccable/design.json` derivados del sistema actual [10.2]
