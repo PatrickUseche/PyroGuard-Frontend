@@ -261,7 +261,8 @@ import { filter, startWith } from 'rxjs';
       }
 
       .auth-user {
-        display: none;
+        max-width: 140px;
+        font-size: 0.9rem;
       }
 
       .health-plate {

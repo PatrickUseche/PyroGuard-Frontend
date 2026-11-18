@@ -177,7 +177,8 @@ const CLASSES: readonly ScaleClass[] = [
       }
 
       .segment-label {
-        font-size: 0.95rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.02em;
       }
     }
   `,

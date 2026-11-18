@@ -261,6 +261,12 @@ import { DashboardStore } from './dashboard-store';
     }
 
     @media (max-width: 640px) {
+      .alert-main {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
       .alert-card {
         align-items: flex-start;
         flex-direction: column;

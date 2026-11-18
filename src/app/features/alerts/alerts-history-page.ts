@@ -93,14 +93,20 @@ type AlertStatusFilter = '' | AlertStatus;
       } @else {
         <ul class="alert-list">
           @for (alert of alerts(); track alert.id) {
-            <li class="alert-card" [class.fire]="alert.level === 'FIRE'">
+            <li
+              class="alert-card"
+              [class.fire]="alert.level === 'FIRE' && alert.status !== 'CLOSED'"
+              [class.closed]="alert.status === 'CLOSED'"
+            >
               <div class="alert-main">
                 <app-risk-badge [risk]="alert.level" />
                 <div>
                   <div class="alert-meta">
                     <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
                     <app-simulated-badge [nodeId]="alert.node_id" />
-                    <span>{{ statusLabel(alert.status) }}</span>
+                    <span [class.stamp]="alert.status === 'CLOSED'">{{
+                      statusLabel(alert.status)
+                    }}</span>
                     <span
                       >×{{ alert.occurrences }}
                       {{ alert.occurrences === 1 ? 'ocurrencia' : 'ocurrencias' }}</span
@@ -235,6 +241,21 @@ type AlertStatusFilter = '' | AlertStatus;
       background: var(--risk-fire-bg);
     }
 
+    .alert-card.closed {
+      border-color: var(--color-border);
+      background: var(--color-surface-muted);
+    }
+
+    .stamp {
+      padding: 0 var(--space-2);
+      border: 2px solid var(--color-ink);
+      color: var(--color-text);
+      font-family: var(--font-display);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
     .alert-main {
       justify-content: flex-start;
       min-width: 0;
@@ -299,6 +320,12 @@ type AlertStatusFilter = '' | AlertStatus;
     }
 
     @media (max-width: 640px) {
+      .alert-main {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
       .page-heading,
       .alert-card {
         align-items: flex-start;
