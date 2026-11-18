@@ -36,15 +36,15 @@ const CLASSES: readonly ScaleClass[] = [
   template: `
     @if (variant() === 'band') {
       <div class="band" role="img" [attr.aria-label]="ariaLabel()">
+        @if (pointerPosition(); as position) {
+          <span class="pointer" aria-hidden="true" [style.--p]="position"></span>
+        }
         @for (item of classes; track item.risk) {
           <div
             class="segment"
             [class]="item.risk.toLowerCase()"
             [class.current]="item.risk === risk()"
           >
-            @if (item.risk === risk()) {
-              <span class="pointer" aria-hidden="true"></span>
-            }
             <span class="segment-label">{{ item.label }}</span>
             <span class="segment-text">{{ item.description }}</span>
           </div>
@@ -64,10 +64,12 @@ const CLASSES: readonly ScaleClass[] = [
     }
 
     .band {
+      --pad: 14px;
+      position: relative;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 6px;
-      padding: 14px;
+      padding: var(--pad);
       background: #111915;
     }
 
@@ -124,14 +126,16 @@ const CLASSES: readonly ScaleClass[] = [
 
     .pointer {
       position: absolute;
-      top: -14px;
-      left: 50%;
+      z-index: 1;
+      top: 0;
+      left: calc(var(--pad) + (100% - 2 * var(--pad)) * var(--p));
       width: 0;
       height: 0;
       border-top: 14px solid #ffffff;
       border-right: 12px solid transparent;
       border-left: 12px solid transparent;
       transform: translateX(-50%);
+      transition: left 600ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .mini {
@@ -170,8 +174,8 @@ const CLASSES: readonly ScaleClass[] = [
 
     @media (max-width: 640px) {
       .band {
+        --pad: 10px;
         gap: 4px;
-        padding: 10px;
       }
 
       .segment {
@@ -196,6 +200,12 @@ export class RiskScale {
   readonly variant = input<'band' | 'mini'>('band');
   readonly stale = input(false);
   readonly classes = CLASSES;
+
+  /** Posición del puntero como fracción del ancho útil: centro de la clase actual. */
+  readonly pointerPosition = computed(() => {
+    const index = CLASSES.findIndex((item) => item.risk === this.risk());
+    return index < 0 ? null : (2 * index + 1) / 6;
+  });
 
   readonly ariaLabel = computed(() => {
     const risk = this.risk();

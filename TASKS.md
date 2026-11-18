@@ -144,6 +144,11 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 - [x] fix(layout): el riesgo global tiñe el riel en todas las rutas con sesión [10.14]
 - [x] fix(dashboard): cifras con jerarquía, nodos por gravedad sin desbordes y banda con contraste [10.15]
 - [x] fix(pages): detalle de nodo, historial alineado, sello legible y alarma del mapa siempre encima [10.16]
+- [x] style(ui): radios y marcador del mapa alineados con el sistema (2px, sin sombras) [10.17]
+- [x] feat(map): marcadores compactos salvo advertencia e incendio [10.18]
+- [x] feat(ui): el puntero de la banda se desliza entre clases (600 ms, 80 ms con reduced-motion) [10.19]
+- [x] feat(dashboard): temperatura y humedad medias de los nodos en línea [10.20]
+- [x] test(ui): pruebas de RiskScale y de los marcadores del mapa [10.21]
 
 ## Fase 11 — Acceso con Google propio
 

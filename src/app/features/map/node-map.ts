@@ -25,6 +25,7 @@ import {
   filterLocatedNodes,
   MapMarkerPresentation,
   mapMarkerPresentation,
+  isCompactMarker,
   markerAccessibleHtml,
 } from './map-marker.util';
 
@@ -333,8 +334,8 @@ export class NodeMap implements OnDestroy {
     return L.divIcon({
       className: 'pyroguard-marker-container',
       html: markerAccessibleHtml(details),
-      iconSize: [128, 40],
-      iconAnchor: [64, 20],
+      iconSize: isCompactMarker(details) ? [40, 40] : [128, 40],
+      iconAnchor: isCompactMarker(details) ? [20, 20] : [64, 20],
     });
   }
 }
