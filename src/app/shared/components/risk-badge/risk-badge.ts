@@ -79,10 +79,13 @@ import { RISK_LABELS, Risk } from '../../models/risk.model';
       align-items: center;
       gap: var(--space-1);
       padding: 3px var(--space-2);
-      border: 1px solid transparent;
-      border-radius: 999px;
+      border: 2px solid transparent;
+      border-radius: 2px;
+      font-family: var(--font-display);
       font-size: 0.8rem;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       line-height: 1.2;
       white-space: nowrap;
     }
@@ -100,15 +103,15 @@ import { RISK_LABELS, Risk } from '../../models/risk.model';
     }
 
     .warning {
-      border-color: var(--risk-warning-border);
-      background: var(--risk-warning-bg);
-      color: var(--risk-warning-text);
+      border-color: var(--class-warning);
+      background: var(--class-warning);
+      color: var(--class-on-warning);
     }
 
     .fire {
-      border-color: var(--risk-fire-border);
-      background: var(--risk-fire-bg);
-      color: var(--risk-fire-text);
+      border-color: var(--class-fire);
+      background: var(--class-fire);
+      color: var(--class-on-fire);
     }
 
     .stale,

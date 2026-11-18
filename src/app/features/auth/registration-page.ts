@@ -189,7 +189,7 @@ const USERNAME_PATTERN = /^[A-Za-z0-9_.-]{4,16}$/;
       gap: var(--space-3);
       padding: var(--space-3);
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
     }
 
     .verified-icon {
@@ -229,7 +229,7 @@ const USERNAME_PATTERN = /^[A-Za-z0-9_.-]{4,16}$/;
       min-height: 48px;
       align-items: center;
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
       background: var(--color-surface);
     }
 
@@ -295,7 +295,7 @@ const USERNAME_PATTERN = /^[A-Za-z0-9_.-]{4,16}$/;
       min-height: 44px;
       padding: var(--space-2) var(--space-4);
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
       cursor: pointer;
       font: inherit;
       font-weight: 650;

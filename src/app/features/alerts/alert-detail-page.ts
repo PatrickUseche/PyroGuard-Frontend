@@ -41,7 +41,6 @@ import { AlertActionsService } from './alert-actions.service';
       <section class="alert-detail" aria-labelledby="alert-title">
         <header class="alert-heading">
           <div>
-            <p class="eyebrow">Detalle de alerta #{{ currentAlert.id }}</p>
             <h1 id="alert-title">
               <a class="node-link" [routerLink]="['/nodos', currentAlert.node_id]">{{
                 currentAlert.node_id
@@ -53,6 +52,10 @@ import { AlertActionsService } from './alert-actions.service';
         </header>
 
         <dl class="detail-grid">
+          <div>
+            <dt>Alerta</dt>
+            <dd>#{{ currentAlert.id }}</dd>
+          </div>
           <div>
             <dt>Estado</dt>
             <dd>{{ statusLabel(currentAlert) }}</dd>
@@ -165,17 +168,10 @@ import { AlertActionsService } from './alert-actions.service';
       gap: var(--space-4);
     }
 
-    .eyebrow,
     h1,
     h2,
     p {
       margin: 0;
-    }
-
-    .eyebrow {
-      margin-bottom: var(--space-2);
-      color: var(--color-text-muted);
-      font-size: 0.85rem;
     }
 
     .node-link {

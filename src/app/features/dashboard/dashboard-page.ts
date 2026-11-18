@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
+import { RiskScale } from '../../shared/components/risk-scale/risk-scale';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { ActiveAlerts } from './active-alerts';
@@ -11,12 +11,11 @@ import { SeriesChart } from './series-chart';
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [ActiveAlerts, NodeGrid, ReadingsTable, RiskBadge, SeriesChart, StateMessage],
+  imports: [ActiveAlerts, NodeGrid, ReadingsTable, RiskScale, SeriesChart, StateMessage],
   template: `
     <section class="dashboard" aria-labelledby="dashboard-title">
       <header class="page-heading">
         <div>
-          <p class="eyebrow">Monitoreo forestal</p>
           <h1 id="dashboard-title">Centro de control</h1>
           <p class="intro">Estado de nodos, lecturas recientes y alertas de PyroGuard.</p>
         </div>
@@ -30,35 +29,24 @@ import { SeriesChart } from './series-chart';
               Actualizado {{ formatRelativeTime(updatedAt.toISOString()) }}
             </time>
           }
-          @if (store.summary(); as summary) {
-            <div
-              class="risk-banner"
-              [class.fire]="summary.overall_risk === 'FIRE'"
-              aria-live="polite"
-            >
-              <span>Riesgo global</span>
-              <app-risk-badge [risk]="summary.overall_risk" />
-            </div>
-          }
         </div>
       </header>
 
-      <section class="risk-legend" aria-labelledby="risk-legend-title">
-        <h2 id="risk-legend-title">Categorías de riesgo</h2>
-        <div class="legend-items">
-          <div class="legend-item">
-            <app-risk-badge risk="NORMAL" />
-            <span>El sistema no identifica condiciones de riesgo elevado.</span>
-          </div>
-          <div class="legend-item">
-            <app-risk-badge risk="WARNING" />
-            <span>El sistema detecta condiciones que requieren atención.</span>
-          </div>
-          <div class="legend-item">
-            <app-risk-badge risk="FIRE" />
-            <span>El sistema determina un riesgo de incendio.</span>
-          </div>
-        </div>
+      <section class="risk-section" aria-labelledby="risk-legend-title">
+        <h2 id="risk-legend-title" class="sr-only">Categorías de riesgo</h2>
+        <app-risk-scale [risk]="store.summary()?.overall_risk ?? null" variant="band" />
+        @if (store.summary(); as summary) {
+          <p class="sr-only" aria-live="polite">
+            Riesgo global:
+            {{
+              summary.overall_risk === 'FIRE'
+                ? 'incendio'
+                : summary.overall_risk === 'WARNING'
+                  ? 'advertencia'
+                  : 'normal'
+            }}
+          </p>
+        }
       </section>
 
       @if (store.loading() && store.slowLoading() && !store.retryAvailable()) {
@@ -97,32 +85,32 @@ import { SeriesChart } from './series-chart';
 
       <section class="summary-section" aria-label="Resumen del sistema">
         @if (store.summary(); as summary) {
-          <div class="metrics-grid">
-            <article class="metric-card">
-              <span class="metric-label">Nodos totales</span>
-              <strong class="metric-value">{{ summary.total_nodes }}</strong>
-            </article>
-            <article class="metric-card online">
-              <span class="metric-label">En línea</span>
-              <strong class="metric-value">{{ summary.nodes_online }}</strong>
-            </article>
-            <article class="metric-card offline">
-              <span class="metric-label">Sin conexión</span>
-              <strong class="metric-value">{{ summary.nodes_offline }}</strong>
-            </article>
-            <article class="metric-card unknown">
-              <span class="metric-label">Sin datos</span>
-              <strong class="metric-value">{{ summary.nodes_unknown }}</strong>
-            </article>
-            <article class="metric-card at-risk">
-              <span class="metric-label">Nodos en riesgo</span>
-              <strong class="metric-value">{{ summary.nodes_at_risk }}</strong>
-            </article>
-            <article class="metric-card active-alerts">
-              <span class="metric-label">Alertas activas</span>
-              <strong class="metric-value">{{ summary.active_alerts }}</strong>
-            </article>
-          </div>
+          <dl class="stats">
+            <div>
+              <dt>Nodos totales</dt>
+              <dd>{{ summary.total_nodes }}</dd>
+            </div>
+            <div>
+              <dt>En línea</dt>
+              <dd>{{ summary.nodes_online }}</dd>
+            </div>
+            <div>
+              <dt>Sin conexión</dt>
+              <dd>{{ summary.nodes_offline }}</dd>
+            </div>
+            <div>
+              <dt>Sin datos</dt>
+              <dd>{{ summary.nodes_unknown }}</dd>
+            </div>
+            <div>
+              <dt>Nodos en riesgo</dt>
+              <dd [class.alert]="summary.nodes_at_risk > 0">{{ summary.nodes_at_risk }}</dd>
+            </div>
+            <div>
+              <dt>Alertas activas</dt>
+              <dd [class.alert]="summary.active_alerts > 0">{{ summary.active_alerts }}</dd>
+            </div>
+          </dl>
           @if (summary.total_nodes === 0) {
             <app-state-message
               kind="empty"
@@ -131,14 +119,14 @@ import { SeriesChart } from './series-chart';
             />
           }
         } @else if (store.loading()) {
-          <div class="metrics-grid" aria-label="Cargando resumen">
+          <dl class="stats" aria-label="Cargando resumen">
             @for (placeholder of skeletons; track placeholder) {
-              <div class="metric-card skeleton" aria-hidden="true">
-                <span></span>
-                <strong></strong>
+              <div class="skeleton" aria-hidden="true">
+                <dt></dt>
+                <dd></dd>
               </div>
             }
-          </div>
+          </dl>
         } @else if (store.error()) {
           <app-state-message
             kind="error"
@@ -173,34 +161,17 @@ import { SeriesChart } from './series-chart';
       gap: var(--space-6);
     }
 
-    .eyebrow {
-      margin: 0 0 var(--space-2);
-      color: var(--color-text-muted);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
     h1 {
       margin: 0;
       font-size: clamp(1.7rem, 3vw, 2.25rem);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
     .intro {
       margin: var(--space-2) 0 0;
       color: var(--color-text-muted);
-    }
-
-    .risk-banner {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-3) var(--space-4);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-card);
-      background: var(--color-surface);
-      font-weight: 700;
     }
 
     .heading-status {
@@ -211,12 +182,11 @@ import { SeriesChart } from './series-chart';
 
     .updated {
       color: var(--color-text-muted);
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
 
-    .risk-banner.fire {
-      border-color: var(--risk-fire-border);
-      animation: fire-pulse 1.8s ease-in-out infinite;
+    .risk-section {
+      padding-top: 14px;
     }
 
     .summary-section {
@@ -224,95 +194,59 @@ import { SeriesChart } from './series-chart';
       gap: var(--space-4);
     }
 
-    .metrics-grid {
+    .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: var(--space-4);
-    }
-
-    .metric-card {
-      display: grid;
-      min-height: 120px;
-      align-content: space-between;
-      gap: var(--space-4);
-      padding: var(--space-4);
-      border: 1px solid var(--color-border);
-      border-left: 4px solid var(--color-focus);
-      border-radius: var(--radius-card);
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      margin: 0;
+      border: var(--panel-border);
       background: var(--color-surface);
     }
 
-    .metric-card.online {
-      border-left-color: var(--risk-normal-border);
+    .stats > div {
+      display: grid;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-4);
+      border-left: 1px solid var(--color-border);
     }
 
-    .metric-card.offline {
-      border-left-color: var(--status-offline-text);
+    .stats > div:first-child {
+      border-left: 0;
     }
 
-    .metric-card.unknown {
-      border-left-color: var(--status-unknown-text);
-    }
-
-    .metric-card.at-risk {
-      border-left-color: var(--risk-warning-border);
-    }
-
-    .metric-card.active-alerts {
-      border-left-color: var(--risk-fire-border);
-    }
-
-    .metric-label {
+    .stats dt {
       color: var(--color-text-muted);
+      font-size: 0.85rem;
       font-weight: 650;
     }
 
-    .metric-value {
+    .stats dd {
+      margin: 0;
+      font-family: var(--font-display);
       font-size: 2rem;
-      line-height: 1;
+      font-weight: 800;
+      line-height: 1.1;
     }
 
-    .skeleton span,
-    .skeleton strong {
-      display: block;
-      border-radius: 6px;
+    .stats dd.alert {
+      color: var(--risk-fire-text);
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+      text-underline-offset: 4px;
+    }
+
+    .skeleton dt,
+    .skeleton dd {
+      height: 1rem;
       background: var(--color-surface-muted);
     }
 
-    .skeleton span {
+    .skeleton dt {
       width: 65%;
-      height: 1rem;
     }
 
-    .skeleton strong {
+    .skeleton dd {
       width: 30%;
       height: 2rem;
-    }
-
-    .empty-summary,
-    .summary-error {
-      margin: 0;
-      padding: var(--space-4);
-      border: 1px dashed var(--color-border);
-      border-radius: var(--radius-card);
-      color: var(--color-text-muted);
-    }
-
-    .summary-error {
-      border-style: solid;
-      color: var(--risk-fire-text);
-    }
-
-    @keyframes fire-pulse {
-      50% {
-        box-shadow: 0 0 0 4px var(--risk-fire-bg);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .risk-banner.fire {
-        animation: none;
-      }
     }
 
     @media (max-width: 640px) {
@@ -323,6 +257,18 @@ import { SeriesChart } from './series-chart';
 
       .heading-status {
         justify-items: start;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats > div:nth-child(odd) {
+        border-left: 0;
+      }
+
+      .stats > div:nth-child(n + 3) {
+        border-top: 1px solid var(--color-border);
       }
     }
   `,
