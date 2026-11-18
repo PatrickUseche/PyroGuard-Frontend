@@ -145,3 +145,4 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 ## Fase 11 — Acceso con Google propio
 
 - [x] fix(auth): usar el Client ID de OAuth propio en desarrollo y producción [11.1]
+- [x] docs(readme): dominio de producción, orígenes de Google, capturas y revisión de zod [11.2]
