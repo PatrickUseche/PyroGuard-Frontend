@@ -216,6 +216,12 @@ select {
   white-space: nowrap;
 }
 
+.pyroguard-marker.compact {
+  justify-content: center;
+  min-width: 36px;
+  padding: var(--space-1);
+}
+
 .pyroguard-marker svg {
   width: 18px;
   height: 18px;

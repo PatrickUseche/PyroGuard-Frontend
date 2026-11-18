@@ -47,6 +47,13 @@ export function mapMarkerPresentation(node: Node, risk: Risk | null): MapMarkerP
     : presentation;
 }
 
+/** Solo advertencia e incendio llevan etiqueta visible; el resto es un icono compacto. */
+export function isCompactMarker(presentation: MapMarkerPresentation): boolean {
+  return presentation.className !== 'fire' && presentation.className !== 'warning';
+}
+
 export function markerAccessibleHtml(presentation: MapMarkerPresentation): string {
-  return `<span class="pyroguard-marker ${presentation.className}" role="img" aria-label="${presentation.label}">${presentation.icon}<span>${presentation.label}</span></span>`;
+  const compact = isCompactMarker(presentation);
+  const labelClass = compact ? ' class="sr-only"' : '';
+  return `<span class="pyroguard-marker ${presentation.className}${compact ? ' compact' : ''}" role="img" aria-label="${presentation.label}">${presentation.icon}<span${labelClass}>${presentation.label}</span></span>`;
 }
