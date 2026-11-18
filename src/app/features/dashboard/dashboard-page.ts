@@ -86,9 +86,13 @@ import { SeriesChart } from './series-chart';
       <section class="summary-section" aria-label="Resumen del sistema">
         @if (store.summary(); as summary) {
           <dl class="stats">
-            <div>
-              <dt>Nodos totales</dt>
-              <dd>{{ summary.total_nodes }}</dd>
+            <div class="key" [class.alert]="summary.active_alerts > 0">
+              <dt>Alertas activas</dt>
+              <dd>{{ summary.active_alerts }}</dd>
+            </div>
+            <div class="key" [class.alert]="summary.nodes_at_risk > 0">
+              <dt>Nodos en riesgo</dt>
+              <dd>{{ summary.nodes_at_risk }}</dd>
             </div>
             <div>
               <dt>En línea</dt>
@@ -103,12 +107,8 @@ import { SeriesChart } from './series-chart';
               <dd>{{ summary.nodes_unknown }}</dd>
             </div>
             <div>
-              <dt>Nodos en riesgo</dt>
-              <dd [class.alert]="summary.nodes_at_risk > 0">{{ summary.nodes_at_risk }}</dd>
-            </div>
-            <div>
-              <dt>Alertas activas</dt>
-              <dd [class.alert]="summary.active_alerts > 0">{{ summary.active_alerts }}</dd>
+              <dt>Nodos totales</dt>
+              <dd>{{ summary.total_nodes }}</dd>
             </div>
           </dl>
           @if (summary.total_nodes === 0) {
@@ -197,6 +197,7 @@ import { SeriesChart } from './series-chart';
     .stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-auto-flow: dense;
       margin: 0;
       border: var(--panel-border);
       background: var(--color-surface);
@@ -227,11 +228,21 @@ import { SeriesChart } from './series-chart';
       line-height: 1.1;
     }
 
-    .stats dd.alert {
+    .stats > .key {
+      grid-column: span 2;
+    }
+
+    .stats > .key dd {
+      font-size: 3rem;
+    }
+
+    .stats > .key.alert {
+      background: var(--risk-fire-bg);
       color: var(--risk-fire-text);
-      text-decoration: underline;
-      text-decoration-thickness: 3px;
-      text-underline-offset: 4px;
+    }
+
+    .stats > .key.alert dt {
+      color: inherit;
     }
 
     .skeleton dt,

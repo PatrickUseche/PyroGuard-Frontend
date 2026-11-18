@@ -28,6 +28,11 @@ import {
   markerAccessibleHtml,
 } from './map-marker.util';
 
+/** La alarma nunca queda tapada: los marcadores de mayor riesgo se dibujan encima. */
+function markerPriority(className: string): number {
+  return className === 'fire' ? 1000 : className === 'warning' ? 500 : 0;
+}
+
 @Component({
   selector: 'app-node-map',
   standalone: true,
@@ -114,7 +119,7 @@ import {
 
     .map-host {
       min-height: 480px;
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       overflow: hidden;
       background: var(--color-surface-muted);
@@ -124,7 +129,7 @@ import {
       display: grid;
       gap: var(--space-3);
       padding: var(--space-4);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
     }
@@ -274,6 +279,7 @@ export class NodeMap implements OnDestroy {
           icon: this.createMarkerIcon(details),
           title: `${node.name}: ${details.label}`,
           keyboard: true,
+          zIndexOffset: markerPriority(details.className),
         }).addTo(this.map);
         newMarker.on('click', () => this.selectNode(node.node_id));
         this.setMarkerAccessibleLabel(newMarker, node, details.label);
@@ -287,6 +293,7 @@ export class NodeMap implements OnDestroy {
           refitBounds = true;
         }
         if (this.markerSignatures.get(node.node_id) !== signature) {
+          marker.setZIndexOffset(markerPriority(details.className));
           marker.setIcon(this.createMarkerIcon(details));
           this.markerSignatures.set(node.node_id, signature);
         }

@@ -39,7 +39,7 @@ describe('AppLayout', () => {
           useValue: { currentUser, restoring, authError, logout, restoreSession },
         },
         { provide: HealthService, useValue: { check: healthCheck } },
-        { provide: DashboardStore, useValue: { lastUpdated: signal(null) } },
+        { provide: DashboardStore, useValue: { lastUpdated: signal(null), summary: signal(null) } },
       ],
     }).compileComponents();
     router = TestBed.inject(Router);

@@ -167,7 +167,7 @@ const USERNAME_PATTERN = /^[A-Za-z0-9_.-]{4,16}$/;
       gap: var(--space-6);
       margin: var(--space-8) auto;
       padding: var(--space-6);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
     }
@@ -294,7 +294,7 @@ const USERNAME_PATTERN = /^[A-Za-z0-9_.-]{4,16}$/;
     .secondary-button {
       min-height: 44px;
       padding: var(--space-2) var(--space-4);
-      border: 1px solid var(--color-border);
+      border: 2px solid var(--color-ink);
       border-radius: var(--radius-control);
       cursor: pointer;
       font: inherit;

@@ -28,7 +28,7 @@ type AlertStatusFilter = '' | AlertStatus;
           <h1 id="history-title">Historial de alertas</h1>
           <p>Consulta alertas activas, reconocidas y cerradas.</p>
         </div>
-        <span>{{ total() }} alertas</span>
+        <span>{{ total() }} {{ total() === 1 ? 'alerta' : 'alertas' }}</span>
       </header>
 
       <form class="filters" aria-label="Filtros de alertas">
@@ -93,15 +93,24 @@ type AlertStatusFilter = '' | AlertStatus;
       } @else {
         <ul class="alert-list">
           @for (alert of alerts(); track alert.id) {
-            <li class="alert-card">
+            <li
+              class="alert-card"
+              [class.fire]="alert.level === 'FIRE' && alert.status !== 'CLOSED'"
+              [class.closed]="alert.status === 'CLOSED'"
+            >
               <div class="alert-main">
                 <app-risk-badge [risk]="alert.level" />
                 <div>
                   <div class="alert-meta">
                     <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
                     <app-simulated-badge [nodeId]="alert.node_id" />
-                    <span>{{ statusLabel(alert.status) }}</span>
-                    <span>×{{ alert.occurrences }} ocurrencias</span>
+                    <span [class.stamp]="alert.status === 'CLOSED'">{{
+                      statusLabel(alert.status)
+                    }}</span>
+                    <span
+                      >×{{ alert.occurrences }}
+                      {{ alert.occurrences === 1 ? 'ocurrencia' : 'ocurrencias' }}</span
+                    >
                     @if (alert.probability !== null) {
                       <span>Prob. {{ formatProbability(alert.probability) }}</span>
                     }
@@ -206,7 +215,7 @@ type AlertStatusFilter = '' | AlertStatus;
     button {
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--color-border);
+      border: 2px solid var(--color-ink);
       border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
@@ -222,9 +231,33 @@ type AlertStatusFilter = '' | AlertStatus;
 
     .alert-card {
       padding: var(--space-4);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
+    }
+
+    .alert-card.fire {
+      border-color: var(--risk-fire-border);
+      background: var(--risk-fire-bg);
+    }
+
+    .alert-card.closed {
+      border-color: var(--color-border);
+      background: var(--color-surface-muted);
+    }
+
+    .stamp {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px var(--space-2);
+      line-height: 1;
+      transform: rotate(-2deg);
+      border: 2px solid var(--color-ink);
+      color: var(--color-text);
+      font-family: var(--font-display);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .alert-main {
@@ -290,7 +323,35 @@ type AlertStatusFilter = '' | AlertStatus;
       opacity: 0.55;
     }
 
+    @media (min-width: 641px) {
+      .alert-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 6.5rem 9rem 6rem;
+      }
+
+      .alert-card > .detail-link {
+        grid-column: 2;
+      }
+
+      .alert-card > .alert-actions {
+        grid-column: 3;
+        justify-content: flex-end;
+      }
+
+      .alert-card > time {
+        grid-column: 4;
+        justify-self: end;
+        text-align: right;
+      }
+    }
+
     @media (max-width: 640px) {
+      .alert-main {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
       .page-heading,
       .alert-card {
         align-items: flex-start;

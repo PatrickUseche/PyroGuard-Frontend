@@ -74,7 +74,8 @@ La API permite lecturas públicas por defecto. Para exigir sesión también en l
 4. Crea un ID de cliente OAuth de tipo **Aplicación web**.
 5. En **Orígenes autorizados de JavaScript**, añade:
    - `http://localhost:4200`
-   - El origen de producción de Vercel, sin barra final (por ejemplo, `https://pyroguard.vercel.app`).
+   - `http://localhost` (sin puerto; Google lo recomienda para desarrollo local)
+   - El origen de producción de Vercel, sin barra final (en producción, `https://pyro-guard-frontend.vercel.app`).
 6. Copia el **Client ID** a `googleClientId` en `src/environments/environment.development.ts` y `src/environments/environment.ts`. Configura el mismo valor en `GOOGLE_CLIENT_ID` en el backend.
 
 El Client ID es público y queda incorporado al bundle del frontend. El **Client Secret no se usa en el navegador**: nunca lo pegues en `googleClientId`, en el código ni en el repositorio.
@@ -87,12 +88,12 @@ El dashboard actualiza el resumen, los nodos y las alertas activas cada 10 segun
 
 ## Capturas
 
-Pendiente de capturas reales: no se generaron imágenes porque el backend local con datos no estaba disponible. Cuando se ejecute localmente, guardar capturas a 1280 px y 360 px en:
+Capturas del diseño actual (datos de demostración de `seed_demo`, con nodos en incendio, advertencia y normal), a 1280 px y 360 px, en `docs/capturas/`:
 
-- `docs/capturas/dashboard-1280.png` y `docs/capturas/dashboard-360.png`
-- `docs/capturas/detalle-nodo-1280.png` y `docs/capturas/detalle-nodo-360.png`
-- `docs/capturas/alertas-1280.png` y `docs/capturas/alertas-360.png`
-- `docs/capturas/mapa-1280.png` y `docs/capturas/mapa-360.png`
+- `dashboard-1280.png` y `dashboard-360.png`
+- `detalle-nodo-1280.png` y `detalle-nodo-360.png`
+- `alertas-1280.png` y `alertas-360.png`
+- `mapa-1280.png` y `mapa-360.png`
 
 ## Probar el flujo con el simulador IoT
 
@@ -151,4 +152,6 @@ El proyecto no declara un `.browserslistrc` ni una lista propia en `package.json
 
 ## Seguridad
 
-`npm audit --omit=dev` reporta una vulnerabilidad alta en `zod@4.6.5` (GHSA-mrhx-c7xc-m3w5), relacionada con agotamiento de memoria al validar colecciones restringidas grandes. `npm update zod` no la resuelve dentro de los rangos semver declarados. En la revisión del 2026-11-02, `npm outdated` indicó `@angular/forms` actual `22.2.1` y wanted `22.2.4`; `npm update @angular/forms` terminó «up to date» sin cambiar el árbol instalado, y `npm audit --omit=dev` siguió reportando la vulnerabilidad. Las rutas observadas con `npm ls @angular/forms zod --all` son `@angular/forms@22.2.1 -> zod@4.6.5` y `@angular/cli@22.2.0 -> zod@4.6.5`. No se forzó una actualización mayor ni se ejecutó `npm audit fix --force`.
+`npm audit --omit=dev` reporta una vulnerabilidad alta en `zod` (GHSA-mrhx-c7xc-m3w5, agotamiento de memoria al validar colecciones restringidas grandes). Llega de forma transitiva por `@angular/forms@22.2.1` y `@angular/cli@22.2.0`, ambos con `zod@4.6.5`; el frontend no usa `zod` directamente.
+
+Revisión del 2026-11-18: el parche existe (`zod` 4.6.6 y 4.6.7) y `npm audit` indica que `npm audit fix` lo resuelve sin cambios mayores. Además hay parches de Angular disponibles dentro de la rama 22 (`@angular/*` 22.2.6 y `@angular/cli` 22.2.7). No se aplicaron: queda pendiente decidir `npm audit fix` o `npm update` de los paquetes de Angular y verificar con `npm run build`, `npx ng test --watch=false` y los e2e. No se usó `npm audit fix --force`.

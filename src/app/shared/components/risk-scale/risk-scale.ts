@@ -78,25 +78,32 @@ const CLASSES: readonly ScaleClass[] = [
       gap: var(--space-1);
       min-height: 96px;
       padding: var(--space-3) var(--space-4);
-      color: #ffffff;
-      opacity: 0.38;
-    }
-
-    .segment.current {
-      opacity: 1;
+      color: #e8eee9;
     }
 
     .segment.normal {
+      background: color-mix(in srgb, var(--class-normal) 32%, #111915);
+    }
+
+    .segment.warning {
+      background: color-mix(in srgb, var(--class-warning) 32%, #111915);
+    }
+
+    .segment.fire {
+      background: color-mix(in srgb, var(--class-fire) 32%, #111915);
+    }
+
+    .segment.current.normal {
       background: var(--class-normal);
       color: var(--class-on-normal);
     }
 
-    .segment.warning {
+    .segment.current.warning {
       background: var(--class-warning);
       color: var(--class-on-warning);
     }
 
-    .segment.fire {
+    .segment.current.fire {
       background: var(--class-fire);
       color: var(--class-on-fire);
     }
@@ -177,7 +184,8 @@ const CLASSES: readonly ScaleClass[] = [
       }
 
       .segment-label {
-        font-size: 0.95rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.02em;
       }
     }
   `,

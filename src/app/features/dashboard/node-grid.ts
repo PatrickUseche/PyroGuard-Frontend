@@ -22,12 +22,14 @@ import { DashboardStore } from './dashboard-store';
           <h2 id="nodes-title">Nodos</h2>
           <p>Estado de conexión, riesgo y última lectura recibida.</p>
         </div>
-        <span class="count">{{ store.nodes().length }} nodos</span>
+        <span class="count"
+          >{{ store.nodes().length }} {{ store.nodes().length === 1 ? 'nodo' : 'nodos' }}</span
+        >
       </header>
 
       @if (store.nodes().length > 0) {
         <div class="node-grid">
-          @for (node of store.nodes(); track node.node_id) {
+          @for (node of sortedNodes(); track node.node_id) {
             <article class="node-card" [class.fire]="nodeRisk(node) === 'FIRE'">
               <header class="node-heading">
                 <div>
@@ -170,12 +172,13 @@ import { DashboardStore } from './dashboard-store';
 
     .node-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: var(--space-4);
     }
 
     .node-card {
       display: grid;
+      min-width: 0;
       gap: var(--space-3);
       padding: var(--space-4);
       border: var(--panel-border);
@@ -198,7 +201,16 @@ import { DashboardStore } from './dashboard-store';
     }
 
     .node-heading {
+      flex-wrap: wrap;
       align-items: flex-start;
+    }
+
+    .node-heading > * {
+      min-width: 0;
+    }
+
+    .node-risk {
+      flex-wrap: wrap;
     }
 
     .node-heading h3 {
@@ -286,6 +298,19 @@ export class NodeGrid {
   );
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;
+
+  readonly sortedNodes = computed(() => {
+    const rank = (node: Node): number => {
+      if (node.connection_status === 'ONLINE') {
+        const risk = this.nodeRisk(node);
+        return risk === 'FIRE' ? 0 : risk === 'WARNING' ? 1 : 2;
+      }
+      return node.connection_status === 'OFFLINE' ? 3 : 4;
+    };
+    return [...this.store.nodes()].sort(
+      (a, b) => rank(a) - rank(b) || a.node_id.localeCompare(b.node_id),
+    );
+  });
 
   nodeRisk(node: Node): Risk | null {
     return node.current_risk ?? this.latestReadingByNode().get(node.node_id)?.risk_level ?? null;

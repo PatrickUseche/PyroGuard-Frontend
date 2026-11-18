@@ -133,10 +133,19 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 - [x] feat(layout): riel lateral en escritorio y barra superior en móvil [10.3]
 - [x] feat(shared): `RiskScale` (banda con puntero y mini-escala por nodo) e insignia de riesgo en esmalte [10.4]
 - [x] refactor(dashboard): banda de escala, franja de cifras y nodos con mini-escala; fuera kickers, bordes de color y leyenda aparte [10.5]
-- [ ] chore(fonts): tipografía de señalización Overpass autoalojada (requiere instalar `@fontsource-variable/overpass`) [10.6]
-- [ ] docs(design): DESIGN.md y `.impeccable/design.json` desde el mundo construido [10.7]
-- [ ] docs(capturas): regenerar las 8 capturas de `docs/capturas/` [10.8]
+- [x] chore(fonts): tipografía de señalización Overpass autoalojada [10.6]
+- [x] feat(layout): el riesgo global tiñe el riel (incendio rojo, advertencia ámbar) [10.9]
+- [x] style(pages): paneles, botones, títulos y estados vacíos del cartel en alertas, nodo, mapa, login, registro, tabla y gráfico [10.10]
+- [x] fix(ui): plurales («1 alerta»), caption oculto de lecturas en móvil y riel móvil compacto [10.11]
+- [x] feat(auth): aviso de servidor en reposo mientras se verifica la cuenta [10.12]
+- [x] docs(design): DESIGN.md y `.impeccable/design.json` desde el mundo construido [10.7]
+- [x] docs(capturas): regenerar las 8 capturas de `docs/capturas/` con datos del backend local [10.8]
+- [x] test(e2e): el resumen se localiza con `.stats` tras el rediseño [10.13]
+- [x] fix(layout): el riesgo global tiñe el riel en todas las rutas con sesión [10.14]
+- [x] fix(dashboard): cifras con jerarquía, nodos por gravedad sin desbordes y banda con contraste [10.15]
+- [x] fix(pages): detalle de nodo, historial alineado, sello legible y alarma del mapa siempre encima [10.16]
 
 ## Fase 11 — Acceso con Google propio
 
 - [x] fix(auth): usar el Client ID de OAuth propio en desarrollo y producción [11.1]
+- [x] docs(readme): dominio de producción, orígenes de Google, capturas y revisión de zod [11.2]

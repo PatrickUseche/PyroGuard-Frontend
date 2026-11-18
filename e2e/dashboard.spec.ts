@@ -6,7 +6,7 @@ test('el resumen del panel coincide con la API', async ({ operatorPage }) => {
   await operatorPage.goto('/');
 
   const metric = (label: string) =>
-    operatorPage.locator('.metrics-grid > *').filter({ hasText: label }).first();
+    operatorPage.locator('.stats > *').filter({ hasText: label }).first();
   await expect(operatorPage.getByRole('heading', { name: 'Centro de control' })).toBeVisible();
   await expect(metric('Nodos totales')).toContainText(String(summary.total_nodes));
   await expect(metric('Alertas activas')).toContainText(String(summary.active_alerts));

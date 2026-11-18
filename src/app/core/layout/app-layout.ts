@@ -9,9 +9,11 @@ import {
 } from '@angular/router';
 import { HealthIndicator } from './health-indicator';
 import { AuthService } from '../services/auth.service';
-import { DestroyRef, computed, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { DestroyRef, Injector, computed, effect, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, startWith } from 'rxjs';
+import { DashboardStore } from '../../features/dashboard/dashboard-store';
 
 @Component({
   selector: 'app-layout',
@@ -250,6 +252,25 @@ import { filter, startWith } from 'rxjs';
     }
 
     @media (max-width: 640px) {
+      .site-header {
+        gap: var(--space-1) var(--space-3);
+      }
+
+      .primary-nav {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .auth-user {
+        max-width: 140px;
+        font-size: 0.9rem;
+      }
+
+      .health-plate {
+        margin-left: auto;
+      }
+
       .main-content {
         padding: var(--space-6) var(--space-4);
       }
@@ -271,7 +292,24 @@ export class AppLayout implements OnInit {
     () => !this.authenticationPage() && this.auth.currentUser() !== null,
   );
 
+  private readonly injector = inject(Injector);
+  private readonly body = inject(DOCUMENT).body;
+
   constructor() {
+    // El riesgo global tiñe el riel en todas las rutas con sesión (ver `body[data-risk]` en styles.css).
+    // El store se crea solo con sesión para no consultar la API en el login.
+    effect(() => {
+      const risk = this.showNavigation()
+        ? this.injector.get(DashboardStore).summary()?.overall_risk
+        : undefined;
+      if (risk === 'FIRE' || risk === 'WARNING') {
+        this.body.dataset['risk'] = risk;
+      } else {
+        delete this.body.dataset['risk'];
+      }
+    });
+    this.destroyRef.onDestroy(() => delete this.body.dataset['risk']);
+
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),

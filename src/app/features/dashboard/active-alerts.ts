@@ -22,7 +22,10 @@ import { DashboardStore } from './dashboard-store';
           <h2 id="alerts-title">Alertas activas</h2>
           <p>Eventos que requieren seguimiento.</p>
         </div>
-        <span class="count">{{ orderedAlerts().length }} alertas</span>
+        <span class="count"
+          >{{ orderedAlerts().length }}
+          {{ orderedAlerts().length === 1 ? 'alerta' : 'alertas' }}</span
+        >
       </header>
 
       @if (!auth.restoring() && !auth.canManageAlerts()) {
@@ -48,7 +51,10 @@ import { DashboardStore } from './dashboard-store';
                     <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
                     <app-simulated-badge [nodeId]="alert.node_id" />
                     <span class="status">{{ statusLabel(alert) }}</span>
-                    <span class="occurrences">×{{ alert.occurrences }} ocurrencias</span>
+                    <span class="occurrences"
+                      >×{{ alert.occurrences }}
+                      {{ alert.occurrences === 1 ? 'ocurrencia' : 'ocurrencias' }}</span
+                    >
                     @if (alert.probability !== null) {
                       <span>Prob. {{ formatProbability(alert.probability) }}</span>
                     }
@@ -250,11 +256,17 @@ import { DashboardStore } from './dashboard-store';
 
     .alert-skeleton span {
       height: 3.5rem;
-      border-radius: var(--space-2);
+      border-radius: var(--radius-control);
       background: var(--color-surface-muted);
     }
 
     @media (max-width: 640px) {
+      .alert-main {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
       .alert-card {
         align-items: flex-start;
         flex-direction: column;

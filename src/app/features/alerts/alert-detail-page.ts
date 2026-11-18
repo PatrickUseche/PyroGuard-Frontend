@@ -45,7 +45,7 @@ import { AlertActionsService } from './alert-actions.service';
               <a class="node-link" [routerLink]="['/nodos', currentAlert.node_id]">{{
                 currentAlert.node_id
               }}</a>
-              <app-simulated-badge [nodeId]="currentAlert.node_id" />
+              <app-simulated-badge class="title-badge" [nodeId]="currentAlert.node_id" />
             </h1>
           </div>
           <app-risk-badge [risk]="currentAlert.level" />
@@ -156,7 +156,7 @@ import { AlertActionsService } from './alert-actions.service';
       display: grid;
       gap: var(--space-6);
       padding: var(--space-6);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
     }
@@ -172,6 +172,11 @@ import { AlertActionsService } from './alert-actions.service';
     h2,
     p {
       margin: 0;
+    }
+
+    .title-badge {
+      margin-left: var(--space-2);
+      vertical-align: middle;
     }
 
     .node-link {
@@ -191,7 +196,7 @@ import { AlertActionsService } from './alert-actions.service';
     .detail-grid > div,
     .message-panel {
       padding: var(--space-4);
-      border-radius: var(--space-2);
+      border-radius: var(--radius-control);
       background: var(--color-surface-muted);
     }
 
@@ -220,8 +225,8 @@ import { AlertActionsService } from './alert-actions.service';
     button {
       min-height: 44px;
       padding: var(--space-2) var(--space-4);
-      border: 1px solid var(--color-border);
-      border-radius: var(--space-2);
+      border: 2px solid var(--color-ink);
+      border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
       cursor: pointer;
