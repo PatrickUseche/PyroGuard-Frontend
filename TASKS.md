@@ -136,3 +136,7 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 - [ ] chore(fonts): tipografía de señalización Overpass autoalojada (requiere instalar `@fontsource-variable/overpass`) [10.6]
 - [ ] docs(design): DESIGN.md y `.impeccable/design.json` desde el mundo construido [10.7]
 - [ ] docs(capturas): regenerar las 8 capturas de `docs/capturas/` [10.8]
+
+## Fase 11 — Acceso con Google propio
+
+- [x] fix(auth): usar el Client ID de OAuth propio en desarrollo y producción [11.1]
