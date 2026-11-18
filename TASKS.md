@@ -141,6 +141,9 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 - [ ] docs(design): DESIGN.md y `.impeccable/design.json` desde el mundo construido [10.7]
 - [x] docs(capturas): regenerar las 8 capturas de `docs/capturas/` con datos del backend local [10.8]
 - [x] test(e2e): el resumen se localiza con `.stats` tras el rediseño [10.13]
+- [x] fix(layout): el riesgo global tiñe el riel en todas las rutas con sesión [10.14]
+- [x] fix(dashboard): cifras con jerarquía, nodos por gravedad sin desbordes y banda con contraste [10.15]
+- [x] fix(pages): detalle de nodo, historial alineado, sello legible y alarma del mapa siempre encima [10.16]
 
 ## Fase 11 — Acceso con Google propio
 
