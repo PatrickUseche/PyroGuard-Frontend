@@ -138,7 +138,7 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 - [x] style(pages): paneles, botones, títulos y estados vacíos del cartel en alertas, nodo, mapa, login, registro, tabla y gráfico [10.10]
 - [x] fix(ui): plurales («1 alerta»), caption oculto de lecturas en móvil y riel móvil compacto [10.11]
 - [x] feat(auth): aviso de servidor en reposo mientras se verifica la cuenta [10.12]
-- [ ] docs(design): DESIGN.md y `.impeccable/design.json` desde el mundo construido [10.7]
+- [x] docs(design): DESIGN.md y `.impeccable/design.json` desde el mundo construido [10.7]
 - [x] docs(capturas): regenerar las 8 capturas de `docs/capturas/` con datos del backend local [10.8]
 - [x] test(e2e): el resumen se localiza con `.stats` tras el rediseño [10.13]
 - [x] fix(layout): el riesgo global tiñe el riel en todas las rutas con sesión [10.14]
