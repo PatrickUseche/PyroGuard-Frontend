@@ -139,7 +139,8 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 - [x] fix(ui): plurales («1 alerta»), caption oculto de lecturas en móvil y riel móvil compacto [10.11]
 - [x] feat(auth): aviso de servidor en reposo mientras se verifica la cuenta [10.12]
 - [ ] docs(design): DESIGN.md y `.impeccable/design.json` desde el mundo construido [10.7]
-- [ ] docs(capturas): regenerar las 8 capturas de `docs/capturas/` [10.8]
+- [x] docs(capturas): regenerar las 8 capturas de `docs/capturas/` con datos del backend local [10.8]
+- [x] test(e2e): el resumen se localiza con `.stats` tras el rediseño [10.13]
 
 ## Fase 11 — Acceso con Google propio
 
