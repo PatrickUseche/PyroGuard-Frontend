@@ -103,21 +103,22 @@ describe('NodeGrid', () => {
     }).compileComponents();
   });
 
-  it('should display an offline node with stale risk and its latest reading', () => {
+  it('should list nodes by severity and show each state', () => {
     const fixture = TestBed.createComponent(NodeGrid);
     fixture.detectChanges();
 
     const cards = (fixture.nativeElement as HTMLElement).querySelectorAll('.node-card');
-    expect(cards[0].textContent).toContain('Nodo Sierra');
-    expect(cards[0].textContent).toContain('Desconectado');
-    expect(cards[0].textContent).toContain('Desactualizado');
-    expect(cards[0].textContent).toContain('27 °C');
-    expect(cards[1].textContent).toContain('SIM-002');
-    expect(cards[1].textContent).toContain('Simulado');
-    expect(cards[1].textContent).toContain('Conectado');
-    expect(cards[1].textContent).toContain('Normal');
-    expect(cards[1].textContent).toContain('Prob.');
-    expect(cards[1].textContent).toContain('87');
+    // Orden por gravedad: en línea (por riesgo), desconectado y sin datos al final.
+    expect(cards[0].textContent).toContain('SIM-002');
+    expect(cards[0].textContent).toContain('Simulado');
+    expect(cards[0].textContent).toContain('Conectado');
+    expect(cards[0].textContent).toContain('Normal');
+    expect(cards[0].textContent).toContain('Prob.');
+    expect(cards[0].textContent).toContain('87');
+    expect(cards[1].textContent).toContain('Nodo Sierra');
+    expect(cards[1].textContent).toContain('Desconectado');
+    expect(cards[1].textContent).toContain('Desactualizado');
+    expect(cards[1].textContent).toContain('27 °C');
     expect(cards[2].textContent).toContain('Nodo Sin Datos');
     expect(cards[2].textContent).toContain('Sin datos');
     expect(cards[2].textContent).toContain('IA no disponible');

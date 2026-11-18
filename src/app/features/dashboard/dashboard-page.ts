@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RiskScale } from '../../shared/components/risk-scale/risk-scale';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
@@ -87,9 +86,13 @@ import { SeriesChart } from './series-chart';
       <section class="summary-section" aria-label="Resumen del sistema">
         @if (store.summary(); as summary) {
           <dl class="stats">
-            <div>
-              <dt>Nodos totales</dt>
-              <dd>{{ summary.total_nodes }}</dd>
+            <div class="key" [class.alert]="summary.active_alerts > 0">
+              <dt>Alertas activas</dt>
+              <dd>{{ summary.active_alerts }}</dd>
+            </div>
+            <div class="key" [class.alert]="summary.nodes_at_risk > 0">
+              <dt>Nodos en riesgo</dt>
+              <dd>{{ summary.nodes_at_risk }}</dd>
             </div>
             <div>
               <dt>En línea</dt>
@@ -104,12 +107,8 @@ import { SeriesChart } from './series-chart';
               <dd>{{ summary.nodes_unknown }}</dd>
             </div>
             <div>
-              <dt>Nodos en riesgo</dt>
-              <dd [class.alert]="summary.nodes_at_risk > 0">{{ summary.nodes_at_risk }}</dd>
-            </div>
-            <div>
-              <dt>Alertas activas</dt>
-              <dd [class.alert]="summary.active_alerts > 0">{{ summary.active_alerts }}</dd>
+              <dt>Nodos totales</dt>
+              <dd>{{ summary.total_nodes }}</dd>
             </div>
           </dl>
           @if (summary.total_nodes === 0) {
@@ -198,6 +197,7 @@ import { SeriesChart } from './series-chart';
     .stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-auto-flow: dense;
       margin: 0;
       border: var(--panel-border);
       background: var(--color-surface);
@@ -228,11 +228,21 @@ import { SeriesChart } from './series-chart';
       line-height: 1.1;
     }
 
-    .stats dd.alert {
+    .stats > .key {
+      grid-column: span 2;
+    }
+
+    .stats > .key dd {
+      font-size: 3rem;
+    }
+
+    .stats > .key.alert {
+      background: var(--risk-fire-bg);
       color: var(--risk-fire-text);
-      text-decoration: underline;
-      text-decoration-thickness: 3px;
-      text-underline-offset: 4px;
+    }
+
+    .stats > .key.alert dt {
+      color: inherit;
     }
 
     .skeleton dt,
@@ -277,20 +287,6 @@ import { SeriesChart } from './series-chart';
 })
 export class DashboardPage {
   readonly store = inject(DashboardStore);
-  private readonly body = inject(DOCUMENT).body;
-
-  constructor() {
-    // El riesgo global tiñe el riel del layout (ver `body[data-risk]` en styles.css).
-    effect(() => {
-      const risk = this.store.summary()?.overall_risk;
-      if (risk === 'FIRE' || risk === 'WARNING') {
-        this.body.dataset['risk'] = risk;
-      } else {
-        delete this.body.dataset['risk'];
-      }
-    });
-    inject(DestroyRef).onDestroy(() => delete this.body.dataset['risk']);
-  }
   readonly skeletons = [1, 2, 3, 4, 5, 6];
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;
