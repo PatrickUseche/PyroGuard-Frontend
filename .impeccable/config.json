@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-18T16:12:53.926Z",
+        "reason": "assistant: throwaway decision-round sketch, never shipped; not user-confirmed"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/wayfinding.html"
+        ],
+        "createdAt": "2026-11-18T16:12:54.125Z",
+        "reason": "assistant: throwaway decision-round sketch, never shipped; not user-confirmed"
+      }
+    ]
+  }
+}
