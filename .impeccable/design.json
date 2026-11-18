@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-18T17:00:00Z",
+  "title": "Design System: PyroGuard",
+  "extensions": {
+    "colorMeta": {
+      "conifer-rail": { "role": "primary", "displayName": "Conifer Rail", "canonical": "#123b2e", "tonalRamp": ["#04100c", "#0a241b", "#123b2e", "#235a46", "#3a7a62", "#6a9f89", "#a3c5b6", "#d6e6de"] },
+      "class-normal": { "role": "secondary", "displayName": "Normal Green", "canonical": "#1f8a4c", "tonalRamp": ["#08200f", "#0f4a2a", "#166a3a", "#1f8a4c", "#4aa670", "#7fc29a", "#b6e0c5", "#d7efdf"] },
+      "class-warning": { "role": "secondary", "displayName": "Warning Amber", "canonical": "#f2a900", "tonalRamp": ["#2e2000", "#5c3500", "#8a5a00", "#b97a00", "#f2a900", "#f7c53f", "#ffe0a0", "#ffe7a3"] },
+      "class-fire": { "role": "secondary", "displayName": "Fire Red", "canonical": "#d3302a", "tonalRamp": ["#2e0907", "#5a1210", "#7a1511", "#a8231f", "#d3302a", "#e56a63", "#f5a9a4", "#fbd9d6"] },
+      "signal-ink": { "role": "neutral", "displayName": "Signal Ink", "canonical": "#111915", "tonalRamp": ["#111915", "#243029", "#435249", "#6f7f75", "#9aa89f", "#c3cfc7", "#dbe5de", "#e8eee9"] },
+      "page-mist": { "role": "neutral", "displayName": "Page Mist", "canonical": "#e8eee9", "tonalRamp": ["#435249", "#6f7f75", "#9aa89f", "#c3cfc7", "#dbe5de", "#e8eee9", "#f3f6f4", "#ffffff"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page h1, uppercase Overpass." },
+      "headline": { "displayName": "Headline", "purpose": "Section h2 and brand." },
+      "title": { "displayName": "Title", "purpose": "Card h3 and state-message titles." },
+      "body": { "displayName": "Body", "purpose": "system-ui reading text." },
+      "label": { "displayName": "Label", "purpose": "Badges, scale labels, stamp; uppercase Overpass." }
+    },
+    "shadows": [
+      { "name": "none", "value": "none", "purpose": "App surfaces are flat; --color-shadow is none." },
+      { "name": "map-marker (drift)", "value": "0 1px 4px rgb(17 25 21 / 30%)", "purpose": "Leaflet marker only; carried by the build, not a rule for new surfaces." }
+    ],
+    "motion": [
+      { "name": "reduced-motion-transition", "value": "80ms", "purpose": "Under prefers-reduced-motion transitions shorten to 80ms, animations run once; spinner stops." },
+      { "name": "state-spin", "value": "1.2s linear infinite", "purpose": "Loading ring in state messages." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "640px" },
+      { "name": "rail", "value": "960px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Scale Band",
+      "kind": "custom",
+      "refersTo": "risk-badge-fire",
+      "description": "Global three-class scale with pointer over the current class.",
+      "html": "<div class=\"ds-band\"><div class=\"ds-seg n\">Normal</div><div class=\"ds-seg w cur\"><span class=\"ds-ptr\"></span>Advertencia</div><div class=\"ds-seg f\">Incendio</div></div>",
+      "css": ".ds-band{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:14px;background:#111915;font-family:var(--font-display,'Overpass Variable',sans-serif)}.ds-seg{position:relative;min-height:72px;display:grid;align-content:center;padding:12px 16px;color:#e8eee9;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.ds-seg.n{background:color-mix(in srgb,#1f8a4c 32%,#111915)}.ds-seg.f{background:color-mix(in srgb,#d3302a 32%,#111915)}.ds-seg.w{background:color-mix(in srgb,#f2a900 32%,#111915)}.ds-seg.w.cur{background:#f2a900;color:#111915}.ds-ptr{position:absolute;top:-14px;left:50%;width:0;height:0;border-top:14px solid #fff;border-left:12px solid transparent;border-right:12px solid transparent;transform:translateX(-50%)}"
+    },
+    {
+      "name": "Mini Scale",
+      "kind": "custom",
+      "description": "Per-node three-bar scale; tall bar marks the class, dashed when stale.",
+      "html": "<div class=\"ds-mini\"><i></i><i class=\"cur\"></i><i></i></div>",
+      "css": ".ds-mini{display:grid;grid-template-columns:repeat(3,1fr);align-items:end;gap:2px;height:22px;width:120px}.ds-mini i{height:10px;background:#dbe5de}.ds-mini i.cur{height:22px;background:#f2a900}"
+    },
+    {
+      "name": "Risk Badge",
+      "kind": "chip",
+      "refersTo": "risk-badge-fire",
+      "description": "Solid uppercase badge with state icon.",
+      "html": "<span class=\"ds-badge\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path d=\"M12 3 2.8 20h18.4L12 3Zm0 5.2v5.3m0 3.2v.1\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>Advertencia</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:4px;min-height:28px;padding:3px 8px;border:2px solid #f2a900;border-radius:2px;background:#f2a900;color:#111915;font-family:var(--font-display,'Overpass Variable',sans-serif);font-size:.8rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}"
+    },
+    {
+      "name": "Node Card",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Flat white panel with 2px ink border; fire variant tinted.",
+      "html": "<article class=\"ds-card\"><h3>Nodo Norte</h3><p>node-01</p></article>",
+      "css": ".ds-card{padding:16px;border:2px solid #111915;border-radius:2px;background:#fff;color:#111915}.ds-card h3{margin:0 0 4px;font-family:var(--font-display,'Overpass Variable',sans-serif);font-weight:800;font-size:1rem}.ds-card p{margin:0;color:#435249;font-size:.875rem}.ds-card:hover{border-color:#123b2e}"
+    },
+    {
+      "name": "CERRADA Stamp",
+      "kind": "custom",
+      "refersTo": "stamp",
+      "description": "Replaces status text on closed alerts.",
+      "html": "<span class=\"ds-stamp\">Cerrada</span>",
+      "css": ".ds-stamp{display:inline-flex;padding:2px 8px;line-height:1;transform:rotate(-2deg);border:2px solid #111915;color:#111915;font-family:var(--font-display,'Overpass Variable',sans-serif);font-weight:800;letter-spacing:.08em;text-transform:uppercase}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "44px control, 2px ink border, flat.",
+      "html": "<button class=\"ds-btn\">Reintentar ahora</button>",
+      "css": ".ds-btn{min-height:44px;padding:8px 12px;border:2px solid #111915;border-radius:2px;background:#fff;color:#111915;font:inherit;cursor:pointer}.ds-btn:hover{background:#dbe5de}.ds-btn:focus-visible{outline:3px solid #0b5cad;outline-offset:3px}"
+    },
+    {
+      "name": "Rail Nav",
+      "kind": "nav",
+      "refersTo": "rail",
+      "description": "Conifer rail links; active link inverts on desktop.",
+      "html": "<nav class=\"ds-nav\"><a>Resumen</a><a class=\"act\">Alertas</a><a>Mapa</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;width:208px;padding:16px;background:#123b2e;font-family:var(--font-display,'Overpass Variable',sans-serif)}.ds-nav a{display:flex;align-items:center;min-height:44px;padding:0 12px;color:#e8eee9;font-size:1.05rem;font-weight:600}.ds-nav a:hover{background:rgb(255 255 255/12%)}.ds-nav a.act{background:#e8eee9;color:#123b2e;font-weight:800}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Cartel de peligro de incendio",
+    "overview": "PyroGuard reads like a roadside fire-danger rating sign. Risk is a three-class scale (NORMAL, ADVERTENCIA, INCENDIO) with a pointer over the current class, drawn as a black signal block with enamel-saturated segments. The scale is the signature: it appears once large at the top of the summary and again in miniature on every node card. The surrounding chrome is conifer green, flat panels carry a thick black border, and there are no diffuse shadows or gradients. The mood is calm when everything is normal and unmistakable in fire, when the whole rail turns to a red field.",
+    "keyCharacteristics": [
+      "Three-class scale with pointer, big band globally and 3-segment mini per node.",
+      "Flat panels, 2px black border, 2px corners, no soft shadows.",
+      "Overpass uppercase for labels and big numbers; system-ui for body.",
+      "Global risk tints the rail through body[data-risk] in WARNING and FIRE.",
+      "Every state has a non-color cue (icon, notch, dash, stamp)."
+    ],
+    "rules": [
+      { "name": "The Enamel Reserve Rule", "body": "Green, amber and red mean risk class and nothing else. Decorative use of them dilutes the sign.", "section": "colors" },
+      { "name": "The Rail Field Rule", "body": "Only body[data-risk] changes the rail color, and only for WARNING and FIRE; NORMAL leaves the conifer.", "section": "colors" },
+      { "name": "The Sign Voice Rule", "body": "Overpass is for labels, headings and numbers; paragraphs stay in system-ui.", "section": "typography" },
+      { "name": "The No-Blur Rule", "body": "No diffuse shadows or gradients on app surfaces.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do express risk as the three-class scale and repeat it per node in miniature.",
+      "Do pair every color state with a shape cue: icon, notch, dash, or stamp.",
+      "Do keep panels flat: 2px signal-ink border, 2px radius.",
+      "Do tint the rail only through body[data-risk] for WARNING and FIRE.",
+      "Do keep 44px minimum targets and the 3px focus-blue ring.",
+      "Do show a CERRADA stamp for closed items instead of hiding them."
+    ],
+    "donts": [
+      "Don't return to a grid of identical metric cards with a colored side border.",
+      "Don't use green, amber or red for anything but risk class.",
+      "Don't add blur shadows, gradients or radii above 2px to new surfaces.",
+      "Don't set long paragraphs in Overpass.",
+      "Don't signal state by color alone."
+    ]
+  }
+}
