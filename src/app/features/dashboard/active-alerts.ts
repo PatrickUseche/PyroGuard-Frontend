@@ -22,7 +22,10 @@ import { DashboardStore } from './dashboard-store';
           <h2 id="alerts-title">Alertas activas</h2>
           <p>Eventos que requieren seguimiento.</p>
         </div>
-        <span class="count">{{ orderedAlerts().length }} alertas</span>
+        <span class="count"
+          >{{ orderedAlerts().length }}
+          {{ orderedAlerts().length === 1 ? 'alerta' : 'alertas' }}</span
+        >
       </header>
 
       @if (!auth.restoring() && !auth.canManageAlerts()) {
@@ -48,7 +51,10 @@ import { DashboardStore } from './dashboard-store';
                     <a [routerLink]="['/nodos', alert.node_id]">{{ alert.node_id }}</a>
                     <app-simulated-badge [nodeId]="alert.node_id" />
                     <span class="status">{{ statusLabel(alert) }}</span>
-                    <span class="occurrences">×{{ alert.occurrences }} ocurrencias</span>
+                    <span class="occurrences"
+                      >×{{ alert.occurrences }}
+                      {{ alert.occurrences === 1 ? 'ocurrencia' : 'ocurrencias' }}</span
+                    >
                     @if (alert.probability !== null) {
                       <span>Prob. {{ formatProbability(alert.probability) }}</span>
                     }

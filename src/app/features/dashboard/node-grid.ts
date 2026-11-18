@@ -22,7 +22,9 @@ import { DashboardStore } from './dashboard-store';
           <h2 id="nodes-title">Nodos</h2>
           <p>Estado de conexión, riesgo y última lectura recibida.</p>
         </div>
-        <span class="count">{{ store.nodes().length }} nodos</span>
+        <span class="count"
+          >{{ store.nodes().length }} {{ store.nodes().length === 1 ? 'nodo' : 'nodos' }}</span
+        >
       </header>
 
       @if (store.nodes().length > 0) {
