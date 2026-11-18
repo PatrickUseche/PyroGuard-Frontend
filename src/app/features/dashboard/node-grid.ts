@@ -2,16 +2,19 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { ConnectionBadge } from '../../shared/components/connection-badge/connection-badge';
 import { RiskBadge } from '../../shared/components/risk-badge/risk-badge';
+import { RiskScale } from '../../shared/components/risk-scale/risk-scale';
+import { Node } from '../../shared/models/node.model';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { formatProbability } from '../../shared/utils/probability-format.util';
+import { Risk } from '../../shared/models/risk.model';
 import { DashboardStore } from './dashboard-store';
 
 @Component({
   selector: 'app-node-grid',
   standalone: true,
-  imports: [ConnectionBadge, RiskBadge, RouterLink, SimulatedBadge, StateMessage],
+  imports: [ConnectionBadge, RiskBadge, RiskScale, RouterLink, SimulatedBadge, StateMessage],
   template: `
     <section class="node-section" aria-labelledby="nodes-title">
       <header class="section-heading">
@@ -25,7 +28,7 @@ import { DashboardStore } from './dashboard-store';
       @if (store.nodes().length > 0) {
         <div class="node-grid">
           @for (node of store.nodes(); track node.node_id) {
-            <article class="node-card">
+            <article class="node-card" [class.fire]="nodeRisk(node) === 'FIRE'">
               <header class="node-heading">
                 <div>
                   <h3>
@@ -43,15 +46,16 @@ import { DashboardStore } from './dashboard-store';
                   <app-risk-badge [risk]="null" emptyLabel="Sin datos" />
                 } @else {
                   <app-risk-badge
-                    [risk]="
-                      node.current_risk ??
-                      latestReadingByNode().get(node.node_id)?.risk_level ??
-                      null
-                    "
+                    [risk]="nodeRisk(node)"
                     [stale]="node.connection_status === 'OFFLINE'"
                   />
                 }
               </div>
+              <app-risk-scale
+                variant="mini"
+                [risk]="node.connection_status === 'UNKNOWN' ? null : nodeRisk(node)"
+                [stale]="node.connection_status === 'OFFLINE'"
+              />
 
               <dl class="reading-details">
                 <div>
@@ -172,11 +176,16 @@ import { DashboardStore } from './dashboard-store';
 
     .node-card {
       display: grid;
-      gap: var(--space-4);
+      gap: var(--space-3);
       padding: var(--space-4);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
+    }
+
+    .node-card.fire {
+      border-color: var(--risk-fire-border);
+      background: var(--risk-fire-bg);
     }
 
     .node-heading,
@@ -254,7 +263,7 @@ import { DashboardStore } from './dashboard-store';
     .skeleton span {
       display: block;
       height: 1.25rem;
-      border-radius: 6px;
+      border-radius: var(--radius-control);
       background: var(--color-surface-muted);
     }
 
@@ -277,6 +286,10 @@ export class NodeGrid {
   );
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;
+
+  nodeRisk(node: Node): Risk | null {
+    return node.current_risk ?? this.latestReadingByNode().get(node.node_id)?.risk_level ?? null;
+  }
 
   aiProbability(nodeId: string): string | null {
     const ai = this.latestReadingByNode().get(nodeId)?.ai;

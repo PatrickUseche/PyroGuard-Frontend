@@ -35,7 +35,6 @@ import {
   template: `
     <section class="map-page" aria-labelledby="map-title">
       <header>
-        <p class="eyebrow">Georreferenciación</p>
         <h1 id="map-title">Mapa de nodos</h1>
         <p>Mapa base de OpenStreetMap; las ubicaciones se mostrarán cuando estén registradas.</p>
       </header>
@@ -97,19 +96,9 @@ import {
       gap: var(--space-4);
     }
 
-    .eyebrow,
     h1,
     p {
       margin: 0;
-    }
-
-    .eyebrow {
-      margin-bottom: var(--space-2);
-      color: var(--color-text-muted);
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
     }
 
     h1 {

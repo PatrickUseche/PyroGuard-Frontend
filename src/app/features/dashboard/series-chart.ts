@@ -301,7 +301,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
     }
@@ -434,7 +434,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
       overflow: auto;
       margin-top: var(--space-3);
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
     }
 
     table {
@@ -476,7 +476,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
 
     .chart-skeleton span {
       height: 7rem;
-      border-radius: 8px;
+      border-radius: var(--radius-control);
       background: var(--color-surface-muted);
     }
 

@@ -21,7 +21,6 @@ import { safeReturnUrl } from '../../core/guards/auth.guard';
   template: `
     <section class="login-panel" aria-labelledby="login-title">
       <header>
-        <p class="eyebrow">Acceso de operación</p>
         <h1 id="login-title">Iniciar sesión</h1>
         <p>
           Inicia sesión con tu cuenta de Gmail. Solo se admiten cuentas @gmail.com verificadas por
@@ -80,15 +79,6 @@ import { safeReturnUrl } from '../../core/guards/auth.guard';
       background: var(--color-surface);
     }
 
-    .eyebrow {
-      margin: 0 0 var(--space-2);
-      color: var(--color-text-muted);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
     h1 {
       margin: 0;
       font-size: 1.7rem;
@@ -110,7 +100,7 @@ import { safeReturnUrl } from '../../core/guards/auth.guard';
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
       cursor: pointer;

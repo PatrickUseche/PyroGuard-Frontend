@@ -160,7 +160,7 @@ import { DashboardStore } from './dashboard-store';
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
       cursor: pointer;
@@ -196,14 +196,14 @@ import { DashboardStore } from './dashboard-store';
       justify-content: space-between;
       gap: var(--space-4);
       padding: var(--space-4);
-      border: 1px solid var(--color-border);
-      border-left: 4px solid var(--risk-warning-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
     }
 
     .alert-card.fire {
-      border-left-color: var(--risk-fire-border);
+      border-color: var(--risk-fire-border);
+      background: var(--risk-fire-bg);
     }
 
     .alert-main {

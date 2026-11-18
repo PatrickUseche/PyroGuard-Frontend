@@ -263,7 +263,7 @@ import { DashboardStore } from './dashboard-store';
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
     }

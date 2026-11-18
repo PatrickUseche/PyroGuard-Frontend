@@ -18,7 +18,7 @@ import { filter, startWith } from 'rxjs';
   standalone: true,
   imports: [HealthIndicator, RouterLink, RouterLinkActive, RouterOutlet],
   template: `
-    <div class="app-shell">
+    <div class="app-shell" [class.with-rail]="showNavigation()">
       <header class="site-header">
         <a class="brand" routerLink="/" aria-label="PyroGuard, inicio">
           <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -44,7 +44,7 @@ import { filter, startWith } from 'rxjs';
             </a>
             <a routerLink="/mapa" routerLinkActive="active" ariaCurrentWhenActive="page"> Mapa </a>
           </nav>
-          <app-health-indicator class="health-indicator" />
+          <div class="health-plate"><app-health-indicator class="health-indicator" /></div>
         }
         @if (!authenticationPage()) {
           @if (auth.currentUser(); as user) {
@@ -77,19 +77,25 @@ import { filter, startWith } from 'rxjs';
     }
 
     .app-shell {
-      display: flex;
+      display: grid;
       min-height: 100vh;
-      flex-direction: column;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto 1fr auto;
     }
 
     .site-header {
       display: flex;
-      min-height: 68px;
+      min-height: 64px;
+      flex-wrap: wrap;
       align-items: center;
-      gap: var(--space-8);
-      padding: var(--space-3) max(var(--space-6), calc((100vw - 1200px) / 2));
-      border-bottom: 1px solid var(--color-border);
-      background: var(--color-surface);
+      gap: var(--space-3) var(--space-6);
+      padding: var(--space-2) var(--space-4);
+      background: var(--color-rail);
+      color: var(--color-on-rail);
+    }
+
+    .site-header :focus-visible {
+      outline-color: var(--color-on-rail);
     }
 
     .brand {
@@ -97,22 +103,24 @@ import { filter, startWith } from 'rxjs';
       min-height: 44px;
       align-items: center;
       gap: var(--space-2);
-      color: var(--color-text);
-      font-size: 1.15rem;
-      font-weight: 750;
+      color: var(--color-on-rail);
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
       text-decoration: none;
+      text-transform: uppercase;
     }
 
     .brand-icon {
       width: 28px;
       height: 28px;
-      color: var(--risk-fire-text);
+      color: var(--class-warning);
     }
 
     .primary-nav {
       display: flex;
-      align-self: stretch;
-      gap: var(--space-2);
+      gap: var(--space-1);
     }
 
     .primary-nav a {
@@ -120,19 +128,27 @@ import { filter, startWith } from 'rxjs';
       min-height: 44px;
       align-items: center;
       padding: 0 var(--space-3);
-      border-bottom: 3px solid transparent;
-      color: var(--color-text-muted);
+      border-bottom: 4px solid transparent;
+      color: var(--color-on-rail);
+      font-family: var(--font-display);
+      font-size: 1.05rem;
       font-weight: 600;
       text-decoration: none;
     }
 
-    .primary-nav a.active {
-      border-bottom-color: var(--color-focus);
-      color: var(--color-text);
+    .primary-nav a:hover {
+      background: rgb(255 255 255 / 12%);
     }
 
-    .health-indicator {
+    .primary-nav a.active {
+      border-bottom-color: var(--class-warning);
+      font-weight: 800;
+    }
+
+    .health-plate {
       margin-left: auto;
+      padding: 0 var(--space-2);
+      background: var(--color-surface);
     }
 
     .auth-button {
@@ -141,20 +157,25 @@ import { filter, startWith } from 'rxjs';
       align-items: center;
       justify-content: center;
       padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      background: var(--color-surface);
-      color: var(--color-text);
+      border: 2px solid var(--color-on-rail);
+      border-radius: var(--radius-control);
+      background: transparent;
+      color: var(--color-on-rail);
       cursor: pointer;
       font-weight: 650;
       text-decoration: none;
       white-space: nowrap;
     }
 
+    .auth-button:hover {
+      background: var(--color-on-rail);
+      color: var(--color-rail);
+    }
+
     .auth-user {
       max-width: 220px;
       overflow: hidden;
-      color: var(--color-text-muted);
+      color: var(--color-on-rail);
       font-weight: 650;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -162,17 +183,16 @@ import { filter, startWith } from 'rxjs';
 
     .main-content {
       width: min(1200px, 100%);
-      flex: 1;
-      align-self: center;
+      align-self: start;
+      justify-self: center;
       padding: var(--space-8) var(--space-6);
     }
 
     .site-footer {
-      padding: var(--space-4) var(--space-6);
-      border-top: 1px solid var(--color-border);
+      padding: var(--space-3) var(--space-6);
+      border-top: 2px solid var(--color-ink);
       background: var(--color-surface);
       color: var(--color-text-muted);
-      text-align: center;
     }
 
     .site-footer p {
@@ -180,24 +200,62 @@ import { filter, startWith } from 'rxjs';
       font-size: 0.875rem;
     }
 
-    @media (max-width: 640px) {
-      .site-header {
-        flex-wrap: wrap;
-        min-height: 60px;
+    @media (min-width: 960px) {
+      .app-shell.with-rail {
+        grid-template-columns: 240px minmax(0, 1fr);
+        grid-template-rows: 1fr auto;
+      }
+
+      .with-rail .site-header {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        grid-row: 1 / span 2;
+        align-content: start;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: stretch;
         gap: var(--space-4);
-        padding: var(--space-2) var(--space-4);
+        padding: var(--space-6) var(--space-4);
       }
 
-      .health-indicator {
-        margin-left: auto;
+      .with-rail .primary-nav {
+        flex-direction: column;
       }
 
+      .with-rail .primary-nav a {
+        padding: 0 var(--space-3);
+        border-bottom: 0;
+        box-shadow: inset 4px 0 0 transparent;
+      }
+
+      .with-rail .primary-nav a.active {
+        background: var(--color-on-rail);
+        box-shadow: none;
+        color: var(--color-rail);
+      }
+
+      .with-rail .health-plate {
+        margin: 0;
+        padding: var(--space-1) var(--space-2);
+      }
+
+      .with-rail .auth-user {
+        max-width: none;
+      }
+
+      .with-rail .auth-user:first-of-type {
+        margin-top: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
       .main-content {
         padding: var(--space-6) var(--space-4);
       }
 
       .site-footer {
-        padding: var(--space-4);
+        padding: var(--space-3) var(--space-4);
       }
     }
   `,

@@ -25,7 +25,6 @@ type AlertStatusFilter = '' | AlertStatus;
     <section class="history-page" aria-labelledby="history-title">
       <header class="page-heading">
         <div>
-          <p class="eyebrow">Registro de eventos</p>
           <h1 id="history-title">Historial de alertas</h1>
           <p>Consulta alertas activas, reconocidas y cerradas.</p>
         </div>
@@ -173,19 +172,9 @@ type AlertStatusFilter = '' | AlertStatus;
       gap: var(--space-4);
     }
 
-    .eyebrow,
     h1,
     p {
       margin: 0;
-    }
-
-    .eyebrow {
-      margin-bottom: var(--space-2);
-      color: var(--color-text-muted);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     h1 {
@@ -218,7 +207,7 @@ type AlertStatusFilter = '' | AlertStatus;
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
     }

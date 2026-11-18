@@ -33,7 +33,6 @@ import { SeriesChart } from '../dashboard/series-chart';
       <section class="node-detail" aria-labelledby="node-title">
         <header class="node-header">
           <div>
-            <p class="eyebrow">Detalle del nodo</p>
             <h1 id="node-title">{{ currentNode.name }}</h1>
             <p class="node-id">{{ currentNode.node_id }}</p>
             <app-simulated-badge [nodeId]="currentNode.node_id" />
@@ -148,24 +147,14 @@ import { SeriesChart } from '../dashboard/series-chart';
       gap: var(--space-4);
     }
 
-    .eyebrow,
     h1,
     h2,
     p {
       margin: 0;
     }
 
-    .eyebrow,
     .node-id {
       color: var(--color-text-muted);
-    }
-
-    .eyebrow {
-      margin-bottom: var(--space-2);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     h1 {

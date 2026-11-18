@@ -126,8 +126,13 @@ escrita en el código. No muestra riesgo, alertas ni el resultado de la IA, y `e
 
 ## Fase 10 — Auditoría y pulido del frontend con impeccable
 
-Alcance: pulido, no rediseño (se conserva identidad visual, texto y comportamiento). Rama `polish/impeccable-audit`.
-Las tareas de corrección se añaden aquí tras presentar el informe de auditoría.
+Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conservan producto, rutas, comportamiento, texto en español y aviso de prototipo). Mundo visual elegido: «Cartel de peligro de incendio» (escala de tres clases con puntero). Rama `polish/impeccable-audit`.
 
 - [x] docs(design): PRODUCT.md con usuarios, propósito y restricciones del panel [10.1]
-- [ ] docs(design): DESIGN.md y `.impeccable/design.json` derivados del sistema actual [10.2]
+- [x] style(theme): tokens del cartel de peligro (riel conífera, clases normal/advertencia/incendio, reduced-motion con alternativa) [10.2]
+- [x] feat(layout): riel lateral en escritorio y barra superior en móvil [10.3]
+- [x] feat(shared): `RiskScale` (banda con puntero y mini-escala por nodo) e insignia de riesgo en esmalte [10.4]
+- [x] refactor(dashboard): banda de escala, franja de cifras y nodos con mini-escala; fuera kickers, bordes de color y leyenda aparte [10.5]
+- [ ] chore(fonts): tipografía de señalización Overpass autoalojada (requiere instalar `@fontsource-variable/overpass`) [10.6]
+- [ ] docs(design): DESIGN.md y `.impeccable/design.json` desde el mundo construido [10.7]
+- [ ] docs(capturas): regenerar las 8 capturas de `docs/capturas/` [10.8]

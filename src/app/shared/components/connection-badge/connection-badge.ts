@@ -61,7 +61,7 @@ import { CONNECTION_STATUS_LABELS, ConnectionStatus } from '../../models/connect
       gap: var(--space-1);
       padding: 3px var(--space-2);
       border: 1px solid transparent;
-      border-radius: 999px;
+      border-radius: 2px;
       font-size: 0.8rem;
       font-weight: 700;
       line-height: 1.2;

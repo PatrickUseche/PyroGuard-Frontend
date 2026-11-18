@@ -32,7 +32,7 @@ Modo Operate. Datos que se actualizan cada 10 s (pausado con la pestaña oculta)
 
 ## Brand Commitments
 
-Nombre PyroGuard, texto en español y paleta de riesgo actual se conservan. El texto y ubicación del aviso de prototipo pueden ajustarse (confirmado por el usuario), pero el aviso debe seguir existiendo.
+Se conservan el nombre PyroGuard, la interfaz en español y el aviso de prototipo (su texto y ubicación pueden ajustarse). El usuario autorizó el 2026-11-18 un rediseño completo del frontend: la identidad visual actual (paleta, tarjetas, tipografía) es evidencia, no autoridad. La semántica de riesgo (normal / advertencia / incendio) debe seguir siendo legible sin depender solo del color.
 
 ## Evidence on Hand
 

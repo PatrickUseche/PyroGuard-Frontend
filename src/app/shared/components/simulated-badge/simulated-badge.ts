@@ -30,7 +30,7 @@ import { isSimulatedNode } from '../../utils/simulated-node.util';
       gap: var(--space-1);
       padding: 2px var(--space-2);
       border: 1px solid var(--color-border);
-      border-radius: 999px;
+      border-radius: 2px;
       background: var(--color-surface-muted);
       color: var(--color-text);
       font-size: 0.75rem;
