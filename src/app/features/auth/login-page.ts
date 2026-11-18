@@ -54,7 +54,11 @@ import { safeReturnUrl } from '../../core/guards/auth.guard';
           <app-state-message
             kind="loading"
             title="Iniciando sesión"
-            message="Verificando tu cuenta de Google."
+            [message]="
+              slowSignIn()
+                ? 'El servidor estaba en reposo y puede tardar hasta un minuto en responder. No cierres esta página.'
+                : 'Verificando tu cuenta de Google.'
+            "
           />
         }
         @if (backendError(); as message) {
@@ -74,7 +78,7 @@ import { safeReturnUrl } from '../../core/guards/auth.guard';
       gap: var(--space-6);
       margin: var(--space-8) auto;
       padding: var(--space-6);
-      border: 1px solid var(--color-border);
+      border: var(--panel-border);
       border-radius: var(--radius-card);
       background: var(--color-surface);
     }
@@ -99,7 +103,7 @@ import { safeReturnUrl } from '../../core/guards/auth.guard';
     .retry-button {
       min-height: 44px;
       padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--color-border);
+      border: 2px solid var(--color-ink);
       border-radius: var(--radius-control);
       background: var(--color-surface);
       color: var(--color-text);
@@ -131,6 +135,7 @@ export class LoginPage {
   readonly clientIdConfigured = environment.googleClientId.trim() !== '';
   readonly sdkReady = signal(false);
   readonly signingIn = signal(false);
+  readonly slowSignIn = signal(false);
   readonly backendError = signal<string | null>(null);
 
   constructor() {
@@ -190,8 +195,11 @@ export class LoginPage {
     }
     this.backendError.set(null);
     this.signingIn.set(true);
+    this.slowSignIn.set(false);
+    const slowTimer = setTimeout(() => this.slowSignIn.set(true), 4_000);
     this.auth.loginWithGoogle(credential).subscribe({
       next: (result) => {
+        clearTimeout(slowTimer);
         this.signingIn.set(false);
         if (result.kind === 'registration-required') {
           this.auth.setPendingRegistrationNotice(
@@ -205,6 +213,7 @@ export class LoginPage {
         void this.router.navigateByUrl(this.getReturnUrl());
       },
       error: (error: unknown) => {
+        clearTimeout(slowTimer);
         this.signingIn.set(false);
         this.backendError.set(this.getErrorMessage(error));
       },
