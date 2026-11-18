@@ -250,6 +250,24 @@ import { filter, startWith } from 'rxjs';
     }
 
     @media (max-width: 640px) {
+      .site-header {
+        gap: var(--space-1) var(--space-3);
+      }
+
+      .primary-nav {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .auth-user {
+        display: none;
+      }
+
+      .health-plate {
+        margin-left: auto;
+      }
+
       .main-content {
         padding: var(--space-6) var(--space-4);
       }

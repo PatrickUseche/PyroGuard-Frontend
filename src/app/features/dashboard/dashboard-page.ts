@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject } from '@angular/core';
 import { RiskScale } from '../../shared/components/risk-scale/risk-scale';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
@@ -276,6 +277,20 @@ import { SeriesChart } from './series-chart';
 })
 export class DashboardPage {
   readonly store = inject(DashboardStore);
+  private readonly body = inject(DOCUMENT).body;
+
+  constructor() {
+    // El riesgo global tiñe el riel del layout (ver `body[data-risk]` en styles.css).
+    effect(() => {
+      const risk = this.store.summary()?.overall_risk;
+      if (risk === 'FIRE' || risk === 'WARNING') {
+        this.body.dataset['risk'] = risk;
+      } else {
+        delete this.body.dataset['risk'];
+      }
+    });
+    inject(DestroyRef).onDestroy(() => delete this.body.dataset['risk']);
+  }
   readonly skeletons = [1, 2, 3, 4, 5, 6];
   readonly formatFullDate = formatFullDate;
   readonly formatRelativeTime = formatRelativeTime;

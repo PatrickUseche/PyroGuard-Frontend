@@ -1,3 +1,5 @@
+@import '@fontsource-variable/overpass/index.css';
+
 :root {
   color-scheme: light;
   font-family:
@@ -95,6 +97,24 @@
   }
 }
 
+body[data-risk='FIRE'] {
+  --color-rail: #8f1d18;
+}
+
+body[data-risk='WARNING'] {
+  --color-rail: #5a4300;
+}
+
+@media (prefers-color-scheme: dark) {
+  body[data-risk='FIRE'] {
+    --color-rail: #6e1613;
+  }
+
+  body[data-risk='WARNING'] {
+    --color-rail: #4a3700;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -130,7 +150,18 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  letter-spacing: 0.01em;
+}
+
+h1 {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+h2,
+h3 {
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 button,
