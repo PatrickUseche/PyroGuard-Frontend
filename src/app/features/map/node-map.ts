@@ -34,6 +34,9 @@ function markerPriority(className: string): number {
   return className === 'fire' ? 1000 : className === 'warning' ? 500 : 0;
 }
 
+/** Distancia en píxeles por debajo de la cual dos marcadores se consideran solapados. */
+const MARKER_CLUSTER_PIXELS = 44;
+
 @Component({
   selector: 'app-node-map',
   standalone: true,
@@ -175,6 +178,8 @@ export class NodeMap implements OnDestroy {
   private map: L.Map | null = null;
   private readonly markers = new Map<string, L.Marker>();
   private readonly markerSignatures = new Map<string, string>();
+  /** Posición real de cada nodo; el marcador puede dibujarse desplazado para no solaparse. */
+  private readonly positions = new Map<string, L.LatLng>();
   private readonly keyboardMarkers = new WeakSet<HTMLElement>();
   readonly selectedNodeId = signal<string | null>(null);
   readonly locatedNodes = computed(() => filterLocatedNodes(this.store.nodes()));
@@ -223,6 +228,7 @@ export class NodeMap implements OnDestroy {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(this.map);
+    this.map.on('zoomend', () => this.spreadMarkers());
     this.updateMarkers();
   }
 
@@ -248,6 +254,7 @@ export class NodeMap implements OnDestroy {
     this.map = null;
     this.markers.clear();
     this.markerSignatures.clear();
+    this.positions.clear();
     this.hasFittedBounds = false;
   }
 
@@ -264,6 +271,7 @@ export class NodeMap implements OnDestroy {
         marker.remove();
         this.markers.delete(nodeId);
         this.markerSignatures.delete(nodeId);
+        this.positions.delete(nodeId);
         refitBounds = true;
       }
     }
@@ -286,11 +294,16 @@ export class NodeMap implements OnDestroy {
         this.setMarkerAccessibleLabel(newMarker, node, details.label);
         this.markers.set(node.node_id, newMarker);
         this.markerSignatures.set(node.node_id, signature);
+        this.positions.set(node.node_id, L.latLng(latitude, longitude));
         refitBounds = true;
       } else {
-        const previousPosition = marker.getLatLng();
-        if (previousPosition.lat !== latitude || previousPosition.lng !== longitude) {
-          marker.setLatLng([latitude, longitude]);
+        const previousPosition = this.positions.get(node.node_id);
+        if (
+          previousPosition === undefined ||
+          previousPosition.lat !== latitude ||
+          previousPosition.lng !== longitude
+        ) {
+          this.positions.set(node.node_id, L.latLng(latitude, longitude));
           refitBounds = true;
         }
         if (this.markerSignatures.get(node.node_id) !== signature) {
@@ -302,6 +315,8 @@ export class NodeMap implements OnDestroy {
         this.setMarkerAccessibleLabel(marker, node, details.label);
       }
     }
+
+    this.spreadMarkers();
 
     if (refitBounds && locatedNodes.length > 0) {
       const bounds = L.latLngBounds(locatedNodes.map((node) => [node.latitude, node.longitude]));
@@ -328,6 +343,61 @@ export class NodeMap implements OnDestroy {
       });
       this.keyboardMarkers.add(element);
     }
+  }
+
+  /**
+   * Abre en abanico los marcadores que quedan a pocos píxeles entre sí. Es solo visual:
+   * la posición real de cada nodo no cambia y se recalcula en cada zoom.
+   */
+  private spreadMarkers(): void {
+    const map = this.map;
+    if (map === null) {
+      return;
+    }
+
+    const points = [...this.positions].map(([id, position]) => ({
+      id,
+      position,
+      point: map.latLngToContainerPoint(position),
+    }));
+    const groups: (typeof points)[] = [];
+    for (const item of points) {
+      const group = groups.find((members) =>
+        members.some((other) => other.point.distanceTo(item.point) < MARKER_CLUSTER_PIXELS),
+      );
+      if (group === undefined) {
+        groups.push([item]);
+      } else {
+        group.push(item);
+      }
+    }
+
+    for (const group of groups) {
+      // Los de mayor riesgo primero, para que ocupen la posición de las 12 en punto.
+      group.sort((a, b) => this.markerRank(b.id) - this.markerRank(a.id));
+      group.forEach((item, index) => {
+        const marker = this.markers.get(item.id);
+        if (marker === undefined) {
+          return;
+        }
+        if (group.length === 1) {
+          marker.setLatLng(item.position);
+          return;
+        }
+        const angle = (2 * Math.PI * index) / group.length - Math.PI / 2;
+        const radius = 44 + 10 * group.length;
+        const shifted = L.point(
+          item.point.x + radius * Math.cos(angle),
+          item.point.y + radius * Math.sin(angle),
+        );
+        marker.setLatLng(map.containerPointToLatLng(shifted));
+      });
+    }
+  }
+
+  private markerRank(nodeId: string): number {
+    const className = this.markerSignatures.get(nodeId)?.split(':')[0];
+    return className === 'fire' ? 2 : className === 'warning' ? 1 : 0;
   }
 
   private createMarkerIcon(details: MapMarkerPresentation): L.DivIcon {
