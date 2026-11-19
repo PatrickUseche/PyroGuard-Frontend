@@ -161,3 +161,17 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 - [x] feat(map): los marcadores a pocos píxeles se abren en abanico (solo visual, recalculado en cada zoom) [12.2]
 - [x] docs(readme): sección de seguridad al día [12.3]
 - Medido (12.4): login en móvil con red 4G lenta y CPU 4× más lenta, FCP/LCP 1,8 s, CLS 0,014, 89,7 kB iniciales comprimidos; sin scroll horizontal en 768 px (panel, alertas, mapa).
+
+## Fase 13 — Tema oscuro y gráficas en vivo
+
+Alcance: tema oscuro único «sala de control» (paleta A elegida por el usuario el 2026-11-19), tendencia en vivo, barras de riesgo y miniaturas por nodo, todo pensado para producción. Diseño y plan en `docs/superpowers/`. Rama `design/tema-oscuro-en-vivo`.
+
+- [ ] style(theme): tema oscuro único «sala de control» [13.1]
+- [ ] style(map): mapa oscuro con filtro sobre las teselas de OpenStreetMap [13.2]
+- [ ] refactor(charts): geometría compartida de las gráficas [13.3]
+- [ ] feat(readings): serie en vivo incremental [13.4]
+- [ ] feat(dashboard): tendencia en vivo de temperatura y humo [13.5]
+- [ ] feat(dashboard): barras de riesgo por nodo [13.6]
+- [ ] feat(nodes): miniaturas de sensores en vivo en el detalle del nodo [13.7]
+- [ ] test(e2e): gráficas en vivo y tema oscuro [13.8]
+- [ ] docs: tema oscuro, gráficas en vivo, capturas y mediciones [13.9]
