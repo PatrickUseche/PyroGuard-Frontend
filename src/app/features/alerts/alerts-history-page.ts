@@ -113,7 +113,7 @@ type AlertStatusFilter = '' | AlertStatus;
                       {{ alert.occurrences === 1 ? 'ocurrencia' : 'ocurrencias' }}</span
                     >
                     @if (alert.probability !== null) {
-                      <span>Prob. {{ formatProbability(alert.probability) }}</span>
+                      <span>Prob. de riesgo {{ formatProbability(alert.probability) }}</span>
                     }
                   </div>
                   <app-alert-message [message]="alert.message" />

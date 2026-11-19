@@ -16,6 +16,7 @@ import { StateMessage } from '../../shared/components/state-message/state-messag
 import { SimulatedBadge } from '../../shared/components/simulated-badge/simulated-badge';
 import { AiResult } from '../../shared/models/ai-result.model';
 import { Reading } from '../../shared/models/reading.model';
+import { RISK_LABELS, Risk } from '../../shared/models/risk.model';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
 import { formatProbability as formatProbabilityValue } from '../../shared/utils/probability-format.util';
 import { DashboardStore } from './dashboard-store';
@@ -163,27 +164,30 @@ import { DashboardStore } from './dashboard-store';
                   </td>
                   <td data-label="IA">
                     @if (reading.ai?.status === 'OK' && reading.ai; as ai) {
-                      <div
-                        class="ai-result"
-                        [attr.title]="ai.model_version ?? 'Versión del modelo desconocida'"
-                      >
+                      <div class="ai-result" [attr.title]="aiBreakdown(ai)">
                         <app-risk-badge [risk]="ai.risk_level" />
-                        <span>{{ formatProbability(ai.probability) }}</span>
-                        <span class="ai-model">
-                          Modelo: {{ ai.model_version ?? 'Versión desconocida' }}
+                        <span class="ai-probability">
+                          Prob. de riesgo {{ formatProbability(ai.probability) }}
                         </span>
                       </div>
+                      <span class="ai-model">
+                        Modelo: {{ ai.model_version ?? 'versión desconocida' }}
+                      </span>
                       @if (
                         reading.risk_level !== null &&
                         ai.risk_level !== null &&
                         reading.risk_level !== ai.risk_level
                       ) {
-                        <span class="adjusted">Ajustado por reglas de seguridad</span>
+                        <span class="adjusted">
+                          Ajustado por reglas de seguridad (la IA indicó
+                          {{ riskLabel(ai.risk_level) }})
+                        </span>
                       }
                     } @else {
                       <span class="ai-unavailable">
                         IA no disponible: {{ aiUnavailableReason(reading.ai) }}
                       </span>
+                      <span class="ai-model">Riesgo calculado solo con reglas de seguridad.</span>
                     }
                   </td>
                 </tr>
@@ -324,6 +328,19 @@ import { DashboardStore } from './dashboard-store';
 
     .ai-result {
       flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .ai-probability {
+      font-weight: 650;
+    }
+
+    .ai-model {
+      display: block;
+      margin-top: var(--space-1);
+      color: var(--color-text-muted);
+      font-size: 0.75rem;
+      overflow-wrap: anywhere;
     }
 
     .adjusted {
@@ -606,20 +623,36 @@ export class ReadingsTable {
     return formatProbabilityValue(probability);
   }
 
+  riskLabel(risk: Risk | null): string {
+    return risk === null ? 'sin nivel' : RISK_LABELS[risk].toLowerCase();
+  }
+
+  /** Detalle por clase para el tooltip: la probabilidad mostrada es P(advertencia) + P(incendio). */
+  aiBreakdown(ai: AiResult): string {
+    const parts = (Object.keys(RISK_LABELS) as Risk[])
+      .filter((risk) => ai.probabilities[risk] !== undefined)
+      .map(
+        (risk) => `${RISK_LABELS[risk]} ${formatProbabilityValue(ai.probabilities[risk] ?? null)}`,
+      );
+    return `Probabilidad de riesgo = advertencia + incendio. ${parts.join(' · ')}. Modelo: ${
+      ai.model_version ?? 'versión desconocida'
+    }`;
+  }
+
   aiUnavailableReason(ai: AiResult | null): string {
     if (ai === null) {
-      return 'sin resultado asociado';
+      return 'esta lectura no tiene evaluación de IA';
     }
 
     switch (ai.status) {
       case 'DISABLED':
-        return 'IA desactivada';
+        return 'la IA está desactivada';
       case 'UNAVAILABLE':
-        return 'IA sin respuesta';
+        return 'el servicio de IA no respondió';
       case 'REJECTED':
-        return 'IA rechazó la lectura';
+        return 'la IA rechazó la lectura';
       case 'INVALID_RESPONSE':
-        return 'Respuesta de IA inválida';
+        return 'la IA devolvió una respuesta inválida';
       case 'OK':
         return 'resultado disponible';
     }

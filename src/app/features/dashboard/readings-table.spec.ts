@@ -61,7 +61,7 @@ describe('ReadingsTable', () => {
     expect(text).toContain('31 °C');
     expect(text).toContain('—');
     expect(text).toContain('Sin evaluar');
-    expect(text).toContain('IA no disponible: IA sin respuesta');
+    expect(text).toContain('IA no disponible: el servicio de IA no respondió');
     expect(text).toContain('Sí');
   });
 
@@ -77,7 +77,7 @@ describe('ReadingsTable', () => {
         probabilities: {},
         model_version: null,
       }),
-    ).toBe('IA desactivada');
+    ).toBe('la IA está desactivada');
     expect(
       component.aiUnavailableReason({
         status: 'REJECTED',
@@ -86,8 +86,8 @@ describe('ReadingsTable', () => {
         probabilities: {},
         model_version: null,
       }),
-    ).toBe('IA rechazó la lectura');
-    expect(component.aiUnavailableReason(null)).toBe('sin resultado asociado');
+    ).toBe('la IA rechazó la lectura');
+    expect(component.aiUnavailableReason(null)).toBe('esta lectura no tiene evaluación de IA');
   });
 
   it('should explain missing and disabled AI and flag final risk adjusted by safety rules', () => {
@@ -148,8 +148,8 @@ describe('ReadingsTable', () => {
     fixture.detectChanges();
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('IA no disponible: sin resultado asociado');
-    expect(text).toContain('IA no disponible: IA desactivada');
+    expect(text).toContain('IA no disponible: esta lectura no tiene evaluación de IA');
+    expect(text).toContain('IA no disponible: la IA está desactivada');
     expect(text).toContain('Ajustado por reglas de seguridad');
     expect(text).toContain('Incendio');
     expect(text).toContain('Advertencia');
