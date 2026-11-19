@@ -1,3 +1,4 @@
+import { AlertMessage } from '../../shared/components/alert-message/alert-message';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -20,7 +21,7 @@ type AlertStatusFilter = '' | AlertStatus;
 @Component({
   selector: 'app-alerts-history-page',
   standalone: true,
-  imports: [RiskBadge, RouterLink, SimulatedBadge, StateMessage],
+  imports: [AlertMessage, RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     <section class="history-page" aria-labelledby="history-title">
       <header class="page-heading">
@@ -115,7 +116,7 @@ type AlertStatusFilter = '' | AlertStatus;
                       <span>Prob. {{ formatProbability(alert.probability) }}</span>
                     }
                   </div>
-                  <p>{{ alert.message }}</p>
+                  <app-alert-message [message]="alert.message" />
                 </div>
               </div>
               <a class="detail-link" [routerLink]="['/alertas', alert.id]">Ver detalle</a>

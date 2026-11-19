@@ -1,3 +1,4 @@
+import { AlertMessage } from '../../shared/components/alert-message/alert-message';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -14,7 +15,7 @@ import { DashboardStore } from './dashboard-store';
 @Component({
   selector: 'app-active-alerts',
   standalone: true,
-  imports: [RiskBadge, RouterLink, SimulatedBadge, StateMessage],
+  imports: [AlertMessage, RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     <section class="alerts-section" aria-labelledby="alerts-title">
       <header class="section-heading">
@@ -59,7 +60,7 @@ import { DashboardStore } from './dashboard-store';
                       <span>Prob. {{ formatProbability(alert.probability) }}</span>
                     }
                   </div>
-                  <p>{{ alert.message }}</p>
+                  <app-alert-message [message]="alert.message" />
                 </div>
               </div>
               <a class="detail-link" [routerLink]="['/alertas', alert.id]">Ver detalle</a>
