@@ -498,8 +498,11 @@ export class ReadingsTable {
       createVisiblePolling(
         10_000,
         () => {
-          this.loading.set(true);
-          this.error.set(null);
+          // Solo se muestra el esqueleto en la primera carga: los sondeos
+          // posteriores actualizan en silencio para que la vista no parpadee.
+          if (this.readings().length === 0) {
+            this.loading.set(true);
+          }
           return this.readingsService.getAll({
             ...(this.selectedNode() === '' ? {} : { node_id: this.selectedNode() }),
             ...(this.appliedFromDate() === ''
@@ -521,6 +524,7 @@ export class ReadingsTable {
             return;
           }
           const page: PaginatedReadings = result.value;
+          this.error.set(null);
           this.readings.set(page.items);
           this.total.set(page.total);
           this.loading.set(false);
