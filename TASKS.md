@@ -166,7 +166,7 @@ Alcance: rediseño completo autorizado por el usuario el 2026-11-18 (se conserva
 
 Alcance: tema oscuro único «sala de control» (paleta A elegida por el usuario el 2026-11-19), tendencia en vivo, barras de riesgo y miniaturas por nodo, todo pensado para producción. Diseño y plan en `docs/superpowers/`. Rama `design/tema-oscuro-en-vivo`.
 
-- [ ] style(theme): tema oscuro único «sala de control» [13.1]
+- [x] style(theme): tema oscuro único «sala de control» [13.1]
 - [ ] style(map): mapa oscuro con filtro sobre las teselas de OpenStreetMap [13.2]
 - [ ] refactor(charts): geometría compartida de las gráficas [13.3]
 - [ ] feat(readings): serie en vivo incremental [13.4]
