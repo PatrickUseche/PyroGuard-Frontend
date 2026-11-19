@@ -152,6 +152,6 @@ El proyecto no declara un `.browserslistrc` ni una lista propia en `package.json
 
 ## Seguridad
 
-`npm audit --omit=dev` reporta una vulnerabilidad alta en `zod` (GHSA-mrhx-c7xc-m3w5, agotamiento de memoria al validar colecciones restringidas grandes). Llega de forma transitiva por `@angular/forms@22.2.1` y `@angular/cli@22.2.0`, ambos con `zod@4.6.5`; el frontend no usa `zod` directamente.
+Revisión del 2026-11-18: `npm audit --omit=dev` reportaba una vulnerabilidad alta en `zod` (GHSA-mrhx-c7xc-m3w5, agotamiento de memoria al validar colecciones restringidas grandes), llegada de forma transitiva por `@angular/forms` y `@angular/cli`; el frontend no usa `zod` directamente. Se resolvió con `npm update` y `npm audit fix`, sin cambios mayores (`zod` 4.6.6, Angular 22.2.6 y CLI 22.2.7). Ahora `npm audit --omit=dev` informa 0 vulnerabilidades. No se usó `npm audit fix --force`.
 
-Revisión del 2026-11-18: el parche existe (`zod` 4.6.6 y 4.6.7) y `npm audit` indica que `npm audit fix` lo resuelve sin cambios mayores. Además hay parches de Angular disponibles dentro de la rama 22 (`@angular/*` 22.2.6 y `@angular/cli` 22.2.7). No se aplicaron: queda pendiente decidir `npm audit fix` o `npm update` de los paquetes de Angular y verificar con `npm run build`, `npx ng test --watch=false` y los e2e. No se usó `npm audit fix --force`.
+Tras cualquier actualización de dependencias, verifica con `npm run lint`, `npm run build`, `npx ng test --watch=false` y los e2e (`e2e/README.md`).
