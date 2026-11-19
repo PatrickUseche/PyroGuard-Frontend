@@ -15,6 +15,7 @@ import {
   timer,
 } from 'rxjs';
 import { createVisiblePolling } from '../../core/visible-polling';
+import { AlertSoundService } from '../../core/services/alert-sound.service';
 import { AlertsService } from '../../core/services/alerts.service';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { NodesService } from '../../core/services/nodes.service';
@@ -22,8 +23,11 @@ import { Alert } from '../../shared/models/alert.model';
 import { ApiError } from '../../shared/models/api-error.model';
 import { DashboardSummary } from '../../shared/models/dashboard-summary.model';
 import { Node } from '../../shared/models/node.model';
+import { Risk } from '../../shared/models/risk.model';
 
 type PollResponse<T> = { ok: true; value: T } | { ok: false; error: ApiError };
+
+const RISK_RANK: Record<Risk, number> = { NORMAL: 0, WARNING: 1, FIRE: 2 };
 
 const INITIAL_RETRY_DELAYS_MS = [3_000, 6_000, 12_000, 24_000, 45_000] as const;
 
@@ -32,6 +36,7 @@ export class DashboardStore {
   private readonly dashboardService = inject(DashboardService);
   private readonly nodesService = inject(NodesService);
   private readonly alertsService = inject(AlertsService);
+  private readonly alertSound = inject(AlertSoundService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly summaryState = signal<DashboardSummary | null>(null);
@@ -46,6 +51,8 @@ export class DashboardStore {
   private readonly retryingConnectionState = signal(false);
   private readonly requestActiveState = signal(false);
   private readonly retryRequests = new Subject<void>();
+  private readonly nodeRisks = new Map<string, Risk>();
+  private riskBaselineReady = false;
   private retryTimer: Subscription | null = null;
   private retryCount = 0;
   private retryPending = false;
@@ -138,6 +145,7 @@ export class DashboardStore {
         }
         if (nodes.ok) {
           this.nodesState.set(nodes.value);
+          this.soundOnRiskEscalation(nodes.value, summary.ok ? summary.value : null);
         }
         if (alerts.ok) {
           this.alertsState.set(alerts.value);
@@ -168,6 +176,26 @@ export class DashboardStore {
       map(() => undefined),
       finalize(() => this.requestActiveState.set(false)),
     );
+  }
+
+  /** Suena cuando un nodo sube a advertencia o incendio; la primera carga solo fija la referencia. */
+  private soundOnRiskEscalation(nodes: Node[], summary: DashboardSummary | null): void {
+    let loudest: Risk = 'NORMAL';
+    for (const node of nodes) {
+      const risk =
+        node.current_risk ??
+        summary?.latest_readings.find((reading) => reading.node_id === node.node_id)?.risk_level ??
+        'NORMAL';
+      const previous = this.nodeRisks.get(node.node_id) ?? 'NORMAL';
+      if (RISK_RANK[risk] > RISK_RANK[previous] && RISK_RANK[risk] > RISK_RANK[loudest]) {
+        loudest = risk;
+      }
+      this.nodeRisks.set(node.node_id, risk);
+    }
+    if (this.riskBaselineReady) {
+      this.alertSound.play(loudest);
+    }
+    this.riskBaselineReady = true;
   }
 
   private scheduleInitialRetry(): void {

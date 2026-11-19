@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RiskScale } from '../../shared/components/risk-scale/risk-scale';
 import { StateMessage } from '../../shared/components/state-message/state-message';
 import { formatFullDate, formatRelativeTime } from '../../shared/utils/date-format.util';
+import { AlertSoundService } from '../../core/services/alert-sound.service';
 import { ActiveAlerts } from './active-alerts';
 import { DashboardStore } from './dashboard-store';
 import { NodeGrid } from './node-grid';
@@ -20,6 +21,14 @@ import { SeriesChart } from './series-chart';
           <p class="intro">Estado de nodos, lecturas recientes y alertas de PyroGuard.</p>
         </div>
         <div class="heading-status">
+          <button
+            type="button"
+            class="sound-toggle"
+            [attr.aria-pressed]="sound.enabled()"
+            (click)="sound.toggle()"
+          >
+            {{ sound.enabled() ? 'Sonido de alertas: activado' : 'Sonido de alertas: silenciado' }}
+          </button>
           @if (store.lastUpdated(); as updatedAt) {
             <time
               class="updated"
@@ -188,6 +197,20 @@ import { SeriesChart } from './series-chart';
       gap: var(--space-2);
     }
 
+    .sound-toggle {
+      min-height: 44px;
+      padding: 0 var(--space-3);
+      border: var(--panel-border);
+      border-radius: var(--radius-control);
+      background: var(--color-surface);
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .sound-toggle[aria-pressed='false'] {
+      color: var(--color-text-muted);
+    }
+
     .updated {
       color: var(--color-text-muted);
       font-size: 0.85rem;
@@ -295,6 +318,7 @@ import { SeriesChart } from './series-chart';
 })
 export class DashboardPage {
   readonly store = inject(DashboardStore);
+  readonly sound = inject(AlertSoundService);
 
   /** Promedios de la última lectura de cada nodo en línea; «—» si no hay datos. */
   readonly means = computed(() => {
