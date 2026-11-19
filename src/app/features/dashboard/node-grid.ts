@@ -83,7 +83,7 @@ import { DashboardStore } from './dashboard-store';
                   <dt>Evaluación de IA</dt>
                   <dd>
                     @if (aiProbability(node.node_id); as probability) {
-                      Prob. {{ probability }}
+                      Prob. de riesgo {{ probability }}
                     } @else {
                       <span class="ai-unavailable">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
