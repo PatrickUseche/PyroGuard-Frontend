@@ -560,8 +560,11 @@ export class SeriesChart {
             return EMPTY;
           }
 
-          this.loading.set(true);
-          this.error.set(null);
+          // Solo se muestra el esqueleto en la primera carga: los sondeos
+          // posteriores actualizan en silencio para que la vista no parpadee.
+          if (this.readings().length === 0) {
+            this.loading.set(true);
+          }
           const range = this.range();
           return range === 'custom'
             ? this.readingsService.getSeries(
@@ -581,6 +584,7 @@ export class SeriesChart {
             this.loading.set(false);
             return;
           }
+          this.error.set(null);
           this.readings.set(result.value);
           this.loading.set(false);
         });
