@@ -79,10 +79,10 @@ describe('DashboardStore', () => {
     expect(store.summary()).not.toBeNull();
   });
 
-  it('should poll again after ten seconds', async () => {
+  it('should poll again after five seconds', async () => {
     completeInitialCycle();
 
-    await vi.advanceTimersByTimeAsync(9_999);
+    await vi.advanceTimersByTimeAsync(4_999);
     httpTestingController.expectNone('https://api.test/api/dashboard/summary/');
 
     await vi.advanceTimersByTimeAsync(1);

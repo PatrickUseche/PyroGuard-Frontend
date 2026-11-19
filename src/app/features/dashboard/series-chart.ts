@@ -551,7 +551,7 @@ export class SeriesChart {
 
     if (isPlatformBrowser(this.platformId)) {
       createVisiblePolling(
-        30_000,
+        10_000,
         () => {
           const nodeId = this.selectedNode();
           if (nodeId === '') {

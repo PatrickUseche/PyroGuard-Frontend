@@ -84,7 +84,7 @@ Las vistas previas de Vercel no admiten comodines en los orígenes OAuth autoriz
 
 Mientras la pantalla de consentimiento esté en modo de pruebas, solo los usuarios añadidos a **Usuarios de prueba** podrán iniciar sesión.
 
-El dashboard actualiza el resumen, los nodos y las alertas activas cada 10 segundos; el sondeo se pausa cuando la pestaña está oculta. La tabla de lecturas y los gráficos consultan bajo demanda y se actualizan como máximo cada 30 segundos. Las respuestas HTTP 429 se gestionan respetando `Retry-After`.
+El dashboard actualiza el resumen, los nodos y las alertas activas cada 5 segundos; el sondeo se pausa cuando la pestaña está oculta. La tabla de lecturas y los gráficos consultan bajo demanda y se actualizan como máximo cada 10 segundos. Las respuestas HTTP 429 se gestionan respetando `Retry-After`.
 
 ## Capturas
 

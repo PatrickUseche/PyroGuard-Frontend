@@ -111,7 +111,7 @@ export class DashboardStore {
   }
 
   private startPolling(): void {
-    createVisiblePolling(10_000, () => this.pollWhenAllowed(), this.retryRequests)
+    createVisiblePolling(5_000, () => this.pollWhenAllowed(), this.retryRequests)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
