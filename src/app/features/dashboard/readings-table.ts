@@ -496,7 +496,7 @@ export class ReadingsTable {
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       createVisiblePolling(
-        30_000,
+        10_000,
         () => {
           this.loading.set(true);
           this.error.set(null);

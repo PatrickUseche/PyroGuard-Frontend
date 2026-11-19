@@ -1,7 +1,7 @@
 @import '@fontsource-variable/overpass/index.css';
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   font-family:
     system-ui,
     -apple-system,
@@ -21,98 +21,61 @@
   --space-8: 32px;
   --radius-card: 2px;
   --radius-control: 2px;
-  --panel-border: 2px solid var(--color-ink);
+  --panel-border: 2px solid var(--color-line);
 
-  --color-ink: #111915;
-  --color-rail: #123b2e;
-  --color-on-rail: #e8eee9;
-  --color-page: #e8eee9;
-  --color-surface: #ffffff;
-  --color-surface-muted: #dbe5de;
-  --color-text: #111915;
-  --color-text-muted: #435249;
-  --color-border: #6f7f75;
-  --color-focus: #0b5cad;
-  --color-primary: #123b2e;
-  --color-on-primary: #ffffff;
-  --color-link: #0d5c3f;
+  /* Tema oscuro «sala de control»: datos en cian/violeta, riesgo en verde/ámbar/rojo. */
+  --color-ink: #e6eef2;
+  --color-rail: #080c0f;
+  --color-on-rail: #e6eef2;
+  --color-page: #0e1418;
+  --color-surface: #151d23;
+  --color-surface-muted: #1c2830;
+  --color-text: #e6eef2;
+  --color-text-muted: #8aa0ab;
+  --color-line: #26343d;
+  --color-border: #5f7684;
+  --color-focus: #2fd0e0;
+  --color-primary: #2fd0e0;
+  --color-on-primary: #061014;
+  --color-link: #5fd9e6;
   --color-shadow: none;
 
-  --class-normal: #1f8a4c;
-  --class-warning: #f2a900;
-  --class-fire: #d3302a;
-  --class-on-normal: #ffffff;
-  --class-on-warning: #111915;
-  --class-on-fire: #ffffff;
+  --data-1: #2fd0e0;
+  --data-2: #9b8cff;
+  --data-3: #6fb7ff;
+  --data-4: #d58cff;
+  --data-5: #7fe3c8;
 
-  --risk-normal-bg: #d7efdf;
-  --risk-normal-text: #0f4a2a;
-  --risk-normal-border: #1f8a4c;
-  --risk-warning-bg: #ffe7a3;
-  --risk-warning-text: #5c3500;
-  --risk-warning-border: #b97a00;
-  --risk-fire-bg: #fbd9d6;
-  --risk-fire-text: #7a1511;
-  --risk-fire-border: #d3302a;
-  --status-offline-bg: #e1e6e3;
-  --status-offline-text: #39434c;
-  --status-unknown-bg: #e1e8ef;
-  --status-unknown-text: #34445c;
+  --class-normal: #2bb673;
+  --class-warning: #f2a900;
+  --class-fire: #ff5a4f;
+  --class-on-normal: #04140c;
+  --class-on-warning: #1a1200;
+  --class-on-fire: #1a0504;
+
+  --risk-normal-bg: #103a28;
+  --risk-normal-text: #b6f0c5;
+  --risk-normal-border: #2bb673;
+  --risk-warning-bg: #49320b;
+  --risk-warning-text: #ffe0a0;
+  --risk-warning-border: #c28a24;
+  --risk-fire-bg: #4b1a18;
+  --risk-fire-text: #ffc2bd;
+  --risk-fire-border: #ff5a4f;
+  --status-offline-bg: #26343d;
+  --status-offline-text: #d3dde3;
+  --status-unknown-bg: #232e48;
+  --status-unknown-text: #d0ddf2;
   --status-online-bg: var(--risk-normal-bg);
   --status-online-text: var(--risk-normal-text);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-
-    --color-ink: #ecf3ee;
-    --color-rail: #0a2a20;
-    --color-on-rail: #e8eee9;
-    --color-page: #0e1713;
-    --color-surface: #16231d;
-    --color-surface-muted: #20322a;
-    --color-text: #ecf3ee;
-    --color-text-muted: #b7c6bd;
-    --color-border: #5f7367;
-    --color-focus: #8fd0ff;
-    --color-primary: #8fd9ae;
-    --color-on-primary: #0e1713;
-    --color-link: #8fd9ae;
-    --color-shadow: none;
-
-    --risk-normal-bg: #173c2a;
-    --risk-normal-text: #b6f0c5;
-    --risk-normal-border: #4d9b67;
-    --risk-warning-bg: #49320b;
-    --risk-warning-text: #ffe0a0;
-    --risk-warning-border: #c28a24;
-    --risk-fire-bg: #4b2020;
-    --risk-fire-text: #ffc2bd;
-    --risk-fire-border: #d2645c;
-    --status-offline-bg: #303942;
-    --status-offline-text: #e0e5e9;
-    --status-unknown-bg: #273448;
-    --status-unknown-text: #d0ddf2;
-  }
-}
-
 body[data-risk='FIRE'] {
-  --color-rail: #8f1d18;
+  --color-rail: #4b1210;
 }
 
 body[data-risk='WARNING'] {
-  --color-rail: #5a4300;
-}
-
-@media (prefers-color-scheme: dark) {
-  body[data-risk='FIRE'] {
-    --color-rail: #6e1613;
-  }
-
-  body[data-risk='WARNING'] {
-    --color-rail: #4a3700;
-  }
+  --color-rail: #3d2d00;
 }
 
 * {
