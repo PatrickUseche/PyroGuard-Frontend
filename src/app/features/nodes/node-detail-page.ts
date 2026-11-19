@@ -1,3 +1,4 @@
+import { AlertMessage } from '../../shared/components/alert-message/alert-message';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -18,7 +19,15 @@ import { SeriesChart } from '../dashboard/series-chart';
 @Component({
   selector: 'app-node-detail-page',
   standalone: true,
-  imports: [ConnectionBadge, RiskBadge, RouterLink, SeriesChart, SimulatedBadge, StateMessage],
+  imports: [
+    AlertMessage,
+    ConnectionBadge,
+    RiskBadge,
+    RouterLink,
+    SeriesChart,
+    SimulatedBadge,
+    StateMessage,
+  ],
   template: `
     <a class="back-link" routerLink="/">← Volver al resumen</a>
     @if (loading()) {
@@ -106,7 +115,7 @@ import { SeriesChart } from '../dashboard/series-chart';
                 @for (alert of alerts(); track alert.id) {
                   <li>
                     <app-risk-badge [risk]="alert.level" />
-                    <span>{{ alert.message }}</span>
+                    <app-alert-message [message]="alert.message" />
                   </li>
                 }
               </ul>

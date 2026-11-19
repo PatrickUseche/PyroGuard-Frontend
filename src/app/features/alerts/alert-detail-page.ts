@@ -1,3 +1,4 @@
+import { AlertMessage } from '../../shared/components/alert-message/alert-message';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -16,7 +17,7 @@ import { AlertActionsService } from './alert-actions.service';
 @Component({
   selector: 'app-alert-detail-page',
   standalone: true,
-  imports: [RiskBadge, RouterLink, SimulatedBadge, StateMessage],
+  imports: [AlertMessage, RiskBadge, RouterLink, SimulatedBadge, StateMessage],
   template: `
     @if (loading()) {
       <app-state-message
@@ -98,7 +99,7 @@ import { AlertActionsService } from './alert-actions.service';
 
         <section class="message-panel" aria-labelledby="message-title">
           <h2 id="message-title">Mensaje</h2>
-          <p>{{ currentAlert.message }}</p>
+          <app-alert-message [message]="currentAlert.message" />
         </section>
 
         @if (auth.canManageAlerts() && currentAlert.status !== 'CLOSED') {
@@ -211,9 +212,8 @@ import { AlertActionsService } from './alert-actions.service';
       font-weight: 650;
     }
 
-    .message-panel p {
+    .message-panel app-alert-message {
       margin-top: var(--space-2);
-      line-height: 1.5;
     }
 
     .actions {

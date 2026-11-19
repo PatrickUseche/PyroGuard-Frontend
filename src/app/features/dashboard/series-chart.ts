@@ -38,6 +38,9 @@ interface SeriesPlot {
   maximum: number;
   points: PlotPoint[];
   coordinates: string;
+  latest: number | null;
+  middle: number;
+  showMarkers: boolean;
 }
 
 const metrics: { key: MetricKey; label: string; unit: string }[] = [
@@ -46,6 +49,9 @@ const metrics: { key: MetricKey; label: string; unit: string }[] = [
   { key: 'smoke', label: 'Humo', unit: '' },
   { key: 'gas', label: 'Gas', unit: '' },
 ];
+
+/** Por encima de este número de lecturas solo se marca el último punto, para no saturar la gráfica. */
+const MAX_MARKERS = 60;
 
 const numberFormatter = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 });
 const timeFormatter = new Intl.DateTimeFormat('es-CO', {
@@ -163,11 +169,21 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
             @for (plot of plots(); track plot.key) {
               <article class="plot">
                 <header>
-                  <h3>{{ plot.label }}</h3>
-                  <span
-                    >{{ number(plot.minimum) }}{{ plot.unit }} – {{ number(plot.maximum)
-                    }}{{ plot.unit }}</span
-                  >
+                  <h3>
+                    <span
+                      class="swatch"
+                      [class]="'swatch series-' + plot.key"
+                      aria-hidden="true"
+                    ></span>
+                    {{ plot.label }}
+                  </h3>
+                  <span class="latest">
+                    @if (plot.latest !== null) {
+                      Último: <strong>{{ number(plot.latest) }}{{ plot.unit }}</strong> ·
+                    }
+                    Rango {{ number(plot.minimum) }}{{ plot.unit }} – {{ number(plot.maximum)
+                    }}{{ plot.unit }}
+                  </span>
                 </header>
                 <svg
                   viewBox="0 0 640 160"
@@ -177,17 +193,40 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
                   <line x1="48" y1="24" x2="624" y2="24" class="grid-line" />
                   <line x1="48" y1="76" x2="624" y2="76" class="grid-line" />
                   <line x1="48" y1="128" x2="624" y2="128" class="grid-line" />
-                  <text x="4" y="28" class="axis-label">{{ number(plot.maximum) }}</text>
-                  <text x="4" y="132" class="axis-label">{{ number(plot.minimum) }}</text>
-                  <polyline [attr.points]="plot.coordinates" class="series-line" />
-                  @for (point of plot.points; track point.timestamp) {
-                    <circle [attr.cx]="point.x" [attr.cy]="point.y" r="3" class="series-point">
-                      <title>{{ point.tooltip }}</title>
-                    </circle>
+                  <text x="44" y="28" text-anchor="end" class="axis-label">
+                    {{ number(plot.maximum) }}
+                  </text>
+                  <text x="44" y="80" text-anchor="end" class="axis-label">
+                    {{ number(plot.middle) }}
+                  </text>
+                  <text x="44" y="132" text-anchor="end" class="axis-label">
+                    {{ number(plot.minimum) }}
+                  </text>
+                  <polyline
+                    [attr.points]="plot.coordinates"
+                    class="series-line"
+                    [class]="'series-line series-' + plot.key"
+                  />
+                  @for (point of plot.points; track point.timestamp; let last = $last) {
+                    @if (plot.showMarkers || last) {
+                      <circle
+                        [attr.cx]="point.x"
+                        [attr.cy]="point.y"
+                        [attr.r]="last ? 4.5 : 3"
+                        [class]="'series-point series-' + plot.key + (last ? ' latest-point' : '')"
+                      >
+                        <title>{{ point.tooltip }}</title>
+                      </circle>
+                    }
                   }
                   @if (isLastPlot(plot)) {
                     @for (tick of timeTicks(); track tick.x) {
-                      <text [attr.x]="tick.x" y="153" text-anchor="middle" class="axis-label">
+                      <text
+                        [attr.x]="tick.x"
+                        y="154"
+                        [attr.text-anchor]="tick.anchor"
+                        class="axis-label"
+                      >
                         {{ tick.label }}
                       </text>
                     }
@@ -401,7 +440,7 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
 
     .series-line {
       fill: none;
-      stroke: var(--color-focus);
+      stroke: var(--series-color, var(--color-focus));
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-width: 2.5;
@@ -409,13 +448,48 @@ const timeFormatter = new Intl.DateTimeFormat('es-CO', {
 
     .series-point {
       fill: var(--color-surface);
-      stroke: var(--color-focus);
+      stroke: var(--series-color, var(--color-focus));
       stroke-width: 2;
+    }
+
+    .series-point.latest-point {
+      fill: var(--series-color, var(--color-focus));
+      stroke: var(--color-surface);
+    }
+
+    .series-temperature {
+      --series-color: var(--data-1);
+    }
+
+    .series-humidity {
+      --series-color: var(--data-3);
+    }
+
+    .series-smoke {
+      --series-color: var(--data-2);
+    }
+
+    .series-gas {
+      --series-color: var(--data-4);
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: var(--space-2);
+      border-radius: 50%;
+      background: var(--series-color);
+      vertical-align: middle;
+    }
+
+    .latest strong {
+      color: var(--color-text);
     }
 
     .axis-label {
       fill: var(--color-text-muted);
-      font-size: 10px;
+      font-size: 11px;
     }
 
     .data-details {
@@ -531,11 +605,11 @@ export class SeriesChart {
     if (validReadings.length === 0) {
       return [];
     }
-    const indexes = [
-      ...new Set([0, Math.floor((validReadings.length - 1) / 2), validReadings.length - 1]),
-    ];
+    const last = validReadings.length - 1;
+    const indexes = [...new Set([0, 0.25, 0.5, 0.75, 1].map((ratio) => Math.round(ratio * last)))];
     return indexes.map((index) => ({
-      x: 48 + (validReadings.length === 1 ? 288 : (index / (validReadings.length - 1)) * 576),
+      x: 48 + (last === 0 ? 288 : (index / last) * 576),
+      anchor: index === 0 && last > 0 ? 'start' : index === last && last > 0 ? 'end' : 'middle',
       label: timeFormatter.format(new Date(validReadings[index].timestamp)),
     }));
   });
@@ -725,6 +799,9 @@ export class SeriesChart {
       maximum,
       points,
       coordinates: points.map((point) => `${point.x},${point.y}`).join(' '),
+      latest: values.length === 0 ? null : values[values.length - 1],
+      middle: (minimum + maximum) / 2,
+      showMarkers: points.length <= MAX_MARKERS,
     };
   }
 }
